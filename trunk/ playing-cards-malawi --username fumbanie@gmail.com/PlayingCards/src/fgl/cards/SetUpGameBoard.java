@@ -151,11 +151,12 @@ public class SetUpGameBoard extends View {
 				Boolean check = (Boolean) Tools.isInRectangle(touchPoint, card).get(0);
 
 				if ( check ){
-					activeCard = card.getName();
+					offset = (Point) Tools.isInRectangle(touchPoint, card).get(1);
 					
-					servedCards.get(activeCard).setX( touchPoint.x );
-					servedCards.get(activeCard).setY( touchPoint.y );
-
+					activeCard = card.getName();
+					servedCards.get(activeCard).setToCenter( offset );
+					
+					PlayingCardsActivity.printDebug(""+ offset + " cnt: "+ card.getPosition() );
 					break;
 				}
 			}
@@ -166,11 +167,11 @@ public class SetUpGameBoard extends View {
 			// move the balls the same as the finger
 			if (activeCard != "") 
 			{	
-				servedCards.get(activeCard).setX( touchPoint.x - offset.x);
-				servedCards.get(activeCard).setY( touchPoint.y - offset.y);
-
-				//FIXME: Try doing this by using context field
-				PlayingCardsActivity.printDebug( activeCard);
+				//TODO: Fix the move (sure, it can be simplyfied)
+				Card card = servedCards.get(activeCard);
+				card.setX(touchPoint.x - card.getCenter().x);
+				card.setY(touchPoint.y - card.getCenter().y);
+				PlayingCardsActivity.printDebug( "Position : "+card.getPosition() );
 			}
 			break; 
 

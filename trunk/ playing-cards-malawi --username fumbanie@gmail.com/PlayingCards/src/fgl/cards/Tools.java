@@ -38,36 +38,30 @@ public class Tools {
 	
 	//check if a point is inside a rectangle
 	public static List<Object> isInRectangle(Point touchPoint, Card card)
-	{
-		//XXX: Debug test point
-		//Log.v(TAG, "touchPoint : " + touchPoint.x +", "+ touchPoint.y );
-		//Log.v(TAG, "cardPosn   : " + card.getX() + ", "+ card.getY() );
+	{		
+		Point cardCenter = card.getCenter();
+		List<Object> result = new ArrayList<Object>();
 		
-		//Determine card center point
-		Point cardCenter = new Point( card.getBitmap().getWidth()/2 , card.getBitmap().getHeight()/2);
-		
-		
-		List<Object> result = new ArrayList<Object>() ;
-		
-		if( touchPoint.x > card.getX() && touchPoint.x < card.getX() + card.getBitmap().getWidth() )
+		if( touchPoint.x >= card.getX() && touchPoint.x <= card.getX() + card.getWidth() )
 		{
-			if ( touchPoint.y > card.getY() && touchPoint.y < card.getY() + card.getBitmap().getHeight())
+			if ( touchPoint.y >= card.getY() && touchPoint.y <= card.getY() + card.getHeight())
 			{
-				
-				int x =  touchPoint.x - ( cardCenter.x + card.getBitmap().getWidth() ); 
-				int y =  touchPoint.y - ( cardCenter.y + card.getBitmap().getHeight()) ; 
-				
-				x = Math.abs(x);
-				y = Math.abs(y);
-				
+				int x =  touchPoint.x - ( cardCenter.x + card.getX() ); 
+				int y =  touchPoint.y - ( cardCenter.y + card.getY()) ; 				
 				Point offset = new Point(x, y);
 				
+				//Add touch response
 				result.add(true);
+				//Add offset coordinates
 				result.add(offset);
 				return result;
 			}
 		}
+		
+		//set default values
 		result.add(false);
+		result.add(new Point());
+		
 		return result;
 	}
 	

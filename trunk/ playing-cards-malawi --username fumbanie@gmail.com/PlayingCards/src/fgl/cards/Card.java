@@ -42,16 +42,21 @@ public class Card
 
 	private int originalX; //Original x-coordinate
 	private int originalY; //Original y-coordinate
+	private int width; 
+	private int height;
 
 
 	public Card(Context context, int drawable, String letter, String suite) {
 		this.letter = letter;
 		this.suite = suite;
 		name = letter + suite;
-
+		
 		BitmapFactory.Options opts = new BitmapFactory.Options();
 		opts.inJustDecodeBounds = true;
 		img = BitmapFactory.decodeResource(context.getResources(), drawable); 
+		
+		this.width = this.getBitmap().getWidth();
+		this.height = this.getBitmap().getHeight();
 	}
 
 	public Card(Context context, int drawable, Point point, String letter, String suite) {
@@ -110,5 +115,37 @@ public class Card
 	{
 		return this.name;
 	}
+
+	public Point getCenter() {
+		Point center = new Point();
+		int x = this.getBitmap().getWidth()/2;
+		int y = this.getBitmap().getHeight()/2;
+		center.x = x;
+		center.y = y;
+		return center;
+	}
+
+	public int getWidth() {
+		// TODO Auto-generated method stub
+		return this.width;
+	}
+
+	public void setToCenter(Point offset) {
+		// TODO Auto-generated method stub
+		this.coordX = this.coordX + offset.x;
+		this.coordY = this.coordY + offset.y;
+	}
+
+	public int getHeight() {
+		// TODO Auto-generated method stub
+		return this.height;
+	}
+
+	public Point getPosition() {
+		// TODO Auto-generated method stub
+		return new Point(this.coordX, this.coordY);
+	}
+
+	
 
 }
