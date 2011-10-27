@@ -3,6 +3,7 @@
  * Copyright (c) 2011 FUMBA GAME LAB. All rights reserved
  * 
  * Malawi Playing Cards: Tools.java
+ * A Collection of methods that are used to complement class functioning and for debugging
  * 
  * @author Fumbani Chibaka
  * @version 1.0
@@ -27,15 +28,33 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
-
 import android.graphics.Point;
 import android.util.Log;
 
 public class Tools {
 
-	private static String TAG = "FGL";
+	private static String TAG = "FGL"; //Tag used for Eclipse Android Logcat
 
+	/**
+	 * Prints to the cat log in eclipse. A special tag, "FGL" is used to enable output filter.
+	 * @param string The string to be printed to the log   
+	 * @author Fumba Chibaka
+	 */
+	public static void catLog(String string)
+	{
+		Log.v(TAG, string);
+	}
 	
+	
+	/**
+	 * Returns an Image object that can then be painted on the screen. 
+	 * The url argument must specify an absolute that draw the image will incrementally paint on the screen.
+	 * 
+	 * @param	name the location of the image, relative to the url argument
+	 * @return	A random card from the card deck                 
+	 * @see	Image
+	 * @author Fumba Chibaka
+	 */
 	//check if a point is inside a rectangle
 	public static List<Object> isInRectangle(Point touchPoint, Card card)
 	{		
@@ -67,6 +86,15 @@ public class Tools {
 	
 	
 	
+	/**
+	 * Returns an Image object that can then be painted on the screen. 
+	 * The url argument must specify an absolute that draw the image will incrementally paint on the screen.
+	 * 
+	 * @param	name the location of the image, relative to the url argument
+	 * @return	A random card from the card deck                 
+	 * @see	Image
+	 * @author Fumba Chibaka
+	 */
 	public static void printHashMap(Hashtable<String, Card> map) 
 	{
 		Iterator<String> iterator = map.keySet().iterator();  

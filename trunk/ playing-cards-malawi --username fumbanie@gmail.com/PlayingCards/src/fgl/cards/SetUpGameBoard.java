@@ -3,6 +3,7 @@
  * Copyright (c) 2011 FUMBA GAME LAB. All rights reserved
  * 
  * Malawi Playing Cards: SetUpGameBoard.java
+ * Collects all necessary elements needed for gameplay. This class controls and manages the elements.
  * 
  * @author Fumbani Chibaka
  * @version 1.0
@@ -23,171 +24,188 @@
  */
 package fgl.cards;
 
-import java.util.Collection;
-import java.util.Hashtable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
-import java.util.Set;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Point;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
 public class SetUpGameBoard extends View {
 
-	private Hashtable<String, Card> cardDeck = new Hashtable<String,Card>(); //collection of the cards
-	private Hashtable<String, Card> servedCards = new Hashtable<String, Card>(); //cards served to player
+	private Context context; //interface to global information about an application environment
+	private List<Card> cardDeck = new ArrayList<Card>();	//Collection of all cards 
+	private List<Card> servedCards = new ArrayList<Card>(); //Collection of cards served to player
 
-	private Hashtable<String, Integer> cardKey = new Hashtable<String, Integer>();
-	private static String TAG = "FGL";
+	private final String [] CARD_LETTERS = {"A","2","3","4","5","6","7","8","9","10", "J", "K", "Q"};
+	private final String [] CARD_SUITES = {"S","H","D","C"}; //Spade, Heart, Diamonds, Clubs
 
-	private final static String [] CARD_LETTERS = {"A","2","3","4","5","6","7","8","9","10", "J", "K", "Q"};
-	private final static String [] CARD_SUITES = {"S","H","D","C"}; //Spade, Heart, Diamonds, Clubs
+	private String activeCard; // keeps track of the currently selected card
+	private Point offset = new Point(); //used for positioning card to the center on touch event
 
-	private String activeCard; // variable to know which card is selected by the player
-	private Point offset = new Point();
 	
-	private Context context;
-
 	public SetUpGameBoard(Context context) 
 	{
 		super(context);
-		setFocusable(true); //TODO: necessary for getting the touch events??
-
 		this.context = context;
+		this.setFocusable(true);
 		this.makeCards();
-
-		//Create cards and assign initial positions for them
 		this.serveCards();
 	}
 
-
-	//Simple shuffle Cards...
+	/**
+	 * Picks a random card from the card deck. 
+	 * @return	A random card from the card deck 
+	 */
 	private Card pickRandomCard() {
-		Random random_generator = new Random();
-		Set<String> cardNames = cardDeck.keySet();
-		Object [] array = cardNames.toArray();
-		String cardName = (String) array[ random_generator.nextInt(54)];
-
-		//TODO: Find out why it is already shuffled at this point
-		Card temp = cardDeck.remove(cardName);
-		return temp;
+		return this.cardDeck.remove( new Random().nextInt( this.cardDeck.size() ));
 	}
 
 
+	/**
+	 * Makes 54 card objects that are to be reused throughout gameplay. 
+	 */
 	private void makeCards() {
-		//add normal cards first
-		for (int j = 0; j < CARD_SUITES.length; j++)
-		{
-			for (int i = 0; i < CARD_LETTERS.length; i++)
-			{
-				Card newCard = new Card(context, R.drawable.card , CARD_LETTERS[i], CARD_SUITES[j]);
-				cardDeck.put(newCard.getName(), newCard);
-			}
+		//Step 1: Add normal cards
+		for (int s = 0; s < this.CARD_SUITES.length; s++)
+			for (int l = 0; l < this.CARD_LETTERS.length; l++)
+				this.cardDeck.add(new Card(this.context, this.CARD_LETTERS[l] + this.CARD_SUITES[s]) );
 
-			//..then add jokers
-			cardDeck.put( "*B", new Card(context, R.drawable.card,"*","B")); //black and white joker
-			cardDeck.put( "*C", new Card(context, R.drawable.card,"*","C")); //color joker
-		}
+		//Step 2: Add two jokers to the collection
+		this.cardDeck.add( new Card(this.context,"*B")); //B = Black and White
+		this.cardDeck.add( new Card(this.context,"*C")); //C = Color
 	}
 
 
+	/**
+	 * Takes cards from the deck and puts them in player hands
+	 */
 	private void serveCards() {
 
-		Point point = new Point(100,100);        	
-		Card card = this.pickRandomCard();
+		Point point1 = new Point(100,100); 
+		Point point2 = new Point(200,300); 
+		Point point3 = new Point(100,400);
 
-		card.setDefaultPosition(point);
-		card.setCurrentPosition(point);
+		Card card1 = this.pickRandomCard();
+		card1.setDefaultPosition(point1);
+		card1.setCurrentPosition(point1);
+		servedCards.add(card1);
 
-		servedCards.put(card.getName(), card);
-		
-		
-		//-----------------------------
-		Point point2 = new Point(200,300);        	
 		Card card2 = this.pickRandomCard();
-
 		card2.setDefaultPosition(point2);
 		card2.setCurrentPosition(point2);
+		servedCards.add(card2);
 
-		servedCards.put(card2.getName(), card2);
+		Card card3 = this.pickRandomCard();
+		card3.setDefaultPosition(point3);
+		card3.setCurrentPosition(point3);
+		servedCards.add(card3);
 
-		//XXX: Print serve summary:
-		Log.v(TAG, ""+ "Random Card picked : "+ card.getName());
-		Log.v(TAG, ""+ "servedCards : "+ servedCards.size());
-		Log.v(TAG, ""+ "cardDeck : "+ cardDeck.size());
+		//XXX: Print Serving Summary to Eclipse log
+		Tools.catLog( "Random Card 1  : " + card1.getName());
+		Tools.catLog( "Random Card 2  : " + card2.getName());
+		Tools.catLog( "Random Card 3  : " + card3.getName());
+		Tools.catLog( "# Served Cards : " + this.servedCards.size());
+		Tools.catLog( "# Cards in Deck: " + this.cardDeck.size());
 	}
 
-	// the method that draws the balls
+	/**
+	 * Overrides View.ondraw method. Draws images on the canvas
+	 * @param canvas The canvas onto which the bitmaps will be drawn            
+	 * @see	View
+	 */
 	@Override protected void onDraw(Canvas canvas) {
-
-		//draw the balls on the canvas
-		Collection<Card> cards = servedCards.values();
-		for (Card card : cards) {
+		for (Card card : this.servedCards)
 			canvas.drawBitmap(card.getBitmap(), card.getX(), card.getY(), null);
-		}
-
 	}
 
-	// events when touching the screen
+	/**
+	 * Detects screen touch gestures and moves the selected card accordingly
+	 * @param	event The detected motion event
+	 * @return	A boolean?? //TODO:                
+	 * @see	MotionEvent
+	 */
 	public boolean onTouchEvent(MotionEvent event) {
-		int eventaction = event.getAction(); 
-
+		int eventAction = event.getAction(); 
 		Point touchPoint = new Point( (int)event.getX(),(int)event.getY());
-		
 		//TODO: Find out how switch case works in this case...
 
-		switch (eventaction ) { 
-		case MotionEvent.ACTION_DOWN: // touch down so check if the finger is on a ball
-			activeCard = ""; //Reset active card
+		switch (eventAction ) { 
 
+		//ACTION 1: TOUCH DOWN
+		case MotionEvent.ACTION_DOWN:
+			this.activeCard = "";//reset active card
 
-			Collection<Card> set = servedCards.values();
-			// check if inside the bounds of the card
-
-			for (Card card : set) 
+			//Check to see if a card being touched
+			for (Card card : this.servedCards) 
 			{
-				Boolean check = (Boolean) Tools.isInRectangle(touchPoint, card).get(0);
-
+				Boolean check = (Boolean) Tools.isInRectangle(touchPoint, card).get(0); 
 				if ( check ){
-					offset = (Point) Tools.isInRectangle(touchPoint, card).get(1);
-					
-					activeCard = card.getName();
-					servedCards.get(activeCard).setToCenter( offset );
-					
-					PlayingCardsActivity.printDebug(""+ offset + " cnt: "+ card.getPosition() );
+					this.offset = (Point) Tools.isInRectangle(touchPoint, card).get(1);
+					this.activeCard = card.getName();
+					this.bringToFront(card); //Important: bring the active card to front
+					card.setToCenter( this.offset );
 					break;
 				}
 			}
 			break; 
 
-
-		case MotionEvent.ACTION_MOVE:   // touch drag with the ball
-			// move the balls the same as the finger
-			if (activeCard != "") 
-			{	
-				//TODO: Fix the move (sure, it can be simplyfied)
-				Card card = servedCards.get(activeCard);
+			//ACTION 2: DRAG (MOVE)
+		case MotionEvent.ACTION_MOVE:
+			if (this.activeCard != "") 
+			{
+				Card card = this.getServedCard(this.activeCard);
 				card.setX(touchPoint.x - card.getCenter().x);
 				card.setY(touchPoint.y - card.getCenter().y);
-				PlayingCardsActivity.printDebug( "Position : "+card.getPosition() );
+				PlayingCardsActivity.printDebug( "Card : " + card.getName() + "  Position : " + card.getPosition() );
 			}
 			break; 
 
-			// touch drop - just do things here after dropping
+			//ACTION 3: DROP ( TOUCH UP)
 		case MotionEvent.ACTION_UP: 
-			//return cards to their initial position
 			if (activeCard != "")  
-			{
-				Card droppedCard= servedCards.get(activeCard);
-				droppedCard.resetPosition();
-			}
+				this.getServedCard(activeCard).resetPosition();
 			break; 
 		} 
-		// redraw the canvas
-		invalidate(); 
-		return true; 
 
+		this.invalidate(); //Redraw the canvas 
+		return true; 
 	}
+
+
+	/**
+	 * Returns a card object from the collection of served cards
+	 * @param	cardName The name of the card to be extracted
+	 * @return	The specified card. Returns null if no cards could be identified by the specified name
+	 */	
+	private Card getServedCard(String cardName) {
+		for( Card card: this.servedCards){
+			if (card.getName().equalsIgnoreCase(cardName))
+				return card;
+		}
+		return null;
+	}
+
+
+	/**
+	 * Brings the selected card to the top of the list.
+	 * @param	touchedCard The card to be brought to the front
+	 */
+	private void bringToFront(Card touchedCard) {
+
+		for(int i = 0; i < this.servedCards.size(); i++ )
+		{
+			Card card = this.servedCards.get(i);
+			if ( card.getName().equalsIgnoreCase( touchedCard.getName()))
+			{
+				this.servedCards.remove(i);
+				this.servedCards.add(card);
+				this.invalidate(); //Redraw canvas
+			}
+		}
+	}
+
+	//Class Ends here________
 }

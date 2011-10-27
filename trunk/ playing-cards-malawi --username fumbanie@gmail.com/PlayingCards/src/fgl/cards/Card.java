@@ -3,6 +3,7 @@
  * Copyright (c) 2011 FUMBA GAME LAB. All rights reserved
  * 
  * Malawi Playing Cards: Card.java
+ * Represents the card object
  * 
  * @author Fumbani Chibaka
  * @version 1.0
@@ -32,61 +33,67 @@ import android.graphics.Point;
 
 public class Card  
 {
-	private String name; //card name = letter and number
-	private String letter; //card_letter
-	private String suite; //number value on the card
-
-	private Bitmap img; // the image of the ball
-	private int coordX = 0; // the x coordinate at the canvas
-	private int coordY = 0; // the y coordinate at the canvas
-
-	private int originalX; //Original x-coordinate
-	private int originalY; //Original y-coordinate
+	/** the unique name of the card (eg. 3D = three of diamonds) */
+	private String name; 
+	/** the graphical bitmap image of the card */
+	private Bitmap img;
+	/** the x- coordinate of the cards' current position. default = 0 */
+	private int currentX = 0; 
+	/** the y- coordinate of the cards' current position. default = 0 */
+	private int currentY = 0;
+	/** the x- coordinate of the cards original position after it was served */
+	private int originalX; 
+	/** the y- coordinate of the cards original position after it was served */
+	private int originalY; 
+	/** the width of the cards' bitmap image */
 	private int width; 
+	/** the height of the cards' bitmap image */
 	private int height;
 
-
-	public Card(Context context, int drawable, String letter, String suite) {
-		this.letter = letter;
-		this.suite = suite;
-		name = letter + suite;
-		
+	/**
+	 * Makes a new card object and defines the relevant image to represent the card
+	 * @param context interface to global information about an application environment
+	 * @param name the unique name of the card (eg. 3D = three of diamonds)
+	 * @see R.drawable
+	 */
+	public Card(Context context, String name) {
+		this.name = name;
 		BitmapFactory.Options opts = new BitmapFactory.Options();
 		opts.inJustDecodeBounds = true;
-		img = BitmapFactory.decodeResource(context.getResources(), drawable); 
-		
+		img = BitmapFactory.decodeResource(context.getResources(), R.drawable.card); 
+
 		this.width = this.getBitmap().getWidth();
 		this.height = this.getBitmap().getHeight();
 	}
 
-	public Card(Context context, int drawable, Point point, String letter, String suite) {
-		this(context, drawable, letter, suite);
-		originalX = coordX = point.x;
-		originalY = coordY = point.y;
-	}
-
-	/* Gets the name of the card */
+	/**
+	 * Gets the cards' unique identifier
+	 * @return the unique name of the card
+	 */
 	public String getName()
 	{
 		return name;
 	}
 
-	
-
-	void setX(int newValue) {
-		coordX = newValue;
+	/**
+	 * Sets the x-coordinate for the cards' position.
+	 * this method is used to move the card on the device screen.
+	 * @param newX the new x-coordinate
+	 */
+	void setX(int newX) {
+		currentX = newX;
 	}
 
 	public int getX() {
-		return coordX;
+		return currentX;
 	}
 
 	void setY(int newValue) {
-		coordY = newValue;
+		currentY = newValue;
 	}
 
 	public int getY() {
-		return coordY;
+		return currentY;
 	}
 
 	public Bitmap getBitmap() {
@@ -132,8 +139,8 @@ public class Card
 
 	public void setToCenter(Point offset) {
 		// TODO Auto-generated method stub
-		this.coordX = this.coordX + offset.x;
-		this.coordY = this.coordY + offset.y;
+		this.currentX = this.currentX + offset.x;
+		this.currentY = this.currentY + offset.y;
 	}
 
 	public int getHeight() {
@@ -143,9 +150,9 @@ public class Card
 
 	public Point getPosition() {
 		// TODO Auto-generated method stub
-		return new Point(this.coordX, this.coordY);
+		return new Point(this.currentX, this.currentY);
 	}
 
-	
+
 
 }
