@@ -35,17 +35,32 @@ import android.view.View;
 
 public class SetUpGameBoard extends View {
 
-	private Context context; //interface to global information about an application environment
-	private List<Card> cardDeck = new ArrayList<Card>();	//Collection of all cards 
-	private List<Card> servedCards = new ArrayList<Card>(); //Collection of cards served to player
+	/** interface to global information about an application environment */
+	private Context context; 
 
+	/** collection of all the cards in the deck */
+	private List<Card> cardDeck = new ArrayList<Card>();
+
+	/** collection of cards served to player */
+	private List<Card> servedCards = new ArrayList<Card>();
+
+	/** card letters */
 	private final String [] CARD_LETTERS = {"A","2","3","4","5","6","7","8","9","10", "J", "K", "Q"};
-	private final String [] CARD_SUITES = {"S","H","D","C"}; //Spade, Heart, Diamonds, Clubs
 
-	private String activeCard; // keeps track of the currently selected card
-	private Point offset = new Point(); //used for positioning card to the center on touch event
+	/** card suites: Spade, Heart, Diamond, Club */
+	private final String [] CARD_SUITES = {"S","H","D","C"}; 
 
-	
+	/** currently selected card */
+	private String activeCard;
+
+	/** offset position relative to the touch point */
+	private Point offset = new Point();
+
+
+	/**
+	 * Sets up the gameboard and manages it
+	 * @param context interface to global information about an application environment 
+	 */
 	public SetUpGameBoard(Context context) 
 	{
 		super(context);
@@ -159,7 +174,7 @@ public class SetUpGameBoard extends View {
 				Card card = this.getServedCard(this.activeCard);
 				card.setX(touchPoint.x - card.getCenter().x);
 				card.setY(touchPoint.y - card.getCenter().y);
-				PlayingCardsActivity.printDebug( "Card : " + card.getName() + "  Position : " + card.getPosition() );
+				PlayingCardsActivity.printDebug( "Card : " + card.getName() + "  Position : " + card.getX() + "," + card.getY() );
 			}
 			break; 
 
@@ -207,5 +222,5 @@ public class SetUpGameBoard extends View {
 		}
 	}
 
-	//Class Ends here________
+
 }

@@ -35,18 +35,25 @@ public class Card
 {
 	/** the unique name of the card (eg. 3D = three of diamonds) */
 	private String name; 
+	
 	/** the graphical bitmap image of the card */
 	private Bitmap img;
+	
 	/** the x- coordinate of the cards' current position. default = 0 */
 	private int currentX = 0; 
+	
 	/** the y- coordinate of the cards' current position. default = 0 */
 	private int currentY = 0;
+	
 	/** the x- coordinate of the cards original position after it was served */
 	private int originalX; 
+	
 	/** the y- coordinate of the cards original position after it was served */
 	private int originalY; 
+	
 	/** the width of the cards' bitmap image */
 	private int width; 
+	
 	/** the height of the cards' bitmap image */
 	private int height;
 
@@ -84,75 +91,113 @@ public class Card
 		currentX = newX;
 	}
 
+	/**
+	 * Gets the x-coordinate for the card's position.
+	 * @return the x-coordinate for the cards' current position
+	 */
 	public int getX() {
 		return currentX;
 	}
 
-	void setY(int newValue) {
-		currentY = newValue;
+	/**
+	 * Sets the y-coordinate for the card's current position.
+	 * This method is used to move the card on the device screen.
+	 * @param newY the new y-coordinate.
+	 */
+	void setY(int newY) {
+		currentY = newY;
 	}
-
+	
+	/**
+	 * Gets the y- coordinate for the card's current position
+	 * @return the y-coordinate for the card's current position.
+	 */
 	public int getY() {
 		return currentY;
 	}
 
+	/**
+	 * Gets the bitmap image for the card object
+	 * @return bitmap image
+	 */
 	public Bitmap getBitmap() {
 		return img;
 	}
 
-	/* Returns the card to its original position */
+	/**
+	 * Resets the current position for the card to its original position.
+	 * This method is used when the player drops the cards on screen areas which do not
+	 * recognise the move.
+	 */
 	public void resetPosition() 
 	{
-		this.setX(originalX);
-		this.setY(originalY);
+		this.currentX = this.originalX;
+		this.currentY = this.originalY;
 	}
 
+	/**
+	 * Sets the current position of the card
+	 * @param point contain x and y coordinates of the new position
+	 */
 	public void setCurrentPosition(Point point) {
-		this.setX(point.x);
-		this.setY(point.y);		
+		this.currentX = point.x;
+		this.currentY = point.y;		
 	}
 
+	/**
+	 * Sets the default position of the card
+	 * @param point contain x and y coordinates for the default position
+	 */
 	public void setDefaultPosition(Point point) {
 		this.originalX = point.x;
 		this.originalY = point.y;			
 	}
 
-
+	/**
+	 * Returns a string to represent the card object.
+	 */
 	public String toString()
 	{
 		return this.name;
 	}
 
+	/**
+	 * Gets the center for the card
+	 * @return a point representing the x and y coordinates for the cards center
+	 */
 	public Point getCenter() {
-		Point center = new Point();
-		int x = this.getBitmap().getWidth()/2;
-		int y = this.getBitmap().getHeight()/2;
-		center.x = x;
-		center.y = y;
-		return center;
+		int x = this.img.getWidth()/2;
+		int y = this.img.getHeight()/2;
+		return new Point(x,y);
 	}
 
+	/**
+	 * Gets the width of the card's bitmap image
+	 * @return an integer value representing the width of the card
+	 */
 	public int getWidth() {
-		// TODO Auto-generated method stub
 		return this.width;
 	}
+	
+	/**
+	 * Gets the height of the card
+	 * @return the height of the card
+	 */
+	public int getHeight() {
+		return this.height;
+	}
 
+	
+	/**
+	 * Calculates the offset position of the card once it is touched. Offset is used to center the card with the touch position.
+	 * @param offset the offset position
+	 * @see fgl.card.SetUpGameBoard.onTouchEvent
+	 */
 	public void setToCenter(Point offset) {
-		// TODO Auto-generated method stub
 		this.currentX = this.currentX + offset.x;
 		this.currentY = this.currentY + offset.y;
 	}
 
-	public int getHeight() {
-		// TODO Auto-generated method stub
-		return this.height;
-	}
-
-	public Point getPosition() {
-		// TODO Auto-generated method stub
-		return new Point(this.currentX, this.currentY);
-	}
-
-
+	
 
 }

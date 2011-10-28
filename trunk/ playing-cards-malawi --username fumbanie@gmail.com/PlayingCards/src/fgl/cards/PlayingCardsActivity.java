@@ -29,7 +29,8 @@ import android.os.Bundle;
 
 public class PlayingCardsActivity extends Activity {
 
-	private static GameBoardLayout elements; //organises all game graphics
+	/** Organises all the game elements */
+	private static GameBoardLayout elements; 
 
 	/** Called when the activity is first created. */
 	@Override public void onCreate(Bundle savedInstanceState) {
@@ -40,10 +41,9 @@ public class PlayingCardsActivity extends Activity {
 
 
 	/**
-     * Used to print debugging text on the android device screen
-     * @author Fumbani Chibaka
-     * @param  text The text to be printed on the android device screen
-     */
+	 * Used to print debugging text on the android device screen
+	 * @param  text The text to be printed on the android device screen
+	 */
 	public static void printDebug(String text)
 	{
 		//note: only updates text if input text is different from the one currently displayed

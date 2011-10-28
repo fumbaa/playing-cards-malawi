@@ -33,34 +33,29 @@ import android.util.Log;
 
 public class Tools {
 
-	private static String TAG = "FGL"; //Tag used for Eclipse Android Logcat
+	/** tag used for Eclipse Android logcat **/
+	private static String TAG = "FGL"; 
 
 	/**
-	 * Prints to the cat log in eclipse. A special tag, "FGL" is used to enable output filter.
-	 * @param string The string to be printed to the log   
-	 * @author Fumba Chibaka
+	 * Prints to the cat log in eclipse. A special tag, "FGL" is used to enable output cfilter.
+	 * @param string The string to be printed to the log
 	 */
 	public static void catLog(String string)
 	{
 		Log.v(TAG, string);
 	}
-	
-	
+
+
 	/**
-	 * Returns an Image object that can then be painted on the screen. 
-	 * The url argument must specify an absolute that draw the image will incrementally paint on the screen.
-	 * 
-	 * @param	name the location of the image, relative to the url argument
-	 * @return	A random card from the card deck                 
-	 * @see	Image
-	 * @author Fumba Chibaka
+	 * Checks to see if the point is inside a definined rectangle
+	 * @return the offset position
 	 */
 	//check if a point is inside a rectangle
 	public static List<Object> isInRectangle(Point touchPoint, Card card)
 	{		
 		Point cardCenter = card.getCenter();
 		List<Object> result = new ArrayList<Object>();
-		
+
 		if( touchPoint.x >= card.getX() && touchPoint.x <= card.getX() + card.getWidth() )
 		{
 			if ( touchPoint.y >= card.getY() && touchPoint.y <= card.getY() + card.getHeight())
@@ -68,7 +63,7 @@ public class Tools {
 				int x =  touchPoint.x - ( cardCenter.x + card.getX() ); 
 				int y =  touchPoint.y - ( cardCenter.y + card.getY()) ; 				
 				Point offset = new Point(x, y);
-				
+
 				//Add touch response
 				result.add(true);
 				//Add offset coordinates
@@ -76,24 +71,17 @@ public class Tools {
 				return result;
 			}
 		}
-		
+
 		//set default values
 		result.add(false);
 		result.add(new Point());
-		
+
 		return result;
 	}
-	
-	
-	
+
+
 	/**
-	 * Returns an Image object that can then be painted on the screen. 
-	 * The url argument must specify an absolute that draw the image will incrementally paint on the screen.
-	 * 
-	 * @param	name the location of the image, relative to the url argument
-	 * @return	A random card from the card deck                 
-	 * @see	Image
-	 * @author Fumba Chibaka
+	 *Prints a hashmap. Used for debugging
 	 */
 	public static void printHashMap(Hashtable<String, Card> map) 
 	{

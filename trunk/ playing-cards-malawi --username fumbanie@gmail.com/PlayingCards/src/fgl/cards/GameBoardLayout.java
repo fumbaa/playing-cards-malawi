@@ -29,12 +29,12 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 public class GameBoardLayout extends LinearLayout {
-
+	
+	/** text used for printing debugging messages to device screen **/
 	private TextView debugText;
 
 	/**
-	 * Constructor- Uses linear layout to arrange game elements
-	 * @author Fumbani Chibaka
+	 * Uses linear layout to arrange game elements
 	 * @param context
 	 */
 	public GameBoardLayout(Context context)
@@ -55,7 +55,6 @@ public class GameBoardLayout extends LinearLayout {
 
 	/**
 	 * Gets the debug text view
-	 * @author Fumbani Chibaka
 	 * @return debugText A text view that is used for debugging
 	 */
 	public TextView getDebugTextView()
