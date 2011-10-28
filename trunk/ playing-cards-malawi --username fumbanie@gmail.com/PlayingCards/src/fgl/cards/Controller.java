@@ -50,6 +50,9 @@ public class Controller extends View {
 
 	/** The coordinates of the point which is touched on the screen */
 	private Point touchPoint;
+	
+	/** Game sound bank **/
+	private SoundBank sounds;
 
 
 	/**
@@ -63,6 +66,8 @@ public class Controller extends View {
 		this.touchPoint = new Point();
 		this.context = context;
 		this.setFocusable(true);
+		
+		sounds = new SoundBank(context);
 		this.makeCards();
 		this.showMainMenu();
 	}
@@ -187,6 +192,9 @@ public class Controller extends View {
 			Card card = this.getServedCard(this.activeCard);
 			card.setX(touchPoint.x - card.getCenter().x);
 			card.setY(touchPoint.y - card.getCenter().y);
+			
+			//FIXME: playing sound
+			sounds.explode();
 			PlayingCardsActivity.printDebug( "Card : " + card.getName() + "  Position : " + card.getX() + "," + card.getY() );
 		}
 	}

@@ -1,5 +1,6 @@
 package fgl.cards;
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.view.Display;
 import android.view.Window;
@@ -38,7 +39,8 @@ public class PlayingCardsActivity extends Activity {
 		//Remove notification bar
 		this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		
-		elements = new GameBoardLayout(this);
+		Context context = this.getApplication();
+		elements = new GameBoardLayout(context);
 		this.setContentView(elements);
 	}
 
