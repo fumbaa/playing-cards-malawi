@@ -56,6 +56,12 @@ public class Controller extends View {
 	/** offset position relative to the touch point */
 	private Point offset = new Point();
 
+	/** Collection of buttons used in the game */
+	private List<CustomButton> buttons = new ArrayList<CustomButton>();
+
+	
+	private Point touchPoint;
+
 
 	/**
 	 * Sets up the gameboard and manages it
@@ -64,10 +70,28 @@ public class Controller extends View {
 	public Controller(Context context) 
 	{
 		super(context);
+		this.touchPoint = new Point();
 		this.context = context;
 		this.setFocusable(true);
 		this.makeCards();
-		this.serveCards();
+		
+		this.showMainMenu();
+		//this.serveCards();
+	}
+
+	/**
+	 * Shows the main menu for the application
+	 */
+	private void showMainMenu() {
+		
+		
+		CustomButton button = new CustomButton(this.context, new Point(), "main_btn");
+		
+		Point center = button.getCenter();
+		Point midpoint = new Point ( PlayingCardsActivity.width / 2 - center.x , PlayingCardsActivity.height / 2 - center.y);
+		button.setPosition(midpoint);
+		
+		buttons.add(button);
 	}
 
 	/**
@@ -132,6 +156,8 @@ public class Controller extends View {
 	 * @see	View
 	 */
 	@Override protected void onDraw(Canvas canvas) {
+		for (CustomButton button: this.buttons)
+			canvas.drawBitmap( button.getBitmap(), button.getX(), button.getY(), null);
 		for (Card card : this.servedCards)
 			canvas.drawBitmap(card.getBitmap(), card.getX(), card.getY(), null);
 	}
@@ -144,27 +170,31 @@ public class Controller extends View {
 	 */
 	public boolean onTouchEvent(MotionEvent event) {
 		int eventAction = event.getAction(); 
-		Point touchPoint = new Point( (int)event.getX(),(int)event.getY());
+		
+		this.touchPoint = new Point( (int)event.getX(),(int)event.getY());
 		//TODO: Find out how switch case works in this case...
 
-		switch (eventAction ) { 
-
+		switch (eventAction ) {
 		//ACTION 1: TOUCH DOWN
 		case MotionEvent.ACTION_DOWN:
+			this.buttonDown();
+			
 			this.activeCard = "";//reset active card
 
 			//Check to see if a card being touched
 			for (Card card : this.servedCards) 
 			{
-				Boolean check = (Boolean) Tools.isInRectangle(touchPoint, card).get(0); 
-				if ( check ){
-					this.offset = (Point) Tools.isInRectangle(touchPoint, card).get(1);
+				Point check = card.isTouched(touchPoint);
+				if ( check != null ){
+					this.offset = check;
 					this.activeCard = card.getName();
 					this.bringToFront(card); //Important: bring the active card to front
 					card.setToCenter( this.offset );
 					break;
 				}
 			}
+			
+			
 			break; 
 
 			//ACTION 2: DRAG (MOVE)
@@ -189,6 +219,24 @@ public class Controller extends View {
 		return true; 
 	}
 
+	/**
+	 * Performs necessary action when a button is touched
+	 */
+	private void buttonDown() {
+		//Check to see if a button was pressed
+		for (CustomButton button : this.buttons) 
+		{
+			Point check = button.isTouched(touchPoint);
+			if ( check != null){
+				buttons.remove(button);
+				this.invalidate();
+				
+				//Serve cards at this point
+				this.serveCards();
+				break;
+			}
+		}
+	}
 
 	/**
 	 * Returns a card object from the collection of served cards

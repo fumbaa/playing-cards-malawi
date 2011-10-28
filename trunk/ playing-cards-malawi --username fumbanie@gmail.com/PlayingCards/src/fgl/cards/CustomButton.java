@@ -2,8 +2,8 @@
  * 
  * Copyright (c) 2011 FUMBA GAME LAB. All rights reserved
  * 
- * Malawi Playing Cards: Card.java
- * Represents the card object
+ * Malawi Playing Cards: GameBoardLayout.java
+ * This class organises the layout of the game elements
  * 
  * @author Fumbani Chibaka
  * @version 1.0
@@ -23,30 +23,26 @@
  *
  */
 package fgl.cards;
+
 import android.content.Context;
 import android.graphics.BitmapFactory;
+import android.graphics.Point;
 
-public class Card extends FGLGraphic
-{	
-	/**
-	 * Makes a new card object and defines the relevant image to represent the card
-	 * @param context interface to global information about an application environment
-	 * @param name the unique name of the card (eg. 3D = three of diamonds)
-	 * @see R.drawable
-	 */
-	public Card(Context context, String name) {
-		super(context, name);
+public class CustomButton extends FGLGraphic {
+
+
+	CustomButton(Context context, Point point, String name)
+	{
+		super(context, point, name);
 	}
 
 	@Override
 	protected void extractBitmap() {
 		BitmapFactory.Options opts = new BitmapFactory.Options();
         opts.inJustDecodeBounds = true;
-        this.img = BitmapFactory.decodeResource(context.getResources(), R.drawable.card); 
-
+        this.img = BitmapFactory.decodeResource(context.getResources(), R.drawable.start_button); 
         this.width = this.getBitmap().getWidth();
         this.height = this.getBitmap().getHeight();
 	}
-	
 
 }

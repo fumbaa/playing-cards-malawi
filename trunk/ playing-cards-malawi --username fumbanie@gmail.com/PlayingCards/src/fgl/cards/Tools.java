@@ -24,11 +24,8 @@
  */
 package fgl.cards;
 
-import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
-import java.util.List;
-import android.graphics.Point;
 import android.util.Log;
 
 public class Tools {
@@ -43,40 +40,6 @@ public class Tools {
 	public static void catLog(String string)
 	{
 		Log.v(TAG, string);
-	}
-
-
-	/**
-	 * Checks to see if the point is inside a definined rectangle
-	 * @return the offset position
-	 */
-	//check if a point is inside a rectangle
-	public static List<Object> isInRectangle(Point touchPoint, Card card)
-	{		
-		Point cardCenter = card.getCenter();
-		List<Object> result = new ArrayList<Object>();
-
-		if( touchPoint.x >= card.getX() && touchPoint.x <= card.getX() + card.getWidth() )
-		{
-			if ( touchPoint.y >= card.getY() && touchPoint.y <= card.getY() + card.getHeight())
-			{
-				int x =  touchPoint.x - ( cardCenter.x + card.getX() ); 
-				int y =  touchPoint.y - ( cardCenter.y + card.getY()) ; 				
-				Point offset = new Point(x, y);
-
-				//Add touch response
-				result.add(true);
-				//Add offset coordinates
-				result.add(offset);
-				return result;
-			}
-		}
-
-		//set default values
-		result.add(false);
-		result.add(new Point());
-
-		return result;
 	}
 
 

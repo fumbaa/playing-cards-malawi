@@ -26,17 +26,31 @@
 package fgl.cards;
 import android.app.Activity;
 import android.os.Bundle;
+import android.view.Display;
 
 public class PlayingCardsActivity extends Activity {
 
 	/** Organises all the game elements */
 	private static GameBoardLayout elements; 
+	
+	/** The screen width of the device */
+	public static int width;
+	
+	/** The screen height of the device */
+	public static int height;
 
 	/** Called when the activity is first created. */
 	@Override public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		Display display = this.getWindowManager().getDefaultDisplay(); 
+		width = display.getWidth();
+		height = display.getHeight();
+		
+		Tools.catLog("width : "+ width + " Height: "+ height);
+		
 		elements = new GameBoardLayout(this);
-		setContentView(elements);
+		this.setContentView(elements);
 	}
 
 
