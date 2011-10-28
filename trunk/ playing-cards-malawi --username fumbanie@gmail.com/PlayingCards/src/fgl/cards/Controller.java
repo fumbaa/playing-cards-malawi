@@ -33,7 +33,7 @@ import android.graphics.Point;
 import android.view.MotionEvent;
 import android.view.View;
 
-public class SetUpGameBoard extends View {
+public class Controller extends View {
 
 	/** interface to global information about an application environment */
 	private Context context; 
@@ -61,7 +61,7 @@ public class SetUpGameBoard extends View {
 	 * Sets up the gameboard and manages it
 	 * @param context interface to global information about an application environment 
 	 */
-	public SetUpGameBoard(Context context) 
+	public Controller(Context context) 
 	{
 		super(context);
 		this.context = context;

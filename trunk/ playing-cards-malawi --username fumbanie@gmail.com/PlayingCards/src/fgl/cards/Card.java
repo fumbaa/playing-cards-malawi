@@ -191,7 +191,7 @@ public class Card
 	/**
 	 * Calculates the offset position of the card once it is touched. Offset is used to center the card with the touch position.
 	 * @param offset the offset position
-	 * @see fgl.card.SetUpGameBoard.onTouchEvent
+	 * @see fgl.Controller.SetUpGameBoard.onTouchEvent
 	 */
 	public void setToCenter(Point offset) {
 		this.currentX = this.currentX + offset.x;

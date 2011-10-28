@@ -48,7 +48,7 @@ public class GameBoardLayout extends LinearLayout {
 		this.addView(debugText);
 
 		//add container for game elements (cards and buttons)
-		SetUpGameBoard board = new SetUpGameBoard(context);
+		Controller board = new Controller(context);
 		this.addView(board);
 	}
 
