@@ -1,32 +1,20 @@
-/**
- * 
- * Copyright (c) 2011 FUMBA GAME LAB. All rights reserved
- * 
- * Malawi Playing Cards: Tools.java
- * A Collection of methods that are used to complement class functioning and for debugging
- * 
- * @author Fumbani Chibaka
- * @version 1.0
- * @since 0.0
- * 
- * 
- * /*******************************************************************************
- * Copyright (c) 1998, 2011 Oracle. All rights reserved.
- * This program and the accompanying materials are made available under the 
- * terms of the Eclipse Public License v1.0 and Eclipse Distribution License v. 1.0 
- * which accompanies this distribution. 
- * The Eclipse Public License is available at http://www.eclipse.org/legal/epl-v10.html
- * and the Eclipse Distribution License is available at 
- * http://www.eclipse.org/org/documents/edl-v10.php.
- * 
- ******************************************************************************
- *
- */
 package fgl.cards;
 
 import java.util.Hashtable;
 import java.util.Iterator;
 import android.util.Log;
+
+/**
+ * Contains developer tools that are used to debug the application. 
+ * <p><i>Copyright (c) 1998, 2011 Oracle. All rights reserved.
+ * This program and the accompanying materials are made available under the 
+ * terms of the Eclipse Public License v1.0 and Eclipse Distribution License v. 1.0 
+ * which accompanies this distribution.</i></p>
+ * 
+ * @author Fumbani Chibaka
+ * @version 1.0, 10/28/2011
+ * @see <a href="http:chibaka.com">Fumba Game Lab</a>
+ */
 
 public class Tools {
 

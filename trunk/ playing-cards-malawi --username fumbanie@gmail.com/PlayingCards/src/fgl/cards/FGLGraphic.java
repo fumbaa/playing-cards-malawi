@@ -1,32 +1,20 @@
-/**
- * Representative of graphic objects printed on the device screen
- * Copyright (c) 2011 FUMBA GAME LAB. All rights reserved
- * 
- * Malawi Playing Cards: FGLView.java
- * Fumba Game Lab View Object
- * 
- * @author Fumbani Chibaka
- * @version 1.0
- * @since 0.0
- * 
- * 
- * /*******************************************************************************
- * Copyright (c) 1998, 2011 Oracle. All rights reserved.
- * This program and the accompanying materials are made available under the 
- * terms of the Eclipse Public License v1.0 and Eclipse Distribution License v. 1.0 
- * which accompanies this distribution. 
- * The Eclipse Public License is available at http://www.eclipse.org/legal/epl-v10.html
- * and the Eclipse Distribution License is available at 
- * http://www.eclipse.org/org/documents/edl-v10.php.
- * 
- ******************************************************************************
- *
- */
 package fgl.cards;
 
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Point;
+
+/**
+ * This superclass represents all custom graphic objects that are added to the game screen.
+ * <p><i>Copyright (c) 1998, 2011 Oracle. All rights reserved.
+ * This program and the accompanying materials are made available under the 
+ * terms of the Eclipse Public License v1.0 and Eclipse Distribution License v. 1.0 
+ * which accompanies this distribution.</i></p>
+ * 
+ * @author Fumbani Chibaka
+ * @version 1.0, 10/28/2011
+ * @see <a href="http:chibaka.com">Fumba Game Lab</a>
+ */
 
 public abstract class FGLGraphic {
 
@@ -36,23 +24,14 @@ public abstract class FGLGraphic {
 	/** the unique id of the custom view */
 	private String name; 
 
-	/** the x- coordinate of the view current position. default = 0 */
-	private int currentX = 0; 
+	/** graphic current position coordinate */
+	private int currentX, currentY;
 
-	/** the y- coordinate of the view current position. default = 0 */
-	private int currentY = 0;
+	/** graphic original positon coordinate */
+	private int originalX, originalY;
 
-	/** the x- coordinate of the cards original position after it was served */
-	private int originalX; 
-
-	/** the y- coordinate of the cards original position after it was served */
-	private int originalY;
-
-	/** the width of the view */
-	protected int width; 
-
-	/** the height of the view */
-	protected int height;
+	/** view dimension */
+	protected int width, height;
 
 	/** the context */
 	protected Context context;
@@ -73,7 +52,7 @@ public abstract class FGLGraphic {
 
 
 	/**
-	 * 
+	 * Graphic object extracts the appropropriate bitmap image from the resources folder
 	 */
 	protected abstract void extractBitmap();
 
@@ -196,18 +175,17 @@ public abstract class FGLGraphic {
 	 */
 	public  Point isTouched(Point touchPoint)
 	{		
-		Point cardCenter = this.getCenter();
 		if( touchPoint.x >= this.getX() && touchPoint.x <= this.getX() + this.getWidth() )
 		{
 			if ( touchPoint.y >= this.getY() && touchPoint.y <= this.getY() + this.getHeight())
 			{
-				int x =  touchPoint.x - ( cardCenter.x + this.getX() ); 
-				int y =  touchPoint.y - ( cardCenter.y + this.getY()) ; 				
+				int x =  touchPoint.x - ( this.getCenter().x + this.getX() ); 
+				int y =  touchPoint.y - ( this.getCenter().y + this.getY()) ; 				
 				return new Point(x, y);
 			}
 		}
 		return null;
 	}
-	
+
 
 }

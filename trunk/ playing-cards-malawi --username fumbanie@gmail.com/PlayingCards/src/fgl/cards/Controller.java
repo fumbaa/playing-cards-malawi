@@ -1,27 +1,3 @@
-/**
- * 
- * Copyright (c) 2011 FUMBA GAME LAB. All rights reserved
- * 
- * Malawi Playing Cards: SetUpGameBoard.java
- * Collects all necessary elements needed for gameplay. This class controls and manages the elements.
- * 
- * @author Fumbani Chibaka
- * @version 1.0
- * @since 0.0
- * 
- * 
- * /*******************************************************************************
- * Copyright (c) 1998, 2011 Oracle. All rights reserved.
- * This program and the accompanying materials are made available under the 
- * terms of the Eclipse Public License v1.0 and Eclipse Distribution License v. 1.0 
- * which accompanies this distribution. 
- * The Eclipse Public License is available at http://www.eclipse.org/legal/epl-v10.html
- * and the Eclipse Distribution License is available at 
- * http://www.eclipse.org/org/documents/edl-v10.php.
- * 
- ******************************************************************************
- *
- */
 package fgl.cards;
 
 import java.util.ArrayList;
@@ -32,6 +8,19 @@ import android.graphics.Canvas;
 import android.graphics.Point;
 import android.view.MotionEvent;
 import android.view.View;
+
+/**
+ * Manages the game application. This class controls menu elements, creates the cards and distributes them
+ *  to players. It also listens to moves that players are making and updates the game state accordingly.
+ * <p><i>Copyright (c) 1998, 2011 Oracle. All rights reserved.
+ * This program and the accompanying materials are made available under the 
+ * terms of the Eclipse Public License v1.0 and Eclipse Distribution License v. 1.0 
+ * which accompanies this distribution.</i></p>
+ * 
+ * @author Fumbani Chibaka
+ * @version 1.0, 10/28/2011
+ * @see <a href="http:chibaka.com">Fumba Game Lab</a>
+ */
 
 public class Controller extends View {
 
@@ -59,12 +48,13 @@ public class Controller extends View {
 	/** Collection of buttons used in the game */
 	private List<CustomButton> buttons = new ArrayList<CustomButton>();
 
-	
+	/** The coordinates of the point which is touched on the screen */
 	private Point touchPoint;
 
 
 	/**
-	 * Sets up the gameboard and manages it
+	 * Starts the game with a welcome screen where user selects desired options and initiates the game.
+	 * Card objects are also created in this constructor.
 	 * @param context interface to global information about an application environment 
 	 */
 	public Controller(Context context) 
@@ -74,23 +64,17 @@ public class Controller extends View {
 		this.context = context;
 		this.setFocusable(true);
 		this.makeCards();
-		
 		this.showMainMenu();
-		//this.serveCards();
 	}
 
 	/**
-	 * Shows the main menu for the application
+	 * Prepares and shows the elements for the main menu.
 	 */
 	private void showMainMenu() {
-		
-		
 		CustomButton button = new CustomButton(this.context, new Point(), "main_btn");
-		
 		Point center = button.getCenter();
 		Point midpoint = new Point ( PlayingCardsActivity.width / 2 - center.x , PlayingCardsActivity.height / 2 - center.y);
 		button.setPosition(midpoint);
-		
 		buttons.add(button);
 	}
 
@@ -107,11 +91,10 @@ public class Controller extends View {
 	 * Makes 54 card objects that are to be reused throughout gameplay. 
 	 */
 	private void makeCards() {
-		//Step 1: Add normal cards
+		//Step 1: A
 		for (int s = 0; s < this.CARD_SUITES.length; s++)
 			for (int l = 0; l < this.CARD_LETTERS.length; l++)
 				this.cardDeck.add(new Card(this.context, this.CARD_LETTERS[l] + this.CARD_SUITES[s]) );
-
 		//Step 2: Add two jokers to the collection
 		this.cardDeck.add( new Card(this.context,"*B")); //B = Black and White
 		this.cardDeck.add( new Card(this.context,"*C")); //C = Color
@@ -124,8 +107,8 @@ public class Controller extends View {
 	private void serveCards() {
 
 		Point point1 = new Point(100,100); 
-		Point point2 = new Point(200,300); 
-		Point point3 = new Point(100,400);
+		Point point2 = new Point(200,100); 
+		Point point3 = new Point(300,100);
 
 		Card card1 = this.pickRandomCard();
 		card1.setDefaultPosition(point1);
@@ -142,7 +125,7 @@ public class Controller extends View {
 		card3.setCurrentPosition(point3);
 		servedCards.add(card3);
 
-		//XXX: Print Serving Summary to Eclipse log
+		//Print Serving Summary to Eclipse log
 		Tools.catLog( "Random Card 1  : " + card1.getName());
 		Tools.catLog( "Random Card 2  : " + card2.getName());
 		Tools.catLog( "Random Card 3  : " + card3.getName());
@@ -156,67 +139,83 @@ public class Controller extends View {
 	 * @see	View
 	 */
 	@Override protected void onDraw(Canvas canvas) {
-		for (CustomButton button: this.buttons)
-			canvas.drawBitmap( button.getBitmap(), button.getX(), button.getY(), null);
-		for (Card card : this.servedCards)
-			canvas.drawBitmap(card.getBitmap(), card.getX(), card.getY(), null);
+		
+		//draw buttons
+		for (CustomButton button: this.buttons){
+			canvas.drawBitmap( button.getBitmap(), button.getX(), button.getY(), null); }
+		
+		//draw cards
+		for (Card card : this.servedCards){
+			canvas.drawBitmap(card.getBitmap(), card.getX(), card.getY(), null); }
 	}
 
 	/**
 	 * Detects screen touch gestures and moves the selected card accordingly
 	 * @param	event The detected motion event
-	 * @return	A boolean?? //TODO:                
+	 * @return	true           
 	 * @see	MotionEvent
 	 */
 	public boolean onTouchEvent(MotionEvent event) {
 		int eventAction = event.getAction(); 
-		
 		this.touchPoint = new Point( (int)event.getX(),(int)event.getY());
-		//TODO: Find out how switch case works in this case...
 
 		switch (eventAction ) {
-		//ACTION 1: TOUCH DOWN
 		case MotionEvent.ACTION_DOWN:
 			this.buttonDown();
-			
-			this.activeCard = "";//reset active card
-
-			//Check to see if a card being touched
-			for (Card card : this.servedCards) 
-			{
-				Point check = card.isTouched(touchPoint);
-				if ( check != null ){
-					this.offset = check;
-					this.activeCard = card.getName();
-					this.bringToFront(card); //Important: bring the active card to front
-					card.setToCenter( this.offset );
-					break;
-				}
-			}
-			
-			
+			this.cardDown();
 			break; 
 
-			//ACTION 2: DRAG (MOVE)
 		case MotionEvent.ACTION_MOVE:
-			if (this.activeCard != "") 
-			{
-				Card card = this.getServedCard(this.activeCard);
-				card.setX(touchPoint.x - card.getCenter().x);
-				card.setY(touchPoint.y - card.getCenter().y);
-				PlayingCardsActivity.printDebug( "Card : " + card.getName() + "  Position : " + card.getX() + "," + card.getY() );
-			}
+			this.cardMove();
 			break; 
 
-			//ACTION 3: DROP ( TOUCH UP)
 		case MotionEvent.ACTION_UP: 
-			if (activeCard != "")  
-				this.getServedCard(activeCard).resetPosition();
+			this.cardUp();
 			break; 
 		} 
 
-		this.invalidate(); //Redraw the canvas 
+		this.invalidate(); //Redraw the canvas
 		return true; 
+	}
+
+	/**
+	 * Actions to perform when a card is moved.
+	 */
+	private void cardMove() {
+		if (this.activeCard != "")
+		{
+			Card card = this.getServedCard(this.activeCard);
+			card.setX(touchPoint.x - card.getCenter().x);
+			card.setY(touchPoint.y - card.getCenter().y);
+			PlayingCardsActivity.printDebug( "Card : " + card.getName() + "  Position : " + card.getX() + "," + card.getY() );
+		}
+	}
+
+	/**
+	 * Actions to perform when a card is dropped
+	 */
+	private void cardUp() {
+		if (activeCard != "")  
+			this.getServedCard(activeCard).resetPosition();
+	}
+
+
+	/**
+	 * Actions to perform when a card is touched
+	 */
+	private void cardDown() {
+		this.activeCard = "";//reset active card
+		for (Card card : this.servedCards) 
+		{
+			Point check = card.isTouched(touchPoint);
+			if ( check != null ){
+				this.offset = check;
+				this.activeCard = card.getName();
+				this.bringToFront(card); //Important: bring the active card to front
+				card.setToCenter( this.offset );
+				break;
+			}
+		}		
 	}
 
 	/**
@@ -230,7 +229,7 @@ public class Controller extends View {
 			if ( check != null){
 				buttons.remove(button);
 				this.invalidate();
-				
+
 				//Serve cards at this point
 				this.serveCards();
 				break;
@@ -265,7 +264,7 @@ public class Controller extends View {
 			{
 				this.servedCards.remove(i);
 				this.servedCards.add(card);
-				this.invalidate(); //Redraw canvas
+				this.invalidate();
 			}
 		}
 	}

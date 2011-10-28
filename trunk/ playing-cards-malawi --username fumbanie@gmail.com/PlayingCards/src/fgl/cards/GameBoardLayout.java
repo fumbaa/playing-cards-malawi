@@ -25,10 +25,10 @@
 package fgl.cards;
 
 import android.content.Context;
-import android.widget.LinearLayout;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 
-public class GameBoardLayout extends LinearLayout {
+public class GameBoardLayout extends FrameLayout {
 	
 	/** text used for printing debugging messages to device screen **/
 	private TextView debugText;
@@ -40,7 +40,6 @@ public class GameBoardLayout extends LinearLayout {
 	public GameBoardLayout(Context context)
 	{
 		super(context);
-		this.setOrientation(LinearLayout.VERTICAL);
 
 		//add debug text
 		this.debugText = new TextView(context);
