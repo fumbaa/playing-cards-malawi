@@ -25,6 +25,7 @@
 package fgl.cards;
 import android.content.Context;
 import android.graphics.BitmapFactory;
+import android.graphics.Point;
 
 public class Card extends FGLGraphic
 {	
@@ -34,18 +35,42 @@ public class Card extends FGLGraphic
 	 * @param name the unique name of the card (eg. 3D = three of diamonds)
 	 * @see R.drawable
 	 */
-	public Card(Context context, String name) {
-		super(context, name);
+	public Card(Context context, String name, int resourceID) {
+		super(context, name, resourceID);
 	}
 
 	@Override
 	protected void extractBitmap() {
 		BitmapFactory.Options opts = new BitmapFactory.Options();
         opts.inJustDecodeBounds = true;
-        this.img = BitmapFactory.decodeResource(context.getResources(), R.drawable.card); 
+        this.img = BitmapFactory.decodeResource(context.getResources(), this.resourceID); 
 
         this.width = this.getBitmap().getWidth();
         this.height = this.getBitmap().getHeight();
+	}
+
+	/**
+	 * Gets the card suite
+	 * @return
+	 */
+	public char getSuite() {
+		return this.name.charAt(1);
+	}
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public char getNumber(){
+		return this.name.charAt(0);
+	}
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public Point getPosition() {
+		return new Point(this.currentX, this.currentY);
 	}
 	
 

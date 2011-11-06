@@ -1,6 +1,7 @@
 package fgl.cards;
 import android.app.Activity;
 import android.content.Context;
+import android.media.AudioManager;
 import android.os.Bundle;
 import android.view.Display;
 import android.view.Window;
@@ -29,6 +30,10 @@ public class PlayingCardsActivity extends Activity {
 	/** Called when the activity is first created. */
 	@Override public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		//Set hardware volume buttons to control this applications volume
+		this.setVolumeControlStream(AudioManager.STREAM_MUSIC);  
+		
 		Display display = this.getWindowManager().getDefaultDisplay(); 
 		width = display.getWidth();
 		height = display.getHeight();

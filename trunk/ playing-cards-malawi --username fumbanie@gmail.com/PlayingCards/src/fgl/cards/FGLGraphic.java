@@ -18,14 +18,17 @@ import android.graphics.Point;
 
 public abstract class FGLGraphic {
 
+	/** the resource ID assigned in the R class **/
+	protected int resourceID;
+	
 	/** the graphical bitmap image of the custom view */
 	protected Bitmap img;
 
 	/** the unique id of the custom view */
-	private String name; 
+	protected String name; 
 
 	/** graphic current position coordinate */
-	private int currentX, currentY;
+	protected int currentX, currentY;
 
 	/** graphic original positon coordinate */
 	private int originalX, originalY;
@@ -37,15 +40,16 @@ public abstract class FGLGraphic {
 	protected Context context;
 
 
-	public FGLGraphic(Context context, String name) {
+	public FGLGraphic(Context context, String name, int resourceID) {
 		this.name = name;
 		this.context = context;
+		this.resourceID = resourceID;
 		this.extractBitmap();
 	}
 
-	FGLGraphic(Context context, Point point, String name)
+	FGLGraphic(Context context, Point point, String name, int resourceID)
 	{
-		this(context, name);
+		this(context, name, resourceID);
 		this.currentX = point.x;
 		this.currentY = point.y;
 	}

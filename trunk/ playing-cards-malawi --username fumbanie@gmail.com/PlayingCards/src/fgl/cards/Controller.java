@@ -24,20 +24,23 @@ import android.view.View;
 
 public class Controller extends View {
 
+	/** Welcome screen **/
+	private static final int START_SCREEN = 1;
+
+	/** Screen with game ready to be played **/
+	private static final int GAME_SCREEN = 2;
+
+	private Card topPlayedCard; //TODO: For debugging purposes only (remove later)
+
 	/** interface to global information about an application environment */
 	private Context context; 
-
-	/** collection of all the cards in the deck */
-	private List<Card> cardDeck = new ArrayList<Card>();
 
 	/** collection of cards served to player */
 	private List<Card> servedCards = new ArrayList<Card>();
 
-	/** card letters */
-	private final String [] CARD_LETTERS = {"A","2","3","4","5","6","7","8","9","10", "J", "K", "Q"};
+	/** collection of played cards */
+	private List<Card> playedCards = new ArrayList<Card>();
 
-	/** card suites: Spade, Heart, Diamond, Club */
-	private final String [] CARD_SUITES = {"S","H","D","C"}; 
 
 	/** currently selected card */
 	private String activeCard;
@@ -45,14 +48,31 @@ public class Controller extends View {
 	/** offset position relative to the touch point */
 	private Point offset = new Point();
 
-	/** Collection of buttons used in the game */
-	private List<CustomButton> buttons = new ArrayList<CustomButton>();
-
 	/** The coordinates of the point which is touched on the screen */
 	private Point touchPoint;
-	
+
 	/** Game sound bank **/
 	private SoundBank sounds;
+
+	/** Game button bank **/
+	private ButtonBank buttons;
+
+	/** Game cards bank **/
+	private CardBank cards;
+
+	/** collection of played cards */
+	private List<CustomButton> displayButtons = new ArrayList<CustomButton>();
+
+	/** Current player **/
+	private Player currentPlayer;
+
+	/** Start button has been pressed **/
+	private boolean start;
+
+	/** The current screen being displayed **/
+	private int screen;
+
+
 
 
 	/**
@@ -65,44 +85,39 @@ public class Controller extends View {
 		super(context);
 		this.touchPoint = new Point();
 		this.context = context;
+		this.start = false;
+		this.screen = Controller.START_SCREEN;
+
 		this.setFocusable(true);
-		
-		sounds = new SoundBank(context);
-		this.makeCards();
+
+		//make sound and graphic elements
+		this.buttons	= new ButtonBank(this.context);
+		this.sounds		= new SoundBank(this.context);
+		this.cards		= new CardBank(this.context);
+
+		//show main menu
 		this.showMainMenu();
+
+		String playerName = "Fumbani";
+		Player one = new HumanPlayer(playerName, this);
+		this.currentPlayer = one;
+
+		List<Player> players = new ArrayList<Player>();
+		players.add(this.currentPlayer);
+
 	}
 
 	/**
 	 * Prepares and shows the elements for the main menu.
 	 */
 	private void showMainMenu() {
-		CustomButton button = new CustomButton(this.context, new Point(), "main_btn");
+		CustomButton button = this.buttons.getStartButton();
 		Point center = button.getCenter();
 		Point midpoint = new Point ( PlayingCardsActivity.width / 2 - center.x , PlayingCardsActivity.height / 2 - center.y);
 		button.setPosition(midpoint);
-		buttons.add(button);
-	}
 
-	/**
-	 * Picks a random card from the card deck. 
-	 * @return	A random card from the card deck 
-	 */
-	private Card pickRandomCard() {
-		return this.cardDeck.remove( new Random().nextInt( this.cardDeck.size() ));
-	}
-
-
-	/**
-	 * Makes 54 card objects that are to be reused throughout gameplay. 
-	 */
-	private void makeCards() {
-		//Step 1: A
-		for (int s = 0; s < this.CARD_SUITES.length; s++)
-			for (int l = 0; l < this.CARD_LETTERS.length; l++)
-				this.cardDeck.add(new Card(this.context, this.CARD_LETTERS[l] + this.CARD_SUITES[s]) );
-		//Step 2: Add two jokers to the collection
-		this.cardDeck.add( new Card(this.context,"*B")); //B = Black and White
-		this.cardDeck.add( new Card(this.context,"*C")); //C = Color
+		//add button to display list
+		this.displayButtons.add(button);
 	}
 
 
@@ -112,30 +127,37 @@ public class Controller extends View {
 	private void serveCards() {
 
 		Point point1 = new Point(100,100); 
-		Point point2 = new Point(200,100); 
-		Point point3 = new Point(300,100);
+		Point point2 = new Point(250,100); 
+		Point point3 = new Point(400,100);
 
-		Card card1 = this.pickRandomCard();
+		Point point4 = new Point(300, 300);
+
+		Card card1 = this.cards.pickRandomCard();
 		card1.setDefaultPosition(point1);
 		card1.setCurrentPosition(point1);
 		servedCards.add(card1);
 
-		Card card2 = this.pickRandomCard();
+		Card card2 = this.cards.pickRandomCard();
 		card2.setDefaultPosition(point2);
 		card2.setCurrentPosition(point2);
 		servedCards.add(card2);
 
-		Card card3 = this.pickRandomCard();
+		Card card3 = this.cards.pickRandomCard();
 		card3.setDefaultPosition(point3);
 		card3.setCurrentPosition(point3);
 		servedCards.add(card3);
 
-		//Print Serving Summary to Eclipse log
-		Tools.catLog( "Random Card 1  : " + card1.getName());
-		Tools.catLog( "Random Card 2  : " + card2.getName());
-		Tools.catLog( "Random Card 3  : " + card3.getName());
-		Tools.catLog( "# Served Cards : " + this.servedCards.size());
-		Tools.catLog( "# Cards in Deck: " + this.cardDeck.size());
+
+		Card card4 = this.cards.pickRandomCard();
+		card4.setDefaultPosition(point4);
+		card4.setCurrentPosition(point4);
+		playedCards.add(card4);
+		this.topPlayedCard = card4; //TODO: Remove this!!!!!
+
+		this.currentPlayer.getCard(card1);
+		this.currentPlayer.getCard(card2);
+		this.currentPlayer.getCard(card3);
+
 	}
 
 	/**
@@ -144,12 +166,16 @@ public class Controller extends View {
 	 * @see	View
 	 */
 	@Override protected void onDraw(Canvas canvas) {
-		
+
 		//draw buttons
-		for (CustomButton button: this.buttons){
+		for (CustomButton button: this.displayButtons){
 			canvas.drawBitmap( button.getBitmap(), button.getX(), button.getY(), null); }
-		
-		//draw cards
+
+		//draw played cards
+		for (Card card : this.playedCards){
+			canvas.drawBitmap(card.getBitmap(), card.getX(), card.getY(), null); }
+
+		//draw cards in hands
 		for (Card card : this.servedCards){
 			canvas.drawBitmap(card.getBitmap(), card.getX(), card.getY(), null); }
 	}
@@ -165,17 +191,21 @@ public class Controller extends View {
 		this.touchPoint = new Point( (int)event.getX(),(int)event.getY());
 
 		switch (eventAction ) {
+
+		case MotionEvent.ACTION_UP: 
+			if (start)
+				this.cardUp();
+			break; 
+
 		case MotionEvent.ACTION_DOWN:
+			if (start)
+				this.cardDown();
 			this.buttonDown();
-			this.cardDown();
 			break; 
 
 		case MotionEvent.ACTION_MOVE:
-			this.cardMove();
-			break; 
-
-		case MotionEvent.ACTION_UP: 
-			this.cardUp();
+			if (start)
+				this.cardMove();
 			break; 
 		} 
 
@@ -187,24 +217,43 @@ public class Controller extends View {
 	 * Actions to perform when a card is moved.
 	 */
 	private void cardMove() {
-		if (this.activeCard != "")
-		{
-			Card card = this.getServedCard(this.activeCard);
-			card.setX(touchPoint.x - card.getCenter().x);
-			card.setY(touchPoint.y - card.getCenter().y);
-			
-			//FIXME: playing sound
-			sounds.explode();
-			PlayingCardsActivity.printDebug( "Card : " + card.getName() + "  Position : " + card.getX() + "," + card.getY() );
-		}
+		if (start)
+			if (this.activeCard != null)
+			{
+				Card card = this.getServedCard(this.activeCard);
+				card.setX(touchPoint.x - card.getCenter().x);
+				card.setY(touchPoint.y - card.getCenter().y);
+			}
 	}
 
 	/**
 	 * Actions to perform when a card is dropped
 	 */
 	private void cardUp() {
-		if (activeCard != "")  
-			this.getServedCard(activeCard).resetPosition();
+		if (this.activeCard != null) { 
+
+			if ( this.currentPlayer.isHuman() )
+			{
+				Boolean validMove = this.currentPlayer.makeMove(this.getServedCard(this.activeCard));
+
+				if ( validMove && this.topPlayedCard.isTouched(this.touchPoint)!= null)
+				{
+					Card card = this.getServedCard(this.activeCard);
+					card.setCurrentPosition(this.topPlayedCard.getPosition());
+					this.playedCards.add( card );
+					this.topPlayedCard = card; //update the card on the top
+
+					this.servedCards.remove(card); //clear it from served cards list
+				}
+				else
+				{
+					this.getServedCard(activeCard).resetPosition();
+
+					if (this.topPlayedCard.isTouched(this.touchPoint) != null)
+						sounds.rejectSound();
+				}
+			}
+		}//end main if
 	}
 
 
@@ -212,10 +261,12 @@ public class Controller extends View {
 	 * Actions to perform when a card is touched
 	 */
 	private void cardDown() {
-		this.activeCard = "";//reset active card
+		this.activeCard = null;//reset active card
+
+		//if card is in hand....
 		for (Card card : this.servedCards) 
 		{
-			Point check = card.isTouched(touchPoint);
+			Point check = card.isTouched(this.touchPoint);
 			if ( check != null ){
 				this.offset = check;
 				this.activeCard = card.getName();
@@ -223,7 +274,13 @@ public class Controller extends View {
 				card.setToCenter( this.offset );
 				break;
 			}
-		}		
+		}	
+		//if card is on the played cards deck.....
+		Card card = this.topPlayedCard;
+		Point check = card.isTouched(this.touchPoint);
+		if ( check != null ){
+			this.sounds.rejectSound();
+		}
 	}
 
 	/**
@@ -231,31 +288,58 @@ public class Controller extends View {
 	 */
 	private void buttonDown() {
 		//Check to see if a button was pressed
-		for (CustomButton button : this.buttons) 
+		for (CustomButton button : this.displayButtons) 
 		{
-			Point check = button.isTouched(touchPoint);
+			Point check = button.isTouched( this.touchPoint);
 			if ( check != null){
-				buttons.remove(button);
-				this.invalidate();
 
-				//Serve cards at this point
-				this.serveCards();
-				break;
+				//Actions to be performed if this is the start screen
+				if (this.screen == Controller.START_SCREEN ){
+
+					//remove start button and add back button
+					this.displayButtons.remove(button);
+					CustomButton back_button = this.buttons.getBackButton();
+					this.displayButtons.add(back_button);
+
+					//FIXME:::
+					back_button.setCurrentPosition(new Point(500,10));
+					sounds.startSound(); 
+					//Serve cards at this point
+					this.serveCards();
+					this.start = true;
+					this.screen = Controller.GAME_SCREEN;
+					break;
+				}
+
+				//Actions to be performed if this is the game screen
+				if (this.screen == Controller.GAME_SCREEN)
+				{
+					this.resetGame();
+					this.showMainMenu();
+					this.screen = Controller.START_SCREEN;
+					break;
+				}
 			}
 		}
 	}
 
-	/**
-	 * Returns a card object from the collection of served cards
-	 * @param	cardName The name of the card to be extracted
-	 * @return	The specified card. Returns null if no cards could be identified by the specified name
-	 */	
-	private Card getServedCard(String cardName) {
-		for( Card card: this.servedCards){
-			if (card.getName().equalsIgnoreCase(cardName))
-				return card;
+
+	/** Reset the game elements **/
+	private void resetGame() {
+
+		//return all cards that are currently in player hands
+		for (Card card: this.servedCards)
+		{
+			this.cards.putBackCard(card);
 		}
-		return null;
+		this.servedCards.clear();
+
+		//return all cards that have been played
+		for (Card card: this.playedCards)
+		{
+			this.cards.putBackCard(card);
+		}
+		this.playedCards.clear();
 	}
 
 
@@ -275,6 +359,27 @@ public class Controller extends View {
 				this.invalidate();
 			}
 		}
+	}
+
+	/**
+	 * Get the card on the top of the played card deck
+	 * @return top played card
+	 */
+	public Card getTopCard() {
+		return this.topPlayedCard;
+	}
+
+	/**
+	 * Returns a card object from the collection of served cards
+	 * @param	cardName The name of the card to be extracted
+	 * @return	The specified card. Returns null if no cards could be identified by the specified name
+	 */	
+	private Card getServedCard(String cardName) {
+		for( Card card: this.servedCards){
+			if (card.getName().equalsIgnoreCase(cardName))
+				return card;
+		}
+		return null;
 	}
 
 

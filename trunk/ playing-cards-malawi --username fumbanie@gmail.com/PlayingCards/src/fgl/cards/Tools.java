@@ -20,6 +20,9 @@ public class Tools {
 
 	/** tag used for Eclipse Android logcat **/
 	private static String TAG = "FGL"; 
+	
+	
+	
 
 	/**
 	 * Prints to the cat log in eclipse. A special tag, "FGL" is used to enable output cfilter.
@@ -46,6 +49,11 @@ public class Tools {
 			Log.v(TAG, key + " " + value);  
 			Log.v(TAG, "________________");
 		} 
+	}
+
+
+	public static void printDebug(String string) {
+		PlayingCardsActivity.printDebug(string);
 	}
 
 }

@@ -25,6 +25,7 @@
 package fgl.cards;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
@@ -43,7 +44,11 @@ public class GameBoardLayout extends FrameLayout {
 
 		//add debug text
 		this.debugText = new TextView(context);
-		debugText.setText("System initiated ....");
+		//this.debugText.setBackgroundColor(Color.WHITE);
+		//this.debugText.setTextColor(Color.BLACK);
+		this.debugText.setText("Fumba Game Lab");
+		//this.debugText.setHeight(30);
+		
 		this.addView(debugText);
 
 		//add container for game elements (cards and buttons)
