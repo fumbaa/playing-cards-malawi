@@ -314,6 +314,7 @@ public class Controller extends View {
 				//Actions to be performed if this is the game screen
 				if (this.screen == Controller.GAME_SCREEN)
 				{
+					this.displayButtons.remove(button);
 					this.resetGame();
 					this.showMainMenu();
 					this.screen = Controller.START_SCREEN;
