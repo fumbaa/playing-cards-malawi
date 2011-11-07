@@ -26,21 +26,35 @@ package fgl.cards;
  */
 
 public abstract class Rules {
-	
+
 	/**
-	 * Check if a move is valid
+	 * Check if a move is valid before it is made
 	 */
-	public static Boolean validMove(Card card, Controller controller)
+	public static Boolean validMove(Card card)
 	{
+		Controller controller = card.getController();
+		
 		char currCardSuite = card.getSuite();
 		char currCardNum = card.getNumber();
-		
+
 		char topCardSuite = controller.getTopCard().getSuite();
 		char topCardNum = controller.getTopCard().getNumber();
-		
+
 		if (currCardSuite == topCardSuite || currCardNum == topCardNum )
 			return true;
 		return false;
+	}
+
+	/**
+	 * Check if there are any valid moves 
+	 * @return Boolean (true if no moves are available from the cards currently in the players hands)
+	 */
+	public static Boolean pickCard(Controller controller) {
+		for (Card card: controller.getCurrentPlayer().getCardsInHand()){
+			if (Rules.validMove(card))
+				return false;
+		}
+		return true;
 	}
 
 }

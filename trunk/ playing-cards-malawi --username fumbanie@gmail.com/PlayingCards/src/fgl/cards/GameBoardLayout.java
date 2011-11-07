@@ -25,7 +25,7 @@
 package fgl.cards;
 
 import android.content.Context;
-import android.graphics.Color;
+import android.graphics.Point;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
@@ -48,7 +48,6 @@ public class GameBoardLayout extends FrameLayout {
 		//this.debugText.setTextColor(Color.BLACK);
 		this.debugText.setText("Fumba Game Lab");
 		//this.debugText.setHeight(30);
-		
 		this.addView(debugText);
 
 		//add container for game elements (cards and buttons)
@@ -64,6 +63,14 @@ public class GameBoardLayout extends FrameLayout {
 	public TextView getDebugTextView()
 	{
 		return debugText;
+	}
+
+	/** Sets positions for the game graphics based on the relative screen size of the device **/
+	public static void setPosition(FGLGraphic graphic, double x, double y)
+	{
+		int height = (int) (PlayingCardsActivity.height * y);
+		int width = (int) (PlayingCardsActivity.width * x);
+		graphic.setCurrentPosition( new Point( width, height));
 	}
 
 }

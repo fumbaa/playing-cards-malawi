@@ -93,11 +93,7 @@ public abstract class FGLGraphic {
 		return new Point(x,y);
 	}
 
-	public void setPosition(Point point) {
-		this.currentX = point.x;
-		this.currentY = point.y;
-	}
-
+	
 	/**
 	 * Resets the current position for the card to its original position.
 	 * This method is used when the player drops the cards on screen areas which do not

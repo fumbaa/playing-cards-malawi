@@ -24,31 +24,53 @@
  */
 package fgl.cards;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Point;
 
 public class Card extends FGLGraphic
 {	
+	/** The controller to which this card belongs to **/
+	private Controller controller;
+
 	/**
 	 * Makes a new card object and defines the relevant image to represent the card
 	 * @param context interface to global information about an application environment
 	 * @param name the unique name of the card (eg. 3D = three of diamonds)
 	 * @see R.drawable
 	 */
-	public Card(Context context, String name, int resourceID) {
+	public Card(Context context, String name, int resourceID, Controller controller) {
 		super(context, name, resourceID);
+		this.controller = controller;
 	}
 
 	@Override
 	protected void extractBitmap() {
 		BitmapFactory.Options opts = new BitmapFactory.Options();
         opts.inJustDecodeBounds = true;
-        this.img = BitmapFactory.decodeResource(context.getResources(), this.resourceID); 
-
+        this.img = BitmapFactory.decodeResource(context.getResources(), this.resourceID);        
         this.width = this.getBitmap().getWidth();
         this.height = this.getBitmap().getHeight();
 	}
 
+	/** Magnify the card image **/
+	public void magnify()
+	{
+		int height = (int) (this.height * 1.5);
+		int width = (int) (this.width  * 1.5);
+       // this.img = Bitmap.createScaledBitmap(img, height , width , true);
+	}
+	
+	/**
+	 * Restores the scale of the bitmap image
+	 */
+	public void rescale()
+	{
+		int height = (int) (this.height / 1.5);
+		int width = (int) (this.width  / 1.5);
+        //this.img = Bitmap.createScaledBitmap(img, height , width , true);
+	}
+	 
 	/**
 	 * Gets the card suite
 	 * @return
@@ -71,6 +93,14 @@ public class Card extends FGLGraphic
 	 */
 	public Point getPosition() {
 		return new Point(this.currentX, this.currentY);
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public Controller getController() {
+		return this.controller;
 	}
 	
 
