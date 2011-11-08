@@ -116,8 +116,8 @@ public class Controller extends View {
 			this.currentPlayer.addCard( this.cards.pickRandomCard()	);
 		}
 
-		//Card middle_card = this.cards.pickRandomCard();
-		Card middle_card = new Card(this.context, "ZZ", R.drawable.card_back, this);
+		Card middle_card = this.cards.pickRandomCard();
+		//Card middle_card = new Card(this.context, "ZZ", R.drawable.card_back, this);
 		GameBoardLayout.setPosition(middle_card, .5, .8);
 		this.updatePlayedCards(middle_card);
 	}
@@ -238,7 +238,7 @@ public class Controller extends View {
 				this.activeCard = card.getName();
 				this.currentPlayer.bringCardToFront(card); //Important: bring the active card to front
 				card.magnify();
-				card.setToCenter( this.offset );
+				//card.setToCenter( this.offset );
 				break;
 			}
 		}	
