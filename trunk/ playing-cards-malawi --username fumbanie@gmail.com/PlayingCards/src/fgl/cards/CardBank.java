@@ -75,7 +75,7 @@ public class CardBank {
 		//this.cardMap.add( new Card(this.context, "5S", R.drawable.fgl5spades)	);
 
 		//6 
-		this.cardMap.add( new Card(this.context, "6C", R.drawable.fgl3club, this.controller)		);
+		this.cardMap.add( new Card(this.context, "6C", R.drawable.fgl6club, this.controller)		);
 		this.cardMap.add( new Card(this.context, "6D", R.drawable.fgl6d, this.controller)		);
 		this.cardMap.add( new Card(this.context, "6H", R.drawable.fgl6hearts, this.controller)	);
 		//this.cardMap.add( new Card(this.context, "6S", R.drawable.fgl6spades)	);
