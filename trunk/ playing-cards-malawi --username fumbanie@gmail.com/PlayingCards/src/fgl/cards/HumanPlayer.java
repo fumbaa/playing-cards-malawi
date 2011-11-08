@@ -5,30 +5,6 @@ import java.util.List;
 
 import android.graphics.Point;
 
-/**
- * 
- * Copyright (c) 2011 FUMBA GAME LAB. All rights reserved
- * 
- * Malawi Playing Cards: HumanPlayer.java
- * Represents the human player.
- * 
- * @author Fumbani Chibaka
- * @version 1.0
- * @since 0.0
- * 
- * 
- * /*******************************************************************************
- * Copyright (c) 1998, 2011 Oracle. All rights reserved.
- * This program and the accompanying materials are made available under the 
- * terms of the Eclipse Public License v1.0 and Eclipse Distribution License v. 1.0 
- * which accompanies this distribution. 
- * The Eclipse Public License is available at http://www.eclipse.org/legal/epl-v10.html
- * and the Eclipse Distribution License is available at 
- * http://www.eclipse.org/org/documents/edl-v10.php.
- * 
- ******************************************************************************
- *
- */
 
 public class HumanPlayer implements Player {
 
@@ -84,6 +60,7 @@ public class HumanPlayer implements Player {
 	 */
 	public void addCard(Card card) {
 		this.cards.add(card);
+		PlayingCardsActivity.updateDeckStatus("" + this.controller.getCardBank().countCards());
 		this.recalculatePositions();
 	}
 
@@ -135,6 +112,7 @@ public class HumanPlayer implements Player {
 	public void playCard(Card card) {
 		Point point = this.controller.getTopCard().getPosition();
 		card.setCurrentPosition(point);
+			
 		this.controller.updatePlayedCards( card );
 		this.cards.remove(card);
 		this.recalculatePositions();
@@ -142,7 +120,7 @@ public class HumanPlayer implements Player {
 
 	/** This method sets new card positions whenever a card is added or removed from the players hands **/
 	public void recalculatePositions() {
-		Tools.printDebug("Num in hands : " + this.cards.size());
+
 		for (int i = 1; i <= this.cards.size(); i++ )
 		{
 			Card card = this.cards.get(i - 1);
@@ -157,7 +135,7 @@ public class HumanPlayer implements Player {
 	/** Pick random card from the card stack
 	 * @return Card
 	 */
-	public Card pickCard() {
-		return this.controller.getCardBank().pickRandomCard();
+	public void pickCard() {
+		this.addCard( this.controller.getCardBank().pickRandomCard() );
 	}
 }

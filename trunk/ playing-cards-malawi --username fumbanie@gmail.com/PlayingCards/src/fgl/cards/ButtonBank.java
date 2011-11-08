@@ -18,6 +18,8 @@ import android.graphics.Point;
 
 public class ButtonBank {
 
+	private static final int CONTINUE_BUTTON = 3;
+
 	/** The collection of buttons **/
 	private HashMap<Integer, CustomButton> buttonMap = new HashMap<Integer, CustomButton>(); 
 
@@ -49,6 +51,10 @@ public class ButtonBank {
 		//Back button
 		CustomButton backBtn = new CustomButton(this.context, startPoint,"start_button", R.drawable.back_button);
 		buttonMap.put(BACK_BUTTON, backBtn);
+		
+		//Back button
+		CustomButton continueBtn = new CustomButton(this.context, startPoint,"start_button", R.drawable.continue_button);
+		buttonMap.put(CONTINUE_BUTTON, continueBtn);
 	}
 
 
@@ -62,6 +68,11 @@ public class ButtonBank {
 	public CustomButton getBackButton()
 	{
 		return buttonMap.get(BACK_BUTTON);
+	}
+
+
+	public FGLGraphic getContinueButton() {
+		return buttonMap.get(CONTINUE_BUTTON);
 	}
 
 }

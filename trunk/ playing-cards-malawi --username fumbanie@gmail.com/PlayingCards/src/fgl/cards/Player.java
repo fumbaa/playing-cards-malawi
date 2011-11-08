@@ -77,6 +77,6 @@ public interface Player {
 	public void playCard(Card card);
 
 	/** Pick random card from the card deck **/
-	public Card pickCard();
+	public void pickCard();
 
 }

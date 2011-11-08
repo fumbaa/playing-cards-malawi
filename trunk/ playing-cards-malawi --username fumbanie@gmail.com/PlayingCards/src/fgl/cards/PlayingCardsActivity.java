@@ -59,4 +59,35 @@ public class PlayingCardsActivity extends Activity {
 		if (elements.getDebugTextView().getText() != text)
 			elements.getDebugTextView().setText(text);
 	}
+	
+	/**
+	 * Used to print debugging text on the android device screen. This method is called by  {@link fgl.cards.Tools.printDebug}
+	 * @param  text The text to be printed on the android device screen
+	 * @see fgl.cards.Tools.printDebug
+	 */
+	public static void updateCurrPlayerName(String text)
+	{
+		if (elements.getPlayerNameView().getText() != text)
+			elements.getPlayerNameView().setText("Current Player : " + text);
+	}
+	
+	/**
+	 * Used to print debugging text on the android device screen. This method is called by  {@link fgl.cards.Tools.printDebug}
+	 * @param  text The text to be printed on the android device screen
+	 * @see fgl.cards.Tools.printDebug
+	 */
+	public static void updateDeckStatus(String text)
+	{
+		if (elements.getDeckView().getText() != text)
+			elements.getDeckView().setText("Remaining : " + text);
+	}
+
+	/**
+	 * Resets the notification text to the initial text views
+	 */
+	public static void reset() {
+		elements.getDeckView().setText("Card Deck Status");
+		elements.getPlayerNameView().setText("--");
+		elements.getDebugTextView().setText("Fumba Game Lab");
+	}
 }

@@ -2,9 +2,13 @@ package fgl.cards;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
+
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Point;
+import android.os.Handler;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Toast;
@@ -34,19 +38,13 @@ public class Controller extends View {
 	private Card topPlayedCard; 
 
 	/** interface to global information about an application environment */
-	private Context context; 
-
-	/** collection of cards served to player */
-	//TODO: private List<Card> servedCards = new ArrayList<Card>();
+	private Context context;
 
 	/** collection of played cards */
 	private List<Card> playedCards = new ArrayList<Card>();
 
 	/** currently selected card */
 	private String activeCard;
-
-	/** offset position relative to the touch point */
-	private Point offset = new Point();
 
 	/** The coordinates of the point which is touched on the screen */
 	private Point touchPoint;
@@ -72,6 +70,11 @@ public class Controller extends View {
 	/** Card that is turned upside down **/
 	private Card cardBack;
 
+	/** List of players currently in the game **/
+	private List<Player> players = new ArrayList<Player>();
+
+	/** Tag to allow player to continue playing **/
+	private boolean proceed = false;
 
 
 	/**
@@ -92,17 +95,19 @@ public class Controller extends View {
 		this.buttons	= new ButtonBank(this.context);
 		this.sounds		= new SoundBank(this.context);
 		this.cards		= new CardBank(this.context, this);
+		Tools.catLog(">> "+ cards.countCards());
 
 		//show main menu
 		this.addMainMenu();
 
-		String playerName = "Fumbani";
-		Player one = new HumanPlayer(playerName, this);
-		this.currentPlayer = one;
+		String playerName1 = "Fumbani";
+		String playerName2 = "Felix";
 
-		List<Player> players = new ArrayList<Player>();
-		players.add(this.currentPlayer);
+		Player p1 = new HumanPlayer(playerName1, this);
+		Player p2 = new HumanPlayer(playerName2, this);
 
+		this.players.add(p1);
+		this.players.add(p2);
 	}
 
 
@@ -111,15 +116,16 @@ public class Controller extends View {
 	 */
 	private void serveCards() {
 
-		for (int i = 0; i < 5; i++)
-		{
-			this.currentPlayer.addCard( this.cards.pickRandomCard()	);
-		}
-
 		Card middle_card = this.cards.pickRandomCard();
 		//Card middle_card = new Card(this.context, "ZZ", R.drawable.card_back, this);
 		GameBoardLayout.setPosition(middle_card, .5, .8);
 		this.updatePlayedCards(middle_card);
+
+		for (int i = 0; i < 5; i++)
+		{
+			this.players.get(0).addCard( this.cards.pickRandomCard()	);
+			this.players.get(1).addCard( this.cards.pickRandomCard()	);
+		}
 	}
 
 	/**
@@ -142,10 +148,17 @@ public class Controller extends View {
 			canvas.drawBitmap(card.getBitmap(), card.getX(), card.getY(), null); }
 
 		//draw cards in hands
-		for (Card card : this.currentPlayer.getCardsInHand() ){
-			canvas.drawBitmap(card.getBitmap(), card.getX(), card.getY(), null); }
+		if (this.screen == Controller.GAME_SCREEN)
+			for (Card card : this.currentPlayer.getCardsInHand() ){
+				canvas.drawBitmap(card.getBitmap(), card.getX(), card.getY(), null); }
 
-		//Tools.catLog(""+ this.cards.countCards());
+		if (this.proceed)
+		{
+			FGLGraphic card = (buttons.getContinueButton());
+			GameBoardLayout.setPosition(buttons.getContinueButton(), 0.2, 0.5);
+			canvas.drawBitmap(card.getBitmap(), card.getX(), card.getY(), null);
+		}
+
 	}
 
 	/**
@@ -155,6 +168,8 @@ public class Controller extends View {
 	 * @see	MotionEvent
 	 */
 	public boolean onTouchEvent(MotionEvent event) {
+
+
 		int eventAction = event.getAction(); 
 		this.touchPoint = new Point( (int)event.getX(),(int)event.getY());
 
@@ -174,13 +189,12 @@ public class Controller extends View {
 			break; 
 
 		case MotionEvent.ACTION_MOVE:
-			if (start)
+			if (start && !proceed)
 				this.cardMove();
-				
 			break; 
 		} 
 
-		this.invalidate(); //Redraw the canvas
+		this.invalidate();
 		return true; 
 	}
 
@@ -205,13 +219,20 @@ public class Controller extends View {
 	private void cardUp() {
 		if (this.activeCard != null) { 
 
+			Card card = this.currentPlayer.getCard(this.activeCard);
+
+			//Current players turn
 			if ( this.currentPlayer.isHuman() )
 			{
-				Card card = this.currentPlayer.getCard(this.activeCard);
 				Boolean validMove = this.currentPlayer.makeMove(card);
 
+				//Current Player makes valid move
 				if ( validMove && this.topPlayedCard.isTouched(this.touchPoint)!= null)
+				{
 					this.currentPlayer.playCard(card);
+					this.proceed = true;
+				}
+				//Current Player makes invalid move
 				else
 				{
 					card.resetPosition();
@@ -219,7 +240,28 @@ public class Controller extends View {
 						sounds.rejectSound();
 				}
 			}
-		}//end main if
+
+			//Computer or other players turn
+			else
+			{
+				card.resetPosition();
+				Toast.makeText(this.context, "Please wait: CPU is playing...", Toast.LENGTH_SHORT);
+			}
+		}
+	}
+
+
+	/**
+	 * Switch to the next player. Gives some time for the user to see what card they picked before it switches
+	 */
+	public void nextPlayer() {
+
+		int location = this.players.indexOf(this.currentPlayer) + 1;
+		if (location == this.players.size() )
+			location = 0;
+		this.currentPlayer = this.players.get(location);
+		PlayingCardsActivity.updateCurrPlayerName( this.currentPlayer.getName());
+		Tools.printDebug("Cards in hands : " + this.currentPlayer.getCardsInHand().size());
 	}
 
 
@@ -234,11 +276,9 @@ public class Controller extends View {
 		{
 			Point check = card.isTouched(this.touchPoint);
 			if ( check != null ){
-				this.offset = check;
 				this.activeCard = card.getName();
 				this.currentPlayer.bringCardToFront(card); //Important: bring the active card to front
 				card.magnify();
-				//card.setToCenter( this.offset );
 				break;
 			}
 		}	
@@ -257,8 +297,8 @@ public class Controller extends View {
 		{ 
 			if (noValidMoves)
 			{
-				Card random_card = this.currentPlayer.pickCard();
-				this.currentPlayer.addCard(random_card);
+				this.currentPlayer.pickCard();				
+				this.proceed = true;
 			}
 			else
 				Toast.makeText(this.context, "You are not allowed...", Toast.LENGTH_SHORT).show();
@@ -278,11 +318,15 @@ public class Controller extends View {
 				if (graphic.equals(this.buttons.getStartButton()))
 				{
 					sounds.startSound();
+					this.currentPlayer = players.get(0); //randomise this
+
+					PlayingCardsActivity.updateCurrPlayerName( this.currentPlayer.getName());
 					this.screen = Controller.GAME_SCREEN;
 					this.removeMainMenu();
 					this.addBackButton();
 					this.addCardDeck();
 					this.serveCards();
+					Tools.printDebug("Cards in hands : " + this.currentPlayer.getCardsInHand().size());
 					break;
 				}
 
@@ -296,6 +340,14 @@ public class Controller extends View {
 				}
 			}
 		}//end for-loop
+
+
+		//Continue Button
+		if (this.buttons.getContinueButton().isTouched( this.touchPoint) != null )
+		{
+			this.proceed = false;
+			this.nextPlayer();
+		}
 	}
 
 
@@ -308,8 +360,6 @@ public class Controller extends View {
 		CustomButton button = this.buttons.getStartButton();
 		GameBoardLayout.setPosition(button, .5, .5);
 		this.displayGraphics.add(button);
-
-		//TODO: add other graphics...
 
 	}
 
@@ -337,8 +387,18 @@ public class Controller extends View {
 		this.displayGraphics.remove(this.buttons.getBackButton());
 
 		//return all cards that are currently in player hands
-		this.currentPlayer.returnCards();
+		for (int i = 0; i < this.players.size(); i++)
+		{
+			this.players.get(i).returnCards();
+		}
+
+		//return played cards to the main card deck
+		for (Card card: this.playedCards){
+			this.cards.putBackCard(card);
+		}
 		this.playedCards.clear();
+
+		PlayingCardsActivity.reset();
 	}
 
 	/**
@@ -355,7 +415,7 @@ public class Controller extends View {
 	}
 
 	/**
-	 * Gets the current Player
+	 * Gets the current Player. (Used by Rules class to retrieve a player from the controller)
 	 * @return Player
 	 */
 	public Player getCurrentPlayer() {
