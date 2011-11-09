@@ -79,4 +79,7 @@ public interface Player {
 	/** Pick random card from the card deck **/
 	public void pickCard();
 
+	/** Counts the number of cards in the players hand **/
+	public int countCardsInHands();
+
 }

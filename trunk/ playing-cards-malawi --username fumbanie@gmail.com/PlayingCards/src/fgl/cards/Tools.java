@@ -51,9 +51,4 @@ public class Tools {
 		} 
 	}
 
-
-	public static void printDebug(String string) {
-		PlayingCardsActivity.printDebug(string);
-	}
-
 }

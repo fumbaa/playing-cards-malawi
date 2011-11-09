@@ -3,34 +3,42 @@ package fgl.cards;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-
 import android.content.Context;
 
 /**
- * Collection of cards that make up the deck
+ * The <code>CardBank</code> class represents a collection of {@link Card Cards} that are used in the game application. This
+ * class extracts images from the {@link R.drawable Android R.drawable} class and assigns them to appropriate card.
+ * <p>
+ * The cards are stored in a hashmap and appropriate accessor methods are provided. The {@link Controller Controller}
+ * class collects necessary buttons from an instance this class in a fashion that promotes recyling of the cards.
+ * 
  * <p><i>Copyright (c) 1998, 2011 Oracle. All rights reserved.
- * This program and the accompanying materials are made available under the 
+ * This program and the accompanying materials are made available under t he 
  * terms of the Eclipse Public License v1.0 and Eclipse Distribution License v. 1.0 
  * which accompanies this distribution.</i></p>
  * 
- * @author Fumbani Chibaka, 
+ * @author Fumbani Chibaka
  * @version 1.0, 10/28/2011
  * @see <a href="http:chibaka.com">Fumba Game Lab</a>
  */
-
 public class CardBank {
 
 	/** Collection of all sounds with their respective keys **/
 	private List <Card> cardMap;
 
-	/**   **/
+	/** Android interface that provides the global information of the application. **/
 	private Context context;
 
+	/** The controller to which this card belongs to. In this case, the contoller can be visualised as the person
+	 * who is taking charge of distributing the cards and observing that all game rules are followed.
+	 */
 	private Controller controller;
 
 	/**
 	 * Initiates sound bank and populates it with sounds from applications resources
-	 * @param context Application-specific resources and classes
+	 * @param context application-specific resources and classes
+	 * @param controller can be visualiased as the person in control of the card deck
+	 * @see <a href="http://developer.android.com/reference/android/content/Context.html">Context (Android API) </a>
 	 */
 	CardBank(Context context, Controller controller)
 	{
@@ -42,6 +50,7 @@ public class CardBank {
 
 	/**
 	 * Makes 54 card objects that are to be reused throughout gameplay. 
+	 * @see R.drawable
 	 */
 	private void initialise() {
 		//A

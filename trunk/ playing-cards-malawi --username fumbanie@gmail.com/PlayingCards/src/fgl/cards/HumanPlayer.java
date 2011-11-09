@@ -60,7 +60,6 @@ public class HumanPlayer implements Player {
 	 */
 	public void addCard(Card card) {
 		this.cards.add(card);
-		PlayingCardsActivity.updateDeckStatus("" + this.controller.getCardBank().countCards());
 		this.recalculatePositions();
 	}
 
@@ -112,7 +111,7 @@ public class HumanPlayer implements Player {
 	public void playCard(Card card) {
 		Point point = this.controller.getTopCard().getPosition();
 		card.setCurrentPosition(point);
-			
+
 		this.controller.updatePlayedCards( card );
 		this.cards.remove(card);
 		this.recalculatePositions();
@@ -127,7 +126,7 @@ public class HumanPlayer implements Player {
 			double initial_x = 1.0 / (this.cards.size() + 2);
 			double x = initial_x * i;
 			double y = 0.3;
-			GameBoardLayout.setPosition(card, x, y);
+			this.controller.getLayout().setPosition(card, x, y);
 			card.setDefaultPosition( card.getPosition());
 		}
 	}
@@ -137,5 +136,13 @@ public class HumanPlayer implements Player {
 	 */
 	public void pickCard() {
 		this.addCard( this.controller.getCardBank().pickRandomCard() );
+	}
+
+	/**
+	 * Counts the number of cards in the players hands
+	 * @return integer
+	 */
+	public int countCardsInHands() {
+		return this.cards.size();
 	}
 }

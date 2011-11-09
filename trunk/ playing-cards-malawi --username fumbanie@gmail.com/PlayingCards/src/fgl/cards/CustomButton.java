@@ -1,7 +1,6 @@
 package fgl.cards;
 import android.content.Context;
 import android.graphics.BitmapFactory;
-import android.graphics.Point;
 
 /**
  * Customised menu buttons.
@@ -19,9 +18,9 @@ import android.graphics.Point;
 public class CustomButton extends FGLGraphic {
 
 
-	CustomButton(Context context, Point point, String name, int resourceID)
+	CustomButton(Context context, String name, int resourceID)
 	{
-		super(context, point, name, resourceID);
+		super(context, name, resourceID);
 	}
 
 	@Override
