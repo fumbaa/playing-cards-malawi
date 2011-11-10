@@ -31,7 +31,7 @@ public interface Player {
 	/**
 	 * Sends a move to the Controller class
 	 */
-	public boolean makeMove(Card card);
+	public Move makeMove(Card card);
 
 	/**
 	 * Returns the name of the player
@@ -81,5 +81,14 @@ public interface Player {
 
 	/** Counts the number of cards in the players hand **/
 	public int countCardsInHands();
+	
+	/**
+	 * Extracts the players current move
+	 * @return {@link Move Move Object}
+	 */
+	public Move getCurrentMove();
+
+	/** Sets the players current move **/
+	public void setCurrentMove(Move move);
 
 }

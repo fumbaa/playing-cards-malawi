@@ -36,16 +36,21 @@ public class CustomButtonBank {
 
 	/** Android interface that provides the global information of the application. **/
 	private Context context;
+
+	/** GameBoard layout **/
+	private GameBoardLayout layout;
 	
 	/**
 	 * Constructs a new collection of <code>Custom Buttons</code> 
 	 * @param context applications global information
 	 * @see <a href="http://developer.android.com/reference/android/content/Context.html">Context (Android API) </a>
 	 */
-	CustomButtonBank(Context context)
+	CustomButtonBank(Context context, GameBoardLayout layout)
 	{
 		this.context = context;
+		this.layout = layout;
 		this.initialise();
+		
 	}
 
 	/**
@@ -56,14 +61,17 @@ public class CustomButtonBank {
 	{
 		//Start button
 		CustomButton startBtn = new CustomButton(this.context, "start_button", R.drawable.start_button);
+		this.layout.setPosition(startBtn, 0.5, 0.5);
 		buttonMap.put(START_BUTTON, startBtn);
 
 		//Back button
-		CustomButton backBtn = new CustomButton(this.context, "back_button", R.drawable.back_button);
-		buttonMap.put(BACK_BUTTON, backBtn);
+		CustomButton back_button = new CustomButton(this.context, "back_button", R.drawable.back_button);
+		this.layout.setPosition(back_button, 0.9 , 0.1);
+		buttonMap.put(BACK_BUTTON, back_button);
 		
 		//Continue button
 		CustomButton continueBtn = new CustomButton(this.context, "cont_button", R.drawable.continue_button);
+		this.layout.setPosition(continueBtn, 0.2, 0.5);
 		buttonMap.put(CONTINUE_BUTTON, continueBtn);
 	}
 

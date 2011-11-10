@@ -11,6 +11,7 @@ import android.widget.Toast;
 /**
  * The <code>Controller</code> manages the game application. This class controls menu elements, creates the cards and distributes them
  *  to players. It also listens to moves that players are making and updates the game state accordingly.
+ *  
  * <p><i>Copyright (c) 1998, 2011 Oracle. All rights reserved.
  * This program and the accompanying materials are made available under the terms of the Eclipse Public License v1.0 and Eclipse Distribution License v. 1.0 
  * which accompanies this distribution.</i></p>
@@ -22,7 +23,7 @@ import android.widget.Toast;
 
 public class Controller extends View {
 
-	//Sreen timeline
+	//Screen timeline
 	/** Welcome screen **/
 	private static final int START_SCREEN = 1;
 
@@ -31,6 +32,8 @@ public class Controller extends View {
 
 	/** Options Screen **/
 	private static final int OPTIONS_SCREEN = 3;
+
+	private static final int GAME_OVER = 4;
 
 
 	/** the card on the very top of the played card stack **/
@@ -57,9 +60,6 @@ public class Controller extends View {
 	/** Game cards bank **/
 	private CardBank cards;
 
-	/** collection of graphics to be displayed on current screen  */
-	private List<FGLGraphic> displayGraphics = new ArrayList<FGLGraphic>();
-
 	/** Current player **/
 	private Player currentPlayer;
 
@@ -72,13 +72,10 @@ public class Controller extends View {
 	/** List of players currently in the game **/
 	private List<Player> players = new ArrayList<Player>();
 
-	/** Tag to allow player to continue playing **/
-	private boolean playerDone_PassToNext = false;
-
 	/** Device handed to next player show cards in hand **/
 	private boolean blankScreenTransition = false;
 
-	/** A framelayout that organises all the graphical game elements **/
+	/** A framelayout that organizes all the graphical game elements **/
 	private GameBoardLayout layout;
 
 	/** Total number of cards available for this game application **/
@@ -90,6 +87,9 @@ public class Controller extends View {
 	/** The next player **/
 	private Player nextPlayer;
 
+	/** The number of cards to be served to the players at the beginning of the game **/
+	private int numOfCardsServed;
+
 
 	/**
 	 * Starts the game with a welcome screen where user selects desired options and initiates the game.
@@ -99,6 +99,9 @@ public class Controller extends View {
 	public Controller(Context context, GameBoardLayout layout) 
 	{
 		super(context);
+
+		this.numOfCardsServed = 2;
+
 		this.touchPoint = new Point();
 		this.context = context;
 		this.currentScreen = Controller.START_SCREEN;
@@ -106,7 +109,7 @@ public class Controller extends View {
 		this.setFocusable(true);
 
 		//Make elements available to the controller
-		this.buttons	= new CustomButtonBank(this.context);
+		this.buttons	= new CustomButtonBank(this.context, this.layout);
 		this.sounds		= new SoundBank(this.context);
 		this.cards		= new CardBank(this.context, this);
 		this.textViews	= new TextViewBank(this.context, this.layout);
@@ -115,7 +118,7 @@ public class Controller extends View {
 		this.totalNumCards = cards.countCards();
 
 		//show main menu
-		this.addMainMenu();
+		//TODO this.addMainMenu();
 
 		String playerName1 = "Fumbani";
 		String playerName2 = "Felix";
@@ -140,7 +143,7 @@ public class Controller extends View {
 		this.layout.setPosition(middle_card, .5, .8);
 		this.updatePlayedCards(middle_card);
 
-		for (int i = 0; i < 5; i++)
+		for (int i = 0; i < this.numOfCardsServed; i++)
 		{
 			//distribute to all the players
 			for ( int j = 0; j < this.players.size(); j++)
@@ -155,45 +158,48 @@ public class Controller extends View {
 	 */
 	@Override protected void onDraw(Canvas canvas) {
 
-		//draw buttons
-		for (FGLGraphic graphic: this.displayGraphics){
-			canvas.drawBitmap( graphic.getBitmap(), graphic.getX(), graphic.getY(), null); }
-		
-		if (! this.blankScreenTransition){
-			if (this.currentScreen == Controller.GAME_SCREEN){
-				canvas.drawBitmap (this.cardBack.getBitmap(), this.cardBack.getX(), this.cardBack.getY(), null);
-			}
+		// 1. START SCREEN (Draw Start Button )
+		if (this.currentScreen == Controller.START_SCREEN)
+			canvas.drawBitmap(this.buttons.getStartButton().getBitmap(), this.buttons.getStartButton().getX(), this.buttons.getStartButton().getY(), null);
 
-			//draw played cards
-			for (Card card : this.playedCards){
-				canvas.drawBitmap(card.getBitmap(), card.getX(), card.getY(), null); }
-
-			//draw cards in hands
-			if (this.currentScreen == Controller.GAME_SCREEN)
-				for (Card card : this.currentPlayer.getCardsInHand() ){
-					canvas.drawBitmap(card.getBitmap(), card.getX(), card.getY(), null); }
-
-			//allows the current player to see their current play status before passing the device to the next player
-			if (this.playerDone_PassToNext)
-			{
-				FGLGraphic card = (buttons.getContinueButton());
-				this.layout.setPosition(buttons.getContinueButton(), 0.2, 0.5);
-				canvas.drawBitmap(card.getBitmap(), card.getX(), card.getY(), null);
-			}
-		}
-
-		//Show a blank screen that will be activated by next player whenever they are ready to play
-		else
+		// 2. GAME SCREEN (Depends on the scenario)
+		if ( this.currentScreen == Controller.GAME_SCREEN)
 		{
-			this.nextPlayer = this.getNextPlayer(); //TODO: Careful when more than 2 people are playing (Reverse/ forward)
+			//draw back button
+			canvas.drawBitmap(this.buttons.getBackButton().getBitmap(),this.buttons.getBackButton().getX(), this.buttons.getBackButton().getY(), null);
 
-			this.textViews.getCurrentPlayerTextView().setText( "Current Player : " + this.nextPlayer.getName());
-			this.textViews.getHandStatusTextView().setText( "# of Cards in Hand : " + this.nextPlayer.countCardsInHands());
-			String string = ", touch anywhere on the screen inorder for you to see your cards and continue playing the game.";
-			this.textViews.getPlayerTransitionTextView().setText( this.nextPlayer.getName() + string );
+			//Scenario 1: Show a blank screen that will be activated by next player whenever they are ready to play
+			if (this.blankScreenTransition)
+			{
+				this.nextPlayer = this.getNextPlayer(); //TODO: Careful when more than 2 people are playing (Reverse/ forward)
+				this.textViews.getCurrentPlayerTextView().setText( "Current Player : " + this.nextPlayer.getName());
+				this.textViews.getHandStatusTextView().setText( "# of Cards in Hand : " + this.nextPlayer.countCardsInHands());
+				String string = ", touch anywhere on the screen inorder for you to see your cards and continue playing the game.";
+				this.textViews.getPlayerTransitionTextView().setText( this.nextPlayer.getName() + string );
+			}
+
+			//Scenario 2: allows the current player to see their current play status before passing the device to the next player
+			if (this.currentPlayer.getCurrentMove().isDone())				
+				canvas.drawBitmap(buttons.getContinueButton().getBitmap(), buttons.getContinueButton().getX(), buttons.getContinueButton().getY(), null);
+
+			//Scenario 3: draw cards
+			if (! this.blankScreenTransition){
+				canvas.drawBitmap (this.cardBack.getBitmap(), this.cardBack.getX(), this.cardBack.getY(), null); //unplayed cards
+				for (Card card : this.playedCards){
+					canvas.drawBitmap(card.getBitmap(), card.getX(), card.getY(), null); } //played cards
+				for (Card card : this.currentPlayer.getCardsInHand() ){
+					canvas.drawBitmap(card.getBitmap(), card.getX(), card.getY(), null); } //cards in hands
+			}
+
 		}
 
-		//Log used cards
+		//3. GAME OVER SCREEN (displays message if the game is over- the current player wins!)
+		else if (this.currentScreen == Controller.GAME_OVER)
+		{
+			this.textViews.getPlayerTransitionTextView().setText("Game Over !!!!");
+		}
+
+		//Logging for debug purposes only
 		this.textViews.getDeckStatusTextView().setText("Used : " + this.cards.countCards()
 				+ " / " + this.totalNumCards + " c[" + this.playedCards.size() + "] a[" + this.countNumCardsAllPlayers() + "]" );
 	}
@@ -220,24 +226,25 @@ public class Controller extends View {
 		int eventAction = event.getAction(); 
 		this.touchPoint = new Point( (int)event.getX(),(int)event.getY());
 
-		Boolean start = ( this.currentScreen == Controller.GAME_SCREEN);
+		//Only move cards on the game screen when the player is not waiting to press (PASS TO NEXT PLAYER) button
+		Boolean canMove = ( this.currentScreen == Controller.GAME_SCREEN) &&  !this.currentPlayer.getCurrentMove().isDone();
 
 		switch (eventAction ) {
 
 		case MotionEvent.ACTION_UP: 
-			if (start)
+			if (canMove)
 				this.cardUp();
 			break; 
 
 		case MotionEvent.ACTION_DOWN:
 			this.screenDown();	
-			if (start)
+			if (canMove )
 				this.cardDown();
 			this.buttonDown();			
 			break; 
 
 		case MotionEvent.ACTION_MOVE:
-			if (start && !playerDone_PassToNext)
+			if (canMove)
 				this.cardMove();
 			break; 
 		} 
@@ -284,14 +291,14 @@ public class Controller extends View {
 			//Current players turn
 			if ( this.currentPlayer.isHuman() )
 			{
-				Boolean validMove = this.currentPlayer.makeMove(card);
+				Boolean validMove = this.currentPlayer.makeMove(card).getValidity();
 
 				//Current Player makes valid move
 				if ( validMove && this.topPlayedCard.isTouched(this.touchPoint)!= null)
 				{
 					this.currentPlayer.playCard(card);
-					this.textViews.getHandStatusTextView().setText( "# of Cards in Hand : " + this.currentPlayer.countCardsInHands());
-					this.playerDone_PassToNext = true;
+					this.textViews.getHandStatusTextView().setText( "# of Cards in Hand : " + currentPlayer.getCurrentMove().isDone()); //TODO: replace>  this.currentPlayer.countCardsInHands()); 
+					this.gameOver();
 				}
 				//Current Player makes invalid move
 				else
@@ -308,6 +315,18 @@ public class Controller extends View {
 				card.resetPosition();
 				Toast.makeText(this.context, "Please wait: CPU is playing...", Toast.LENGTH_SHORT);
 			}
+		}
+	}
+
+
+	/**
+	 * Check of the most recent move has resulted into a win. This method is called in {@link #cardUp()}.
+	 */
+	private void gameOver() {
+		//important: check if the player is continuing with his move (this can also be done by using the playerDone_PassToNext field 
+		if (this.currentPlayer.getCurrentMove().isDone())
+		{
+			this.currentScreen = Controller.GAME_OVER;
 		}
 	}
 
@@ -352,17 +371,12 @@ public class Controller extends View {
 		}
 
 		//if card is on the deck of unplayed cards
-		card = this.cardBack;
-		
-		//TODO: Allow this? Boolean noValidMoves = Rules.pickCard(this);
-		Boolean noValidMoves = true;
-
-		if (card.isTouched(this.touchPoint) != null)
+		if (this.cardBack.isTouched(this.touchPoint) != null)
 		{ 
-			if (noValidMoves && !this.playerDone_PassToNext )
-			{
-				this.currentPlayer.pickCard();				
-				this.playerDone_PassToNext = true;
+			if (  ! this.currentPlayer.getCurrentMove().isDone() ){ //Block players waiting to press PASS PHONE TO NEXT PLAYER button from picking cards //TODO
+				this.currentPlayer.pickCard();	
+				this.currentPlayer.getCurrentMove().setDone(true);
+				this.textViews.getHandStatusTextView().setText( "# of Cards in Hand : " + this.currentPlayer.countCardsInHands());
 			}
 			else
 				Toast.makeText(this.context, "You are not allowed...", Toast.LENGTH_SHORT).show();
@@ -373,74 +387,36 @@ public class Controller extends View {
 	 * Performs necessary action when a button is touched
 	 */
 	private void buttonDown() {
-		//Check to see if a button was pressed
-		for (FGLGraphic graphic : this.displayGraphics) 
+
+		//START BUTTON (determine 1st player, put cards on table, distribute cards)
+		if (this.buttons.getStartButton().isTouched(this.touchPoint) != null)
 		{
-			if (graphic.isTouched( this.touchPoint) != null) {
+			this.currentScreen = Controller.GAME_SCREEN;
+			sounds.startSound();
+			this.currentPlayer = players.get(0); //Randomize this maybe ?
 
-				//Start Button
-				if (graphic.equals(this.buttons.getStartButton()))
-				{
-					sounds.startSound();
-					this.currentPlayer = players.get(0); //randomise this
+			this.textViews.getCurrentPlayerTextView().setText("Current Player : " + this.currentPlayer.getName());
+			
 
-					this.textViews.getCurrentPlayerTextView().setText("Current Player : " + this.currentPlayer.getName());
+			this.addCardDeck();
+			this.serveCards();
+			this.textViews.getHandStatusTextView().setText( "# of Cards in Hand : " + this.currentPlayer.countCardsInHands());
+		}
 
-					this.currentScreen = Controller.GAME_SCREEN;
-					this.removeMainMenu();
-					this.addBackButton();
-					this.addCardDeck();
-					this.serveCards();
-
-					this.textViews.getHandStatusTextView().setText( "# of Cards in Hand : " + this.currentPlayer.countCardsInHands());
-					break;
-				}
-
-				//Back button
-				if (graphic.equals(this.buttons.getBackButton()))
-				{
-					this.resetGame();
-					this.addMainMenu();
-					this.currentScreen = Controller.START_SCREEN;
-					break;
-				}
-			}
-		}//end for-loop
-
-
-		//Continue Button
-		if (this.buttons.getContinueButton().isTouched( this.touchPoint) != null && this.playerDone_PassToNext )
+		//BACK BUTTON (go back to the main screen)
+		else if (this.buttons.getBackButton().isTouched(this.touchPoint) != null)
 		{
-			this.playerDone_PassToNext = false; 
+			this.resetGame();
+			this.currentScreen = Controller.START_SCREEN;
+		}
+
+		//CONTINUE BUTTON
+		else if (this.buttons.getContinueButton().isTouched( this.touchPoint) != null && this.currentPlayer.getCurrentMove().isDone() )
+		{
+			this.currentPlayer.setCurrentMove( new Move() ); //refresh move
 			this.blankScreenTransition = true;
 		}
 
-	}
-
-
-	/**
-	 * Prepares and shows the elements for the main menu.
-	 */
-	private void addMainMenu() {
-
-		//add start button
-		CustomButton button = this.buttons.getStartButton();
-		this.layout.setPosition(button, .5, .5);
-		this.displayGraphics.add(button);
-
-	}
-
-	/** Remove main menu elements **/
-	private void removeMainMenu()
-	{
-		this.displayGraphics.remove( this.buttons.getStartButton() );
-	}
-
-	/** Puts the back button on the current screen **/
-	private void addBackButton() {
-		CustomButton back_button = this.buttons.getBackButton();
-		this.layout.setPosition(back_button, 0.9 , 0.1);
-		this.displayGraphics.add(back_button);		
 	}
 
 	/** Show the card deck and make cards available for player to pick if necessary **/
@@ -451,13 +427,12 @@ public class Controller extends View {
 
 	/** Reset the game elements **/
 	private void resetGame() {
-		this.displayGraphics.remove(this.buttons.getBackButton());
-		this.playerDone_PassToNext = false; //TODO: Remove the continue button instead
 
 		//return all cards that are currently in player hands
 		for (int i = 0; i < this.players.size(); i++)
 		{
 			this.players.get(i).returnCards();
+			this.players.get(i).setCurrentMove(new Move()); //refresh player moves
 		}
 
 		//return played cards to the main card deck

@@ -11,16 +11,14 @@ public class HumanPlayer implements Player {
 
 	private Controller controller;
 
-
-	/**
-	 * Name of the human player
-	 */
+	/** Name of the current player **/
 	private String name;
 
-	/**
-	 * List of cards in hands
-	 */
+	 /** List of cards in hands*/
 	private List<Card> cards = new ArrayList<Card>();
+
+	/** The players current move **/
+	private Move currentMove;
 
 	/**
 	 * Constructs human player 
@@ -29,13 +27,14 @@ public class HumanPlayer implements Player {
 	public HumanPlayer(String name, Controller controller){
 		this.name = name;
 		this.controller = controller;
+		this.currentMove = new Move(); //defaults to false, false for validity and continuity
 	}
 
 	/**
 	 * Send move to the the game controller
 	 */
-	public boolean makeMove(Card card) {
-		//Check if move is valid
+	public Move makeMove(Card card) {
+		//check if the move is valid
 		return Rules.validMove(card);
 	}
 
@@ -145,4 +144,15 @@ public class HumanPlayer implements Player {
 	public int countCardsInHands() {
 		return this.cards.size();
 	}
+
+	/**Sets the players current move **/
+	public void setCurrentMove(Move currentMove)
+	{
+		this.currentMove = currentMove;
+	}
+	/** Gets the players current move **/
+	public Move getCurrentMove() {
+		return this.currentMove;
+	}
+
 }
