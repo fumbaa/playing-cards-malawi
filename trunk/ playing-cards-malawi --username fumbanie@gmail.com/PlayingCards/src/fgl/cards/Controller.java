@@ -12,8 +12,7 @@ import android.widget.Toast;
  * The <code>Controller</code> manages the game application. This class controls menu elements, creates the cards and distributes them
  *  to players. It also listens to moves that players are making and updates the game state accordingly.
  * <p><i>Copyright (c) 1998, 2011 Oracle. All rights reserved.
- * This program and the accompanying materials are made available under the 
- * terms of the Eclipse Public License v1.0 and Eclipse Distribution License v. 1.0 
+ * This program and the accompanying materials are made available under the terms of the Eclipse Public License v1.0 and Eclipse Distribution License v. 1.0 
  * which accompanies this distribution.</i></p>
  * 
  * @author Fumbani Chibaka
@@ -31,7 +30,6 @@ public class Controller extends View {
 	private static final int GAME_SCREEN = 2;
 
 	/** Options Screen **/
-	@SuppressWarnings("unused") //TODO
 	private static final int OPTIONS_SCREEN = 3;
 
 
@@ -75,7 +73,7 @@ public class Controller extends View {
 	private List<Player> players = new ArrayList<Player>();
 
 	/** Tag to allow player to continue playing **/
-	private boolean proceed = false;
+	private boolean playerDone_PassToNext = false;
 
 	/** Device handed to next player show cards in hand **/
 	private boolean blankScreenTransition = false;
@@ -115,8 +113,6 @@ public class Controller extends View {
 
 		//LOG INFORMATION FOR INITIAL VALUES (for debugging )
 		this.totalNumCards = cards.countCards();
-
-
 
 		//show main menu
 		this.addMainMenu();
@@ -178,7 +174,7 @@ public class Controller extends View {
 					canvas.drawBitmap(card.getBitmap(), card.getX(), card.getY(), null); }
 
 			//allows the current player to see their current play status before passing the device to the next player
-			if (this.proceed)
+			if (this.playerDone_PassToNext)
 			{
 				FGLGraphic card = (buttons.getContinueButton());
 				this.layout.setPosition(buttons.getContinueButton(), 0.2, 0.5);
@@ -241,7 +237,7 @@ public class Controller extends View {
 			break; 
 
 		case MotionEvent.ACTION_MOVE:
-			if (start && !proceed)
+			if (start && !playerDone_PassToNext)
 				this.cardMove();
 			break; 
 		} 
@@ -295,7 +291,7 @@ public class Controller extends View {
 				{
 					this.currentPlayer.playCard(card);
 					this.textViews.getHandStatusTextView().setText( "# of Cards in Hand : " + this.currentPlayer.countCardsInHands());
-					this.proceed = true;
+					this.playerDone_PassToNext = true;
 				}
 				//Current Player makes invalid move
 				else
@@ -363,10 +359,10 @@ public class Controller extends View {
 
 		if (card.isTouched(this.touchPoint) != null)
 		{ 
-			if (noValidMoves && !this.proceed )
+			if (noValidMoves && !this.playerDone_PassToNext )
 			{
 				this.currentPlayer.pickCard();				
-				this.proceed = true;
+				this.playerDone_PassToNext = true;
 			}
 			else
 				Toast.makeText(this.context, "You are not allowed...", Toast.LENGTH_SHORT).show();
@@ -413,9 +409,9 @@ public class Controller extends View {
 
 
 		//Continue Button
-		if (this.buttons.getContinueButton().isTouched( this.touchPoint) != null && this.proceed )
+		if (this.buttons.getContinueButton().isTouched( this.touchPoint) != null && this.playerDone_PassToNext )
 		{
-			this.proceed = false; 
+			this.playerDone_PassToNext = false; 
 			this.blankScreenTransition = true;
 		}
 
@@ -456,7 +452,7 @@ public class Controller extends View {
 	/** Reset the game elements **/
 	private void resetGame() {
 		this.displayGraphics.remove(this.buttons.getBackButton());
-		this.proceed = false; //TODO: Remove the continue button instead
+		this.playerDone_PassToNext = false; //TODO: Remove the continue button instead
 
 		//return all cards that are currently in player hands
 		for (int i = 0; i < this.players.size(); i++)
@@ -510,9 +506,9 @@ public class Controller extends View {
 
 	/**
 	 * Count the total number of cards in all the players hands (Used for debugging)
+	 * @return the number of cards
 	 */
-	private int countNumCardsAllPlayers()
-	{
+	private int countNumCardsAllPlayers(){
 		int sum = 0;
 		for (Player player: this.players){
 			sum = sum + player.countCardsInHands();
