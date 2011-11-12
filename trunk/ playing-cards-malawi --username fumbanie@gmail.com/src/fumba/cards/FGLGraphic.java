@@ -20,7 +20,7 @@ public abstract class FGLGraphic {
 
 	/** the resource ID assigned in the R class **/
 	protected int resourceID;
-	
+
 	/** the graphical bitmap image of the custom view */
 	protected Bitmap img;
 
@@ -39,8 +39,12 @@ public abstract class FGLGraphic {
 	/** the context */
 	protected Context context;
 
+	/** a tag to check if the graphic is touch sensitive **/
+	private boolean active;
+
 
 	public FGLGraphic(Context context, String name, int resourceID) {
+		this.active = false;
 		this.name = name;
 		this.context = context;
 		this.resourceID = resourceID;
@@ -93,7 +97,7 @@ public abstract class FGLGraphic {
 		return new Point(x,y);
 	}
 
-	
+
 	/**
 	 * Resets the current position for the card to its original position.
 	 * This method is used when the player drops the cards on screen areas which do not
@@ -168,22 +172,44 @@ public abstract class FGLGraphic {
 		return this.height;
 	}
 
+	/**
+	 * Deactivates a button when it is not necessary for the current screen state. This method is necessary for CustomButtons.
+	 */
+	public void deactivate()
+	{
+		this.active = false;
+	}
 
 	/**
-	 * Checks to see if the graphic object was touched
+	 * Activates a graphic when it is necessary for it to be. This method is necessary for CustomButtons.
+	 */
+	public void activate()
+	{
+		this.active = true;
+	}
+
+	/**
+	 * Checks to see if the graphic object was touched. Only currently active graphics can be touched.
 	 * @return the offset position
 	 */
 	public  Point isTouched(Point touchPoint)
-	{		
-		if( touchPoint.x >= this.getX() && touchPoint.x <= this.getX() + this.getWidth() )
-		{
-			if ( touchPoint.y >= this.getY() && touchPoint.y <= this.getY() + this.getHeight())
+	{	
+		if ( this.active ){
+			if( touchPoint.x >= this.getX() && touchPoint.x <= this.getX() + this.getWidth() )
 			{
-				int x =  touchPoint.x - ( this.getCenter().x + this.getX() ); 
-				int y =  touchPoint.y - ( this.getCenter().y + this.getY()) ; 				
-				return new Point(x, y);
+				if ( touchPoint.y >= this.getY() && touchPoint.y <= this.getY() + this.getHeight())
+				{
+					int x =  touchPoint.x - ( this.getCenter().x + this.getX() ); 
+					int y =  touchPoint.y - ( this.getCenter().y + this.getY()) ; 	
+
+					//Log that this button was touched (for debugging purposes only)
+					Tools.catLog(this.name);
+
+					return new Point(x, y);
+				}
 			}
-		}
+		}//end if condition
+		
 		return null;
 	}
 

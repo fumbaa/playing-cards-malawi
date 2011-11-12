@@ -31,14 +31,6 @@ public class HumanPlayer implements Player {
 	}
 
 	/**
-	 * Send move to the the game controller
-	 */
-	public Move makeMove(Card card) {
-		//check if the move is valid
-		return Rules.validMove(card);
-	}
-
-	/**
 	 * Gets the name of the player
 	 * @return String representing name of the player
 	 */
@@ -107,9 +99,13 @@ public class HumanPlayer implements Player {
 	}
 
 	/** Add the selected card to the played cards list **/
-	public void playCard(Card card) {
+	public void playCard(Move move) {
+		
+		Card card = move.getCard();
 		Point point = this.controller.getTopCard().getPosition();
 		card.setCurrentPosition(point);
+		this.controller.getTopCard().deactivate();
+		this.currentMove = move;
 
 		this.controller.updatePlayedCards( card );
 		this.cards.remove(card);
@@ -134,7 +130,9 @@ public class HumanPlayer implements Player {
 	 * @return Card
 	 */
 	public void pickCard() {
-		this.addCard( this.controller.getCardBank().pickRandomCard() );
+		Card card =  this.controller.getCardBank().pickRandomCard();
+		card.activate();
+		this.addCard( card);
 	}
 
 	/**
@@ -154,5 +152,5 @@ public class HumanPlayer implements Player {
 	public Move getCurrentMove() {
 		return this.currentMove;
 	}
-
+	
 }

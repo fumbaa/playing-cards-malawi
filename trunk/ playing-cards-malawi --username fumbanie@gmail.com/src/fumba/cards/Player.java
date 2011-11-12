@@ -29,11 +29,6 @@ import java.util.List;
 public interface Player {
 
 	/**
-	 * Sends a move to the Controller class
-	 */
-	public Move makeMove(Card card);
-
-	/**
 	 * Returns the name of the player
 	 */
 	public String getName();
@@ -74,7 +69,7 @@ public interface Player {
 	/**
 	 * Adds the specified card to the played cards list
 	 */
-	public void playCard(Card card);
+	public void playCard(Move move);
 
 	/** Pick random card from the card deck **/
 	public void pickCard();

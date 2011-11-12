@@ -62,6 +62,7 @@ public class CustomButtonBank {
 		//Start button
 		CustomButton startBtn = new CustomButton(this.context, "start_button", R.drawable.start_button);
 		this.layout.setPosition(startBtn, 0.5, 0.5);
+		startBtn.activate();
 		buttonMap.put(START_BUTTON, startBtn);
 
 		//Back button
