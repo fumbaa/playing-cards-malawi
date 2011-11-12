@@ -105,6 +105,7 @@ public class Controller extends View {
 		this.touchPoint = new Point();
 		this.context = context;
 		this.currentScreen = Controller.START_SCREEN;
+		this.blankScreenTransition = false;
 		this.layout = layout;
 		this.setFocusable(true);
 
@@ -142,12 +143,16 @@ public class Controller extends View {
 		Card middle_card = this.cards.pickRandomCard();
 		this.layout.setPosition(middle_card, .5, .8);
 		this.updatePlayedCards(middle_card);
+		middle_card.activate();
 
 		for (int i = 0; i < this.numOfCardsServed; i++)
 		{
 			//distribute to all the players
-			for ( int j = 0; j < this.players.size(); j++)
-				this.players.get(j).addCard( this.cards.pickRandomCard()	);
+			for ( int j = 0; j < this.players.size(); j++){
+				Card card = this.cards.pickRandomCard();
+				card.activate();
+				this.players.get(j).addCard( card	);
+			}
 		}
 	}
 
@@ -178,7 +183,7 @@ public class Controller extends View {
 				this.textViews.getPlayerTransitionTextView().setText( this.nextPlayer.getName() + string );
 			}
 
-			//Scenario 2: allows the current player to see their current play status before passing the device to the next player
+			//Scenario 2: allows the current player to see their current play status before passing the device to the next player			
 			if (this.currentPlayer.getCurrentMove().isDone())				
 				canvas.drawBitmap(buttons.getContinueButton().getBitmap(), buttons.getContinueButton().getX(), buttons.getContinueButton().getY(), null);
 
@@ -291,13 +296,14 @@ public class Controller extends View {
 			//Current players turn
 			if ( this.currentPlayer.isHuman() )
 			{
-				Boolean validMove = this.currentPlayer.makeMove(card).getValidity();
-
+				Move move = Rules.checkMove(card);
 				//Current Player makes valid move
-				if ( validMove && this.topPlayedCard.isTouched(this.touchPoint)!= null)
+				if ( move.getValidity() && this.topPlayedCard.isTouched(this.touchPoint)!= null)
 				{
-					this.currentPlayer.playCard(card);
-					this.textViews.getHandStatusTextView().setText( "# of Cards in Hand : " + currentPlayer.getCurrentMove().isDone()); //TODO: replace>  this.currentPlayer.countCardsInHands()); 
+					this.currentPlayer.playCard(move);
+					this.activeCard = null;
+					this.buttons.getContinueButton().activate();
+					this.textViews.getHandStatusTextView().setText( "# of Cards in Hand : " + this.currentPlayer.countCardsInHands()); 
 					this.gameOver();
 				}
 				//Current Player makes invalid move
@@ -323,10 +329,10 @@ public class Controller extends View {
 	 * Check of the most recent move has resulted into a win. This method is called in {@link #cardUp()}.
 	 */
 	private void gameOver() {
-		//important: check if the player is continuing with his move (this can also be done by using the playerDone_PassToNext field 
+		//important: check if the player is continuing with his move 
 		if (this.currentPlayer.getCurrentMove().isDone())
 		{
-			this.currentScreen = Controller.GAME_OVER;
+			//this.currentScreen = Controller.GAME_OVER;
 		}
 	}
 
@@ -375,6 +381,8 @@ public class Controller extends View {
 		{ 
 			if (  ! this.currentPlayer.getCurrentMove().isDone() ){ //Block players waiting to press PASS PHONE TO NEXT PLAYER button from picking cards //TODO
 				this.currentPlayer.pickCard();	
+				this.buttons.getContinueButton().activate();
+				
 				this.currentPlayer.getCurrentMove().setDone(true);
 				this.textViews.getHandStatusTextView().setText( "# of Cards in Hand : " + this.currentPlayer.countCardsInHands());
 			}
@@ -391,6 +399,7 @@ public class Controller extends View {
 		//START BUTTON (determine 1st player, put cards on table, distribute cards)
 		if (this.buttons.getStartButton().isTouched(this.touchPoint) != null)
 		{
+			this.buttons.getStartButton().deactivate();
 			this.currentScreen = Controller.GAME_SCREEN;
 			sounds.startSound();
 			this.currentPlayer = players.get(0); //Randomize this maybe ?
@@ -400,6 +409,7 @@ public class Controller extends View {
 
 			this.addCardDeck();
 			this.serveCards();
+			this.buttons.getBackButton().activate();
 			this.textViews.getHandStatusTextView().setText( "# of Cards in Hand : " + this.currentPlayer.countCardsInHands());
 		}
 
@@ -408,12 +418,15 @@ public class Controller extends View {
 		{
 			this.resetGame();
 			this.currentScreen = Controller.START_SCREEN;
+			this.buttons.getBackButton().deactivate();
+			this.buttons.getStartButton().activate();
 		}
 
 		//CONTINUE BUTTON
 		else if (this.buttons.getContinueButton().isTouched( this.touchPoint) != null && this.currentPlayer.getCurrentMove().isDone() )
 		{
 			this.currentPlayer.setCurrentMove( new Move() ); //refresh move
+			this.buttons.getContinueButton().deactivate();
 			this.blankScreenTransition = true;
 		}
 
@@ -422,6 +435,7 @@ public class Controller extends View {
 	/** Show the card deck and make cards available for player to pick if necessary **/
 	private void addCardDeck() {
 		this.cardBack = new Card (this.context, "--", R.drawable.card_back, this);
+		this.cardBack.activate();
 		this.layout.setPosition(cardBack, 0.9, 0.7);
 	}
 

@@ -4,7 +4,7 @@ package fumba.cards;
  * The <code>Rules</code> class defines the rules for playing the game. Game users are allowed to customize the game rules according to their liking or
  * familiarity since this game has variations.
  * 
- * <p><i>Copyright (c) 1998, 2011 Oracle. All rights reserved.
+ * <p><i>Copyright (c) 1998, 2011 Oracle. All rights reserved. 
  * This program and the accompanying materials are made available under the terms of the Eclipse Public License v1.0 and Eclipse Distribution License v. 1.0 
  * which accompanies this distribution.</i></p>
  * 
@@ -15,14 +15,14 @@ package fumba.cards;
 
 public abstract class Rules {
 
+	
 	/**
-	 * Apply rules to the specified intended card play
-	 * @return a {@link Move Move} object that contains both the validity and continuity of the played move
+	 * Checks if a move is valid
+	 * @return Boolean
 	 */
-	public static Move validMove(Card card)
+	public static Move checkMove(Card card)
 	{
 		Move move = new Move();
-		card.getController().getCurrentPlayer().setCurrentMove(move);
 
 		Controller controller = card.getController();
 
@@ -36,6 +36,7 @@ public abstract class Rules {
 		{
 			move.setValidity(true);
 			move.setDone(true);
+			move.setCard(card);
 		}
 		return move; 
 	}
@@ -46,7 +47,7 @@ public abstract class Rules {
 	 */
 	public static Boolean pickCard(Controller controller) {
 		for (Card card: controller.getCurrentPlayer().getCardsInHand()){
-			if (Rules.validMove(card).getValidity())
+			if (Rules.checkMove(card).getValidity())
 				return false;
 		}
 		return true;

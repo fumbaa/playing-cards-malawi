@@ -19,11 +19,14 @@ public class Move {
 	/** tag to show the attempted move is a valid one **/
 	private Boolean validity;
 	
+	Card card;
+	
 	/** Constructs a move object **/
 	public Move()
 	{
 		this.continuity = false;
 		this.validity = false;
+		this.card = null;
 	}
 
 	/**
@@ -56,6 +59,17 @@ public class Move {
 	 */
 	public Boolean  isDone() {
 		return this.continuity;
+	}
+
+	public String toString(){
+		return "Move : " + this.card.getName() + " -  Valid: " + this.validity + " Continuity: "+ this.continuity;
+	}
+	public void setCard(Card card){
+		this.card = card;
+	}
+	
+	public Card getCard() {
+		return this.card;
 	}
 
 }
