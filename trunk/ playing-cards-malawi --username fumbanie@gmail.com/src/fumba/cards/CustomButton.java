@@ -4,7 +4,7 @@ import android.content.Context;
 import android.graphics.BitmapFactory;
 
 /**
- * Customised menu buttons.
+ * Customized menu buttons.
  * <p>
  * <i>Copyright (c) 1998, 2011 Oracle. All rights reserved. This program and the
  * accompanying materials are made available under the terms of the Eclipse

@@ -27,7 +27,7 @@ import android.widget.Toast;
  * @see <a href="http:chibaka.com">Fumba Game Lab</a>
  */
 
-public class Controller extends View {
+public class Controller extends View implements MessageConstants {
 
 	// Screen timeline
 	/** Welcome screen **/
@@ -97,6 +97,9 @@ public class Controller extends View {
 	 * game
 	 **/
 	private int numOfCardsServed;
+
+	/** Game Language **/
+	private String LN;
 
 	/**
 	 * Starts the game with a welcome screen where user selects desired options
@@ -431,9 +434,11 @@ public class Controller extends View {
 				this.textViews.getHandStatusTextView().setText(
 						"# of Cards in Hand : "
 								+ this.currentPlayer.countCardsInHands());
-			} else
-				Toast.makeText(this.context, "You are not allowed...",
-						Toast.LENGTH_SHORT).show();
+			} else {
+				String msg = FGLMessage.getMoveNotAllowed(LN);
+				Toast.makeText(this.context, msg , Toast.LENGTH_SHORT)
+						.show();
+			}
 		}
 	}
 
