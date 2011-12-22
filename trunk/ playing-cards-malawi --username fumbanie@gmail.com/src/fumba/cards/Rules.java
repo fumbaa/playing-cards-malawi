@@ -1,12 +1,16 @@
 package fumba.cards;
 
 /**
- * The <code>Rules</code> class defines the rules for playing the game. Game users are allowed to customize the game rules according to their liking or
+ * The <code>Rules</code> class defines the rules for playing the game. Game
+ * users are allowed to customize the game rules according to their liking or
  * familiarity since this game has variations.
  * 
- * <p><i>Copyright (c) 1998, 2011 Oracle. All rights reserved. 
- * This program and the accompanying materials are made available under the terms of the Eclipse Public License v1.0 and Eclipse Distribution License v. 1.0 
- * which accompanies this distribution.</i></p>
+ * <p>
+ * <i>Copyright (c) 1998, 2011 Oracle. All rights reserved. This program and the
+ * accompanying materials are made available under the terms of the Eclipse
+ * Public License v1.0 and Eclipse Distribution License v. 1.0 which accompanies
+ * this distribution.</i>
+ * </p>
  * 
  * @author Fumbani Chibaka
  * @version 1.0, 10/28/2011
@@ -15,13 +19,12 @@ package fumba.cards;
 
 public abstract class Rules {
 
-	
 	/**
 	 * Checks if a move is valid
+	 * 
 	 * @return Boolean
 	 */
-	public static Move checkMove(Card card)
-	{
+	public static Move checkMove(Card card) {
 		Move move = new Move();
 
 		Controller controller = card.getController();
@@ -32,21 +35,38 @@ public abstract class Rules {
 		char topCardSuite = controller.getTopCard().getSuite();
 		char topCardNum = controller.getTopCard().getNumber();
 
-		if (currCardSuite == topCardSuite || currCardNum == topCardNum )
-		{
+		if (currCardSuite == topCardSuite || currCardNum == topCardNum) {
 			move.setValidity(true);
 			move.setDone(true);
 			move.setCard(card);
 		}
-		return move; 
+
+		checkIfEndMove(move, controller);
+		return move;
 	}
 
 	/**
-	 * Check if there are any valid moves 
-	 * @return Boolean (true if no moves are available from the cards currently in the players hands)
+	 * Checks to see if the player wins with their current move.
+	 */
+	private static void checkIfEndMove(Move move, Controller controller) {
+		Player currentPlayer = controller.getCurrentPlayer();
+		int cardCount = currentPlayer.getCardsInHand().size();
+		if (cardCount == 1 && move.getValidity() == true
+				&& move.isDone() == true) {// at this point the player has only
+											// card left that is playable-
+											// update necessary move fields
+
+		}
+	}
+
+	/**
+	 * Check if there are any valid moves
+	 * 
+	 * @return Boolean (true if no moves are available from the cards currently
+	 *         in the players hands)
 	 */
 	public static Boolean pickCard(Controller controller) {
-		for (Card card: controller.getCurrentPlayer().getCardsInHand()){
+		for (Card card : controller.getCurrentPlayer().getCardsInHand()) {
 			if (Rules.checkMove(card).getValidity())
 				return false;
 		}

@@ -30,24 +30,25 @@ import android.widget.RelativeLayout;
 
 public class GameBoardLayout extends RelativeLayout {
 
-
 	/**
 	 * Uses relative layout to arrange game elements
+	 * 
 	 * @param context
 	 */
-	public GameBoardLayout(Context context)
-	{
+	public GameBoardLayout(Context context) {
 		super(context);
 		Controller board = new Controller(context, this);
 		this.addView(board);
 	}
 
-	/** Sets positions for the game graphics based on the relative screen size of the device **/
-	public void setPosition(FGLGraphic graphic, double x, double y)
-	{
+	/**
+	 * Sets positions for the game graphics based on the relative screen size of
+	 * the device
+	 **/
+	public void setPosition(FGLGraphic graphic, double x, double y) {
 		int height = (int) (PlayingCardsActivity.height * y);
 		int width = (int) (PlayingCardsActivity.width * x);
-		graphic.setCurrentPosition( new Point( width, height));
+		graphic.setCurrentPosition(new Point(width, height));
 	}
 
 }
