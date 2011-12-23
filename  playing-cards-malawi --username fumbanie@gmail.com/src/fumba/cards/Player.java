@@ -96,4 +96,7 @@ public interface Player {
 	/** Sets the players current move **/
 	public void setCurrentMove(Move move);
 
+	/** Checks if player has moves that can be made **/
+	public boolean hasValidMoves();
+
 }

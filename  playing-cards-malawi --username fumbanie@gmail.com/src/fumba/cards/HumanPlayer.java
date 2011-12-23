@@ -165,4 +165,11 @@ public class HumanPlayer implements Player {
 	public String toString() {
 		return this.name;
 	}
+
+	/**
+	 * Checks to see if the player has valid moves
+	 */
+	public boolean hasValidMoves() {
+		return Rules.hasValidMoves(this);
+	}
 }
