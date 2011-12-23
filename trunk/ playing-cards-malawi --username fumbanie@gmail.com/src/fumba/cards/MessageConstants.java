@@ -8,4 +8,8 @@ public interface MessageConstants {
 	/** CHICHEWA - Player not allowed to make move **/
 	public final static String CH_NOT_ALLOWED = "Simungayende muvu imeneyi panthawi ino...";
 
+	/** TUMBUKA- Player not allowed to make move **/
+	public static final String TM_NOT_ALLOWED = "Ivo mukuchita nvyakulolezeka yayi";
+	
+
 }
