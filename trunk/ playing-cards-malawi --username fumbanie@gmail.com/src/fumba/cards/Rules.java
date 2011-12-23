@@ -37,40 +37,26 @@ public abstract class Rules {
 
 		if (currCardSuite == topCardSuite || currCardNum == topCardNum) {
 			move.setValidity(true);
-			move.setDone(true);
+			move.setContinuity(false); // TODO change this
 			move.setCard(card);
 		}
-
-		checkIfEndMove(move, controller);
 		return move;
 	}
 
 	/**
-	 * Checks to see if the player wins with their current move.
-	 */
-	private static void checkIfEndMove(Move move, Controller controller) {
-		Player currentPlayer = controller.getCurrentPlayer();
-		int cardCount = currentPlayer.getCardsInHand().size();
-		if (cardCount == 1 && move.getValidity() == true
-				&& move.isDone() == true) {// at this point the player has only
-											// card left that is playable-
-											// update necessary move fields
-
-		}
-	}
-
-	/**
-	 * Check if there are any valid moves
+	 * Checks to see if the player has valid moves
 	 * 
-	 * @return Boolean (true if no moves are available from the cards currently
-	 *         in the players hands)
+	 * @param player
+	 *            Player object
+	 * @return boolean Return true if the player can make a valid move from his
+	 *         current stack
 	 */
-	public static Boolean pickCard(Controller controller) {
-		for (Card card : controller.getCurrentPlayer().getCardsInHand()) {
+	public static boolean hasValidMoves(Player player) {
+		for (Card card : player.getCardsInHand()) {
 			if (Rules.checkMove(card).getValidity())
-				return false;
+				return true;
 		}
-		return true;
+		return false;
 	}
 
 }

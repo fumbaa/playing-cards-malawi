@@ -99,7 +99,10 @@ public class Controller extends View implements MessageConstants {
 	private int numOfCardsServed;
 
 	/** Game Language **/
-	private String LN;
+	private String LN = GeneralConstants.CHICHEWA;
+
+	/** Set true if a player just put a card on the deck **/
+	private boolean currentPlayerMadeValidMove = false;
 
 	/**
 	 * Starts the game with a welcome screen where user selects desired options
@@ -144,7 +147,7 @@ public class Controller extends View implements MessageConstants {
 
 		this.players.add(p1);
 		this.players.add(p2);
-		this.players.add(p3);
+		//this.players.add(p3);
 	}
 
 	/**
@@ -209,10 +212,12 @@ public class Controller extends View implements MessageConstants {
 
 			// Scenario 2: allows the current player to see their current play
 			// status before passing the device to the next player
-			if (this.currentPlayer.getCurrentMove().isDone())
+			if (this.currentPlayerMadeValidMove) {
 				canvas.drawBitmap(buttons.getContinueButton().getBitmap(),
 						buttons.getContinueButton().getX(), buttons
 								.getContinueButton().getY(), null);
+				// Proceed to touch down event (buttonDown() - CONTINUE BUTTON)
+			}
 
 			// Scenario 3: draw cards
 			if (!this.blankScreenTransition) {
@@ -269,24 +274,24 @@ public class Controller extends View implements MessageConstants {
 		// Only move cards on the game screen when the player is not waiting to
 		// press (PASS TO NEXT PLAYER) button
 		Boolean canMove = (this.currentScreen == Controller.GAME_SCREEN)
-				&& !this.currentPlayer.getCurrentMove().isDone();
+				&& !this.currentPlayer.getCurrentMove().isContinued();
 
 		switch (eventAction) {
 
 		case MotionEvent.ACTION_UP:
-			if (canMove)
-				this.cardUp();
+			if (canMove && this.activeCard != null)
+				this.cardReleased();
 			break;
 
 		case MotionEvent.ACTION_DOWN:
 			this.screenDown();
 			if (canMove)
-				this.cardDown();
+				this.cardTouched();
 			this.buttonDown();
 			break;
 
 		case MotionEvent.ACTION_MOVE:
-			if (canMove)
+			if (canMove && this.activeCard != null)
 				this.cardMove();
 			break;
 		}
@@ -307,6 +312,48 @@ public class Controller extends View implements MessageConstants {
 	}
 
 	/**
+	 * Actions to perform when a card is touched
+	 */
+	private void cardTouched() {
+		this.activeCard = null;// reset active card
+
+		// if card is in hand....
+		for (Card card : this.currentPlayer.getCardsInHand()) {
+			Point check = card.isTouched(this.touchPoint);
+			if (check != null) {
+				this.activeCard = card.getName();
+				this.currentPlayer.bringCardToFront(card);
+				card.magnify();
+				break;
+			}
+		}
+		// if card is on the played cards deck.....
+		Card card = this.topPlayedCard;
+		Point check = card.isTouched(this.touchPoint);
+		if (check != null) {
+			this.sounds.rejectSound();
+		}
+
+		// if card is on the deck of unplayed cards
+		if (this.cardBack.isTouched(this.touchPoint) != null) {
+			if (!this.currentPlayer.hasValidMoves()) {
+				this.currentPlayer.pickCard();
+				// TODO: time the player wait period
+				this.buttons.getContinueButton().activate();
+				this.textViews.getHandStatusTextView().setText(
+						"# of Cards in Hand : "
+								+ this.currentPlayer.countCardsInHands());
+				this.currentPlayerMadeValidMove = true;
+			} else {
+				// Player has valid moves force them...
+				// TODO: add option to allow continued played on choice (bluff)
+				String msg = FGLMessage.getMoveNotAllowed(LN);
+				Toast.makeText(this.context, msg, Toast.LENGTH_SHORT).show();
+			}
+		}
+	}
+
+	/**
 	 * Actions to perform when a card is moved.
 	 */
 	private void cardMove() {
@@ -320,9 +367,9 @@ public class Controller extends View implements MessageConstants {
 	}
 
 	/**
-	 * Actions to perform when a card is dropped
+	 * Actions to perform when a card is dropped/ released
 	 */
-	private void cardUp() {
+	private void cardReleased() {
 		if (this.activeCard != null) {
 
 			Card card = this.currentPlayer.getCard(this.activeCard);
@@ -339,7 +386,12 @@ public class Controller extends View implements MessageConstants {
 					this.textViews.getHandStatusTextView().setText(
 							"# of Cards in Hand : "
 									+ this.currentPlayer.countCardsInHands());
-					this.gameOver();
+
+					// gameOver() handles change of screen
+					if (this.gameOver()) {
+						return;
+					}
+					this.currentPlayerMadeValidMove = true;
 				}
 				// Current Player makes invalid move
 				else {
@@ -360,13 +412,18 @@ public class Controller extends View implements MessageConstants {
 
 	/**
 	 * Check of the most recent move has resulted into a win. This method is
-	 * called in {@link #cardUp()}.
+	 * called in {@link #cardReleased()}.
+	 * 
+	 * @return
 	 */
-	private void gameOver() {
+	private boolean gameOver() {
 		// important: check if the player is continuing with his move
-		if (this.currentPlayer.getCurrentMove().isDone()) {
+		if (!this.currentPlayer.getCurrentMove().isContinued()
+				&& this.currentPlayer.getCardsInHand().isEmpty()) {
 			this.currentScreen = Controller.GAME_OVER;
+			return true;
 		}
+		return false;
 	}
 
 	/**
@@ -385,61 +442,6 @@ public class Controller extends View implements MessageConstants {
 		this.textViews.getHandStatusTextView().setText(
 				"# of Cards in Hand : "
 						+ this.currentPlayer.countCardsInHands());
-	}
-
-	/**
-	 * Actions to perform when a card is touched
-	 */
-	private void cardDown() {
-		this.activeCard = null;// reset active card
-
-		// if card is in hand....
-		for (Card card : this.currentPlayer.getCardsInHand()) {
-			Point check = card.isTouched(this.touchPoint);
-			if (check != null) {
-				this.activeCard = card.getName();
-				this.currentPlayer.bringCardToFront(card); // Important: bring
-															// the active card
-															// to front
-				card.magnify();
-				break;
-			}
-		}
-		// if card is on the played cards deck.....
-		Card card = this.topPlayedCard;
-		Point check = card.isTouched(this.touchPoint);
-		if (check != null) {
-			this.sounds.rejectSound();
-		}
-
-		// if card is on the deck of unplayed cards
-		if (this.cardBack.isTouched(this.touchPoint) != null) {
-			if (!this.currentPlayer.getCurrentMove().isDone()) { // Block
-																	// players
-																	// waiting
-																	// to press
-																	// PASS
-																	// PHONE TO
-																	// NEXT
-																	// PLAYER
-																	// button
-																	// from
-																	// picking
-																	// cards
-																	// //TODO
-				this.currentPlayer.pickCard();
-				this.buttons.getContinueButton().activate();
-
-				this.currentPlayer.getCurrentMove().setDone(true);
-				this.textViews.getHandStatusTextView().setText(
-						"# of Cards in Hand : "
-								+ this.currentPlayer.countCardsInHands());
-			} else {
-				String msg = FGLMessage.getMoveNotAllowed(LN);
-				Toast.makeText(this.context, msg , Toast.LENGTH_SHORT)
-						.show();
-			}
-		}
 	}
 
 	/**
@@ -475,11 +477,11 @@ public class Controller extends View implements MessageConstants {
 		}
 
 		// CONTINUE BUTTON
-		else if (this.buttons.getContinueButton().isTouched(this.touchPoint) != null
-				&& this.currentPlayer.getCurrentMove().isDone()) {
-			this.currentPlayer.setCurrentMove(new Move()); // refresh move
+		else if (this.buttons.getContinueButton().isTouched(this.touchPoint) != null) {
+			this.currentPlayer.setCurrentMove(new Move()); // reset move
 			this.buttons.getContinueButton().deactivate();
 			this.blankScreenTransition = true;
+			this.currentPlayerMadeValidMove = false;
 		}
 
 	}

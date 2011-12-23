@@ -17,7 +17,7 @@ package fumba.cards;
  */
 public class Move {
 
-	/** Tag to show if player is allowed to make another move **/
+	/** Tag to show if player is required to make another  move (continued move) **/
 	private Boolean continuity;
 
 	/** tag to show the attempted move is a valid one **/
@@ -42,7 +42,7 @@ public class Move {
 	/**
 	 * Sets the continuity of the move
 	 */
-	public void setDone(Boolean continuity) {
+	public void setContinuity(Boolean continuity) {
 		this.continuity = continuity;
 	}
 
@@ -60,7 +60,7 @@ public class Move {
 	 * 
 	 * @return Boolean
 	 */
-	public Boolean isDone() {
+	public Boolean isContinued() {
 		return this.continuity;
 	}
 

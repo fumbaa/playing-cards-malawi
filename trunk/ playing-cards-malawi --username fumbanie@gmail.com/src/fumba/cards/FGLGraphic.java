@@ -212,16 +212,13 @@ public abstract class FGLGraphic {
 						&& touchPoint.y <= this.getY() + this.getHeight()) {
 					int x = touchPoint.x - (this.getCenter().x + this.getX());
 					int y = touchPoint.y - (this.getCenter().y + this.getY());
-
 					// Log that this button was touched (for debugging purposes
 					// only)
 					Tools.catLog(this.name);
-
 					return new Point(x, y);
 				}
 			}
 		}// end if condition
-
 		return null;
 	}
 
