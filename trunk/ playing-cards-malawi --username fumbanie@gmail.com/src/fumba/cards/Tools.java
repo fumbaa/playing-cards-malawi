@@ -1,7 +1,11 @@
 package fumba.cards;
 
+import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
+
+import org.apache.commons.lang3.StringUtils;
+
 import android.util.Log;
 
 /**
@@ -48,6 +52,32 @@ public class Tools {
 			Log.v(TAG, key + " " + value);
 			Log.v(TAG, "________________");
 		}
+	}
+
+	/**
+	 * Debugging purposes only
+	 * @param textViews
+	 * @param cards
+	 * @param totalNumCards
+	 * @param playedCards
+	 * @param cardsAllPlayers
+	 */
+	public static void debug(String string, TextViewBank textViews, CardBank cards, int totalNumCards, ArrayList<Card> playedCards, int cardsAllPlayers, Player nextPlayer ){
+		
+		if (StringUtils.equals(string, GeneralConstants.USED_CARDS_SUMMARY))
+		textViews.getDeckStatusTextView().setText(
+				"Used : " + cards.countCards() + " / "
+						+ totalNumCards + " c[" + playedCards.size()
+						+ "] a[" + cardsAllPlayers + "]");
+		
+		else if (StringUtils.equals(string, GeneralConstants.CURRENT_PLAYER_SUMMARY)){
+			textViews.getCurrentPlayerTextView().setText(
+					"Current Player : " + nextPlayer.getName());
+			textViews.getHandStatusTextView().setText(
+					"# of Cards in Hand : "
+							+ nextPlayer.countCardsInHands());
+		}
+		
 	}
 
 }

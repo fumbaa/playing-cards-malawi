@@ -1,5 +1,8 @@
 package fumba.cards;
 
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
+
 /**
  * The <code>Rules</code> class defines the rules for playing the game. Game
  * users are allowed to customize the game rules according to their liking or
@@ -20,9 +23,10 @@ package fumba.cards;
 public abstract class Rules {
 
 	/**
-	 * Checks if a move is valid
+	 * Checks if a card can be played and returns a move object with validity
+	 * and continuity determined.
 	 * 
-	 * @return Boolean
+	 * @return Move
 	 */
 	public static Move checkMove(Card card) {
 		Move move = new Move();
@@ -37,10 +41,24 @@ public abstract class Rules {
 
 		if (currCardSuite == topCardSuite || currCardNum == topCardNum) {
 			move.setValidity(true);
-			move.setContinuity(false); // TODO change this
+			move.setContinuity( determineContinuity(card) ); 
 			move.setCard(card);
 		}
 		return move;
+	}
+
+	/**
+	 * Check if the card being played requires for a support card. ie. the
+	 * player needs to make another move
+	 * 
+	 * @return boolean true if the player needs to make another supporting move
+	 */
+	public static boolean determineContinuity(Card card) {
+		String[] repeatCards = card.getController().getRepeatCards();
+		if ( ArrayUtils.contains(repeatCards, card.getName()) || ArrayUtils.contains(repeatCards, card.getNumber())){
+			return true;
+		}
+		return false;
 	}
 
 	/**
