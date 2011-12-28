@@ -2,6 +2,9 @@ package fumba.cards;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import org.apache.commons.lang3.ArrayUtils;
+
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Point;
@@ -27,19 +30,8 @@ import android.widget.Toast;
  * @see <a href="http:chibaka.com">Fumba Game Lab</a>
  */
 
-public class Controller extends View implements LanguageConstants {
-
-	// Screen timeline
-	/** Welcome screen **/
-	private static final int START_SCREEN = 1;
-
-	/** Screen with game ready to be played **/
-	private static final int GAME_SCREEN = 2;
-
-	/** Options Screen **/
-	private static final int OPTIONS_SCREEN = 3;
-
-	private static final int GAME_OVER = 4;
+public class Controller extends View implements LanguageConstants,
+		GeneralConstants, ScreenConstants {
 
 	/** the card on the very top of the played card stack **/
 	private Card topPlayedCard;
@@ -48,7 +40,7 @@ public class Controller extends View implements LanguageConstants {
 	private Context context;
 
 	/** collection of played cards */
-	private List<Card> playedCards = new ArrayList<Card>();
+	private ArrayList<Card> playedCards = new ArrayList<Card>();
 
 	/** currently selected card */
 	private String activeCard;
@@ -77,9 +69,6 @@ public class Controller extends View implements LanguageConstants {
 	/** List of players currently in the game **/
 	private List<Player> players = new ArrayList<Player>();
 
-	/** Device handed to next player show cards in hand **/
-	private boolean blankScreenTransition = false;
-
 	/** A framelayout that organizes all the graphical game elements **/
 	private GameBoardLayout layout;
 
@@ -99,10 +88,10 @@ public class Controller extends View implements LanguageConstants {
 	private int numOfCardsServed;
 
 	/** Game Language **/
-	private String LN = GeneralConstants.CHICHEWA;
+	private String LN = CHICHEWA;
 
-	/** Set true if a player just put a card on the deck **/
-	private boolean currentPlayerMadeValidMove = false;
+	/** Cards that need support after they are played **/
+	private String[] repeatCards = REPEAT_CARDS_1;
 
 	/**
 	 * Starts the game with a welcome screen where user selects desired options
@@ -120,8 +109,7 @@ public class Controller extends View implements LanguageConstants {
 
 		this.touchPoint = new Point();
 		this.context = context;
-		this.currentScreen = Controller.START_SCREEN;
-		this.blankScreenTransition = false;
+		this.currentScreen = START_SCREEN;
 		this.layout = layout;
 		this.setFocusable(true);
 
@@ -139,15 +127,15 @@ public class Controller extends View implements LanguageConstants {
 
 		String playerName1 = "Fumbani";
 		String playerName2 = "Felix";
-		//String playerName3 = "DiwiDiwi";
+		// String playerName3 = "DiwiDiwi";
 
 		Player p1 = new HumanPlayer(playerName1, this);
 		Player p2 = new HumanPlayer(playerName2, this);
-		//Player p3 = new HumanPlayer(playerName3, this);
+		// Player p3 = new HumanPlayer(playerName3, this);
 
 		this.players.add(p1);
 		this.players.add(p2);
-		//this.players.add(p3);
+		// this.players.add(p3);
 	}
 
 	/**
@@ -180,76 +168,66 @@ public class Controller extends View implements LanguageConstants {
 	@Override
 	protected void onDraw(Canvas canvas) {
 
-		// 1. START SCREEN (Draw Start Button )
-		if (this.currentScreen == Controller.START_SCREEN)
-			canvas.drawBitmap(this.buttons.getStartButton().getBitmap(),
-					this.buttons.getStartButton().getX(), this.buttons
-							.getStartButton().getY(), null);
+		/* Application welcome Screen */
+		if (this.currentScreen == START_SCREEN)
+			this.buttons.drawStartButton(canvas);
 
-		// 2. GAME SCREEN (Depends on the scenario)
-		if (this.currentScreen == Controller.GAME_SCREEN) {
-			// draw back button
-			canvas.drawBitmap(this.buttons.getBackButton().getBitmap(),
-					this.buttons.getBackButton().getX(), this.buttons
-							.getBackButton().getY(), null);
-
-			// Scenario 1: Show a blank screen that will be activated by next
-			// player whenever they are ready to play
-			if (this.blankScreenTransition) {
-				this.nextPlayer = this.getNextPlayer(); 
-				this.textViews.getCurrentPlayerTextView().setText(
-						"Current Player : " + this.nextPlayer.getName());
-				this.textViews.getHandStatusTextView().setText(
-						"# of Cards in Hand : "
-								+ this.nextPlayer.countCardsInHands());
-				String string = ", touch anywhere on the screen inorder for you to see your cards and continue playing the game.";
-				this.textViews.getPlayerTransitionTextView().setText(
-						this.nextPlayer.getName() + string);
+		/* GamePlay Screens */
+		else if (ArrayUtils.contains(GAMEPLAY_SCREENS, this.currentScreen)) {
+			this.buttons.drawBackButton(canvas);
+			if (this.currentScreen == TRANSITION_SCREEN) {
+				this.nextPlayer = this.getNextPlayer();
+				this.printTransitionScreenMessage();
+				Tools.debug(CURRENT_PLAYER_SUMMARY, textViews, null, 0, null,
+						0, nextPlayer);
+			} else {
+				this.drawCards(canvas);
+				if (this.currentScreen == CONTINUE_SCREEN)
+					this.buttons.drawContinueButton(canvas);
 			}
-
-			// Scenario 2: allows the current player to see their current play
-			// status before passing the device to the next player
-			if (this.currentPlayerMadeValidMove) {
-				canvas.drawBitmap(buttons.getContinueButton().getBitmap(),
-						buttons.getContinueButton().getX(), buttons
-								.getContinueButton().getY(), null);
-				// Proceed to touch down event (buttonDown() - CONTINUE BUTTON)
-			}
-
-			// Scenario 3: draw cards
-			if (!this.blankScreenTransition) {
-				canvas.drawBitmap(this.cardBack.getBitmap(),
-						this.cardBack.getX(), this.cardBack.getY(), null); // unplayed
-																			// cards
-				for (Card card : this.playedCards) {
-					canvas.drawBitmap(card.getBitmap(), card.getX(),
-							card.getY(), null);
-				} // played cards
-				for (Card card : this.currentPlayer.getCardsInHand()) {
-					canvas.drawBitmap(card.getBitmap(), card.getX(),
-							card.getY(), null);
-				} // cards in hands
-			}
-
 		}
 
-		// 3. GAME OVER SCREEN (displays message if the game is over- the
-		// current player wins!)
-		else if (this.currentScreen == Controller.GAME_OVER) {
+		/* GameOver Screen */
+		else if (this.currentScreen == GAME_OVER) {
 			this.textViews.getPlayerTransitionTextView().setText(
 					"Game Over !!!!");
+			this.buttons.drawBackButton(canvas);
 		}
+		Tools.debug(USED_CARDS_SUMMARY, textViews, cards, totalNumCards,
+				playedCards, countNumCardsAllPlayers(), null);
+	}
 
-		// Logging for debug purposes only
-		this.textViews.getDeckStatusTextView().setText(
-				"Used : " + this.cards.countCards() + " / "
-						+ this.totalNumCards + " c[" + this.playedCards.size()
-						+ "] a[" + this.countNumCardsAllPlayers() + "]");
+	/**
+	 * Prints the instructions for the next player to touch screen during device
+	 * exchange
+	 * 
+	 * @param player
+	 */
+	private void printTransitionScreenMessage() {
+		String message = FGLMessage.getTouchScreenMsg(LN);
+		this.textViews.getPlayerTransitionTextView().setText(
+				this.nextPlayer.getName() + ", " + message);
+	}
+
+	/**
+	 * Draw All Cards on the game board
+	 * 
+	 * @param canvas
+	 */
+	private void drawCards(Canvas canvas) {
+		canvas.drawBitmap(this.cardBack.getBitmap(), this.cardBack.getX(),
+				this.cardBack.getY(), null);
+		for (Card card : this.playedCards) {
+			canvas.drawBitmap(card.getBitmap(), card.getX(), card.getY(), null);
+		}
+		for (Card card : this.currentPlayer.getCardsInHand()) {
+			canvas.drawBitmap(card.getBitmap(), card.getX(), card.getY(), null);
+		}
 	}
 
 	/** Retrieves the next player **/
 	private Player getNextPlayer() {
-		//TODO: add reverse and forward moves
+		// TODO: add reverse and forward moves
 		int location = this.players.indexOf(this.currentPlayer) + 1;
 		if (location == this.players.size())
 			location = 0;
@@ -271,7 +249,7 @@ public class Controller extends View implements LanguageConstants {
 
 		// Only move cards on the game screen when the player is not waiting to
 		// press (PASS TO NEXT PLAYER) button
-		Boolean canMove = (this.currentScreen == Controller.GAME_SCREEN)
+		Boolean canMove = (this.currentScreen == PLAY_SCREEN)
 				&& !this.currentPlayer.getCurrentMove().isContinued();
 
 		switch (eventAction) {
@@ -302,8 +280,8 @@ public class Controller extends View implements LanguageConstants {
 	 * Actions to be performed when the screen in touched
 	 */
 	private void screenDown() {
-		if (this.blankScreenTransition) {
-			this.blankScreenTransition = false;
+		if (this.currentScreen == TRANSITION_SCREEN) {
+			this.currentScreen = PLAY_SCREEN;
 			this.nextPlayer();
 			this.textViews.getPlayerTransitionTextView().setText("");
 		}
@@ -341,11 +319,11 @@ public class Controller extends View implements LanguageConstants {
 				this.textViews.getHandStatusTextView().setText(
 						"# of Cards in Hand : "
 								+ this.currentPlayer.countCardsInHands());
-				this.currentPlayerMadeValidMove = true;
+				this.currentScreen = CONTINUE_SCREEN;
 			} else {
 				// Player has valid moves force them...
 				// TODO: add option to allow continued played on choice (bluff)
-				String msg = FGLMessage.getMoveNotAllowed(LN);
+				String msg = FGLMessage.getMoveNotAllowedMsg(LN);
 				Toast.makeText(this.context, msg, Toast.LENGTH_SHORT).show();
 			}
 		}
@@ -355,7 +333,7 @@ public class Controller extends View implements LanguageConstants {
 	 * Actions to perform when a card is moved.
 	 */
 	private void cardMove() {
-		if (this.currentScreen == Controller.GAME_SCREEN)
+		if (this.currentScreen == PLAY_SCREEN)
 			if (this.activeCard != null) {
 				Card card = this.currentPlayer.getCard(this.activeCard);
 				card.rescale();
@@ -389,7 +367,7 @@ public class Controller extends View implements LanguageConstants {
 					if (this.gameOver()) {
 						return;
 					}
-					this.currentPlayerMadeValidMove = true;
+					this.currentScreen = CONTINUE_SCREEN;
 				}
 				// Current Player makes invalid move
 				else {
@@ -418,7 +396,7 @@ public class Controller extends View implements LanguageConstants {
 		// important: check if the player is continuing with his move
 		if (!this.currentPlayer.getCurrentMove().isContinued()
 				&& this.currentPlayer.getCardsInHand().isEmpty()) {
-			this.currentScreen = Controller.GAME_OVER;
+			this.currentScreen = GAME_OVER;
 			return true;
 		}
 		return false;
@@ -451,7 +429,7 @@ public class Controller extends View implements LanguageConstants {
 		// cards)
 		if (this.buttons.getStartButton().isTouched(this.touchPoint) != null) {
 			this.buttons.getStartButton().deactivate();
-			this.currentScreen = Controller.GAME_SCREEN;
+			this.currentScreen = PLAY_SCREEN;
 			sounds.startSound();
 			this.currentPlayer = players.get(0); // Randomize this maybe ?
 
@@ -469,7 +447,7 @@ public class Controller extends View implements LanguageConstants {
 		// BACK BUTTON (go back to the main screen)
 		else if (this.buttons.getBackButton().isTouched(this.touchPoint) != null) {
 			this.resetGame();
-			this.currentScreen = Controller.START_SCREEN;
+			this.currentScreen = START_SCREEN;
 			this.buttons.getBackButton().deactivate();
 			this.buttons.getStartButton().activate();
 		}
@@ -478,8 +456,7 @@ public class Controller extends View implements LanguageConstants {
 		else if (this.buttons.getContinueButton().isTouched(this.touchPoint) != null) {
 			this.currentPlayer.setCurrentMove(new Move()); // reset move
 			this.buttons.getContinueButton().deactivate();
-			this.blankScreenTransition = true;
-			this.currentPlayerMadeValidMove = false;
+			this.currentScreen = TRANSITION_SCREEN;
 		}
 
 	}
@@ -564,6 +541,15 @@ public class Controller extends View implements LanguageConstants {
 			sum = sum + player.countCardsInHands();
 		}
 		return sum;
+	}
+
+	/**
+	 * List of cards that qualify for repeat move as determined in game menu
+	 * 
+	 * @return Array list of card suites/numbers
+	 */
+	public String[] getRepeatCards() {
+		return this.repeatCards;
 	}
 
 }

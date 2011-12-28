@@ -2,6 +2,7 @@ package fumba.cards;
 
 import java.util.HashMap;
 import android.content.Context;
+import android.graphics.Canvas;
 
 /**
  * The <code>CustomButtonBank</code> class represents a collection of
@@ -115,4 +116,35 @@ public class CustomButtonBank {
 		return buttonMap.get(CONTINUE_BUTTON);
 	}
 
+	/**
+	 * Draw the continue button on the screen
+	 * 
+	 * @param canvas
+	 */
+	public void drawContinueButton(Canvas canvas) {
+		canvas.drawBitmap(this.getContinueButton().getBitmap(), this
+				.getContinueButton().getX(), this.getContinueButton().getY(),
+				null);
+	}
+
+	/**
+	 * Draw the back button on the screen
+	 * 
+	 * @param canvas
+	 */
+	public void drawBackButton(Canvas canvas) {
+		canvas.drawBitmap(this.getBackButton().getBitmap(), this
+				.getBackButton().getX(), this.getBackButton().getY(), null);
+	}
+
+	/**
+	 * Draw the Start button
+	 * 
+	 * @param canvas
+	 */
+	public void drawStartButton(Canvas canvas) {
+		canvas.drawBitmap(this.getStartButton().getBitmap(), this
+				.getStartButton().getX(), this.getStartButton().getY(), null);
+
+	}
 }
