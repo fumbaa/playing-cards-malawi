@@ -27,7 +27,7 @@ import android.widget.Toast;
  * @see <a href="http:chibaka.com">Fumba Game Lab</a>
  */
 
-public class Controller extends View implements MessageConstants {
+public class Controller extends View implements LanguageConstants {
 
 	// Screen timeline
 	/** Welcome screen **/
@@ -139,11 +139,11 @@ public class Controller extends View implements MessageConstants {
 
 		String playerName1 = "Fumbani";
 		String playerName2 = "Felix";
-		String playerName3 = "DiwiDiwi";
+		//String playerName3 = "DiwiDiwi";
 
 		Player p1 = new HumanPlayer(playerName1, this);
 		Player p2 = new HumanPlayer(playerName2, this);
-		Player p3 = new HumanPlayer(playerName3, this);
+		//Player p3 = new HumanPlayer(playerName3, this);
 
 		this.players.add(p1);
 		this.players.add(p2);
@@ -196,10 +196,7 @@ public class Controller extends View implements MessageConstants {
 			// Scenario 1: Show a blank screen that will be activated by next
 			// player whenever they are ready to play
 			if (this.blankScreenTransition) {
-				this.nextPlayer = this.getNextPlayer(); // TODO: Careful when
-														// more than 2 people
-														// are playing (Reverse/
-														// forward)
+				this.nextPlayer = this.getNextPlayer(); 
 				this.textViews.getCurrentPlayerTextView().setText(
 						"Current Player : " + this.nextPlayer.getName());
 				this.textViews.getHandStatusTextView().setText(
@@ -252,6 +249,7 @@ public class Controller extends View implements MessageConstants {
 
 	/** Retrieves the next player **/
 	private Player getNextPlayer() {
+		//TODO: add reverse and forward moves
 		int location = this.players.indexOf(this.currentPlayer) + 1;
 		if (location == this.players.size())
 			location = 0;
