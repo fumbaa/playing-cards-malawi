@@ -182,7 +182,7 @@ public class Controller extends View implements LanguageConstants,
 						0, nextPlayer);
 			} else {
 				this.drawCards(canvas);
-				if (this.currentScreen == CONTINUE_SCREEN)
+				if (this.currentScreen == REVIEW_SCREEN)
 					this.buttons.drawContinueButton(canvas);
 			}
 		}
@@ -314,15 +314,12 @@ public class Controller extends View implements LanguageConstants,
 		if (this.cardBack.isTouched(this.touchPoint) != null) {
 			if (!this.currentPlayer.hasValidMoves()) {
 				this.currentPlayer.pickCard();
-				// TODO: time the player wait period
-				this.buttons.getContinueButton().activate();
 				this.textViews.getHandStatusTextView().setText(
 						"# of Cards in Hand : "
 								+ this.currentPlayer.countCardsInHands());
-				this.currentScreen = CONTINUE_SCREEN;
+				this.currentScreen = REVIEW_SCREEN;
 			} else {
 				// Player has valid moves force them...
-				// TODO: add option to allow continued played on choice (bluff)
 				String msg = FGLMessage.getMoveNotAllowedMsg(LN);
 				Toast.makeText(this.context, msg, Toast.LENGTH_SHORT).show();
 			}
@@ -350,33 +347,34 @@ public class Controller extends View implements LanguageConstants,
 
 			Card card = this.currentPlayer.getCard(this.activeCard);
 
-			// Current players turn
 			if (this.currentPlayer.isHuman()) {
 				Move move = Rules.checkMove(card);
-				// Current Player makes valid move
+				/* Valid Move */
 				if (move.getValidity()
 						&& this.topPlayedCard.isTouched(this.touchPoint) != null) {
 					this.currentPlayer.playCard(move);
 					this.activeCard = null;
-					this.buttons.getContinueButton().activate();
-					this.textViews.getHandStatusTextView().setText(
-							"# of Cards in Hand : "
-									+ this.currentPlayer.countCardsInHands());
-
-					// gameOver() handles change of screen
+					Tools.debug(CURRENT_MOVE_UPDATE, textViews, null, 0, null,
+							0, currentPlayer);
+					// check if game is over....
 					if (this.gameOver()) {
+						this.currentScreen = GAME_OVER;
 						return;
 					}
-					this.currentScreen = CONTINUE_SCREEN;
+					// check if move is continued...
+					if (!move.isContinued())
+						this.currentScreen = REVIEW_SCREEN;
+					else
+						Toast.makeText(this.context, "Its your turn again...",
+								Toast.LENGTH_SHORT);
 				}
-				// Current Player makes invalid move
+				/* Invalid Move */
 				else {
 					card.resetPosition();
 					if (this.topPlayedCard.isTouched(this.touchPoint) != null)
 						sounds.rejectSound();
 				}
 			}
-
 			// Computer or other players turn
 			else {
 				card.resetPosition();
@@ -396,7 +394,6 @@ public class Controller extends View implements LanguageConstants,
 		// important: check if the player is continuing with his move
 		if (!this.currentPlayer.getCurrentMove().isContinued()
 				&& this.currentPlayer.getCardsInHand().isEmpty()) {
-			this.currentScreen = GAME_OVER;
 			return true;
 		}
 		return false;

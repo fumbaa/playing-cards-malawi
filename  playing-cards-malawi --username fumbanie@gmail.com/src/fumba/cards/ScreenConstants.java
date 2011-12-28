@@ -18,7 +18,7 @@ public interface ScreenConstants {
 	public static final int PLAY_SCREEN = 2;
 
 	/** Continue Buttons shows to allow player to see their current card state **/
-	public static final int CONTINUE_SCREEN = 6;
+	public static final int REVIEW_SCREEN = 6;
 
 	/** All Screens associated with a gameplay session **/
 	public static final int[] GAMEPLAY_SCREENS = { TRANSITION_SCREEN,
