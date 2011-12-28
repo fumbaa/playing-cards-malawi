@@ -1,7 +1,6 @@
 package fumba.cards;
 
 import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.StringUtils;
 
 /**
  * The <code>Rules</code> class defines the rules for playing the game. Game
