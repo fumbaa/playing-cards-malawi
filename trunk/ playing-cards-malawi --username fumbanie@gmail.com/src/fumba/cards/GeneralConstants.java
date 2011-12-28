@@ -22,4 +22,6 @@ public interface GeneralConstants {
 
 	/** For Debugging Only: Current Player Summary **/
 	public static final String CURRENT_PLAYER_SUMMARY = "Current Player Summary";
+
+	public static final String CURRENT_MOVE_UPDATE = "Current Move Update";
 }

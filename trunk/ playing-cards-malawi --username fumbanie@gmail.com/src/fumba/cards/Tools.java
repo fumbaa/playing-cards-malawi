@@ -56,28 +56,37 @@ public class Tools {
 
 	/**
 	 * Debugging purposes only
+	 * 
 	 * @param textViews
 	 * @param cards
 	 * @param totalNumCards
 	 * @param playedCards
 	 * @param cardsAllPlayers
 	 */
-	public static void debug(String string, TextViewBank textViews, CardBank cards, int totalNumCards, ArrayList<Card> playedCards, int cardsAllPlayers, Player nextPlayer ){
-		
+	public static void debug(String string, TextViewBank textViews,
+			CardBank cards, int totalNumCards, ArrayList<Card> playedCards,
+			int cardsAllPlayers, Player player) {
+
 		if (StringUtils.equals(string, GeneralConstants.USED_CARDS_SUMMARY))
-		textViews.getDeckStatusTextView().setText(
-				"Used : " + cards.countCards() + " / "
-						+ totalNumCards + " c[" + playedCards.size()
-						+ "] a[" + cardsAllPlayers + "]");
-		
-		else if (StringUtils.equals(string, GeneralConstants.CURRENT_PLAYER_SUMMARY)){
+			textViews.getDeckStatusTextView().setText(
+					"Used : " + cards.countCards() + " / " + totalNumCards
+							+ " c[" + playedCards.size() + "] a["
+							+ cardsAllPlayers + "]");
+
+		else if (StringUtils.equals(string,
+				GeneralConstants.CURRENT_PLAYER_SUMMARY)) {
 			textViews.getCurrentPlayerTextView().setText(
-					"Current Player : " + nextPlayer.getName());
+					"Current Player : " + player.getName());
 			textViews.getHandStatusTextView().setText(
-					"# of Cards in Hand : "
-							+ nextPlayer.countCardsInHands());
+					"# of Cards in Hand : " + player.countCardsInHands());
 		}
-		
+
+		else if (StringUtils.equals(string,
+				GeneralConstants.CURRENT_MOVE_UPDATE)) {
+			textViews.getHandStatusTextView().setText(
+					"# of Cards in Hand : " + player.countCardsInHands());
+		}
+
 	}
 
 }

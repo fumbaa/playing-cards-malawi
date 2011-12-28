@@ -205,20 +205,19 @@ public abstract class FGLGraphic {
 	 * @return the offset position
 	 */
 	public Point isTouched(Point touchPoint) {
-		if (this.active) {
-			if (touchPoint.x >= this.getX()
-					&& touchPoint.x <= this.getX() + this.getWidth()) {
-				if (touchPoint.y >= this.getY()
-						&& touchPoint.y <= this.getY() + this.getHeight()) {
+		int adjust = 10;
+		if (this.active)
+			if (touchPoint.x >= (this.getX() - adjust)
+					&& touchPoint.x <= (this.getX() + adjust) + this.getWidth())
+				if (touchPoint.y >= (this.getY() - adjust)
+						&& touchPoint.y <= (this.getY() + adjust)
+								+ this.getHeight()) {
 					int x = touchPoint.x - (this.getCenter().x + this.getX());
 					int y = touchPoint.y - (this.getCenter().y + this.getY());
 					// Log that this button was touched (for debugging purposes
-					// only)
 					Tools.catLog(this.name);
 					return new Point(x, y);
 				}
-			}
-		}// end if condition
 		return null;
 	}
 

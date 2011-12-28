@@ -125,6 +125,7 @@ public class CustomButtonBank {
 		canvas.drawBitmap(this.getContinueButton().getBitmap(), this
 				.getContinueButton().getX(), this.getContinueButton().getY(),
 				null);
+		this.getContinueButton().activate();
 	}
 
 	/**
