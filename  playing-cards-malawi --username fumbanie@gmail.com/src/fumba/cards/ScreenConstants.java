@@ -22,5 +22,5 @@ public interface ScreenConstants {
 
 	/** All Screens associated with a gameplay session **/
 	public static final int[] GAMEPLAY_SCREENS = { TRANSITION_SCREEN,
-			PLAY_SCREEN };
+			PLAY_SCREEN, REVIEW_SCREEN };
 }
