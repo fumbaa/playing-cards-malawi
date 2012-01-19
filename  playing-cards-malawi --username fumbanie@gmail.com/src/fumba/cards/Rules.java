@@ -52,7 +52,7 @@ public abstract class Rules {
 	 */
 	public static boolean determineContinuity(Card card) {
 		String[] repeatCards = card.getController().getRepeatCards();
-		if ( ArrayUtils.contains(repeatCards, card.getName()) || ArrayUtils.contains(repeatCards, card.getNumber())){
+		if ( ArrayUtils.contains(repeatCards, card.getName()) || ArrayUtils.contains(repeatCards, "" + card.getNumber() )){
 			return true;
 		}
 		return false;
