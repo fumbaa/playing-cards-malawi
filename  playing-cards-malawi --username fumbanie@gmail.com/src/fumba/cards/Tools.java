@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
 
-import org.apache.commons.lang3.StringUtils;
-
 import android.util.Log;
 
 /**

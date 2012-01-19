@@ -3,8 +3,6 @@ package fumba.cards;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang3.ArrayUtils;
-
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Point;
