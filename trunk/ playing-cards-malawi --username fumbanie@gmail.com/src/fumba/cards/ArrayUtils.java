@@ -2,18 +2,31 @@ package fumba.cards;
 
 public class ArrayUtils {
 
+	/**
+	 * 
+	 * @param gameplayScreens
+	 * @param currentScreen
+	 * @return
+	 */
 	public static boolean contains(int[] gameplayScreens, int currentScreen) {
-		// TODO Auto-generated method stub
+		for (int check : gameplayScreens) {
+			if (check == currentScreen)
+				return true;
+		}
 		return false;
 	}
 
+	/**
+	 * 
+	 * @param repeatCards
+	 * @param name
+	 * @return
+	 */
 	public static boolean contains(String[] repeatCards, String name) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	public static boolean contains(String[] repeatCards, char number) {
-		// TODO Auto-generated method stub
+		for (String string : repeatCards) {
+			if (string.equalsIgnoreCase(name))
+				return true;
+		}
 		return false;
 	}
 
