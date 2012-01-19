@@ -5,6 +5,7 @@ import android.content.Context;
 import android.media.AudioManager;
 import android.os.Bundle;
 import android.view.Display;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 
@@ -39,9 +40,10 @@ public class PlayingCardsActivity extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		// Set hardware volume buttons to control this applications volume
+		// Set hardware volume buttons to control this applications' volume
 		this.setVolumeControlStream(AudioManager.STREAM_MUSIC);
 
+		//Determine the height and width of the mobile device screen
 		Display display = this.getWindowManager().getDefaultDisplay();
 		width = display.getWidth();
 		height = display.getHeight();
@@ -53,8 +55,19 @@ public class PlayingCardsActivity extends Activity {
 		this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
 				WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
+		
 		Context context = this.getApplication();
 		elements = new GameBoardLayout(context);
-		this.setContentView(elements);
+		//this.setContentView(elements);
+		
+		//Show Landing Screen (main.xml)
+		this.setContentView(R.layout.main);
 	}
+	
+	/**
+	 * Start Button Actions
+	 * @param view
+	 */
+	 public void selfDestruct(View view) {
+	 }
 }
