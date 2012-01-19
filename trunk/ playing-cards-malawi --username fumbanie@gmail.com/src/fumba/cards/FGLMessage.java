@@ -1,7 +1,5 @@
 package fumba.cards;
 
-import org.apache.commons.lang3.StringUtils;
-
 public class FGLMessage implements GeneralConstants, LanguageConstants {
 
 	/**
