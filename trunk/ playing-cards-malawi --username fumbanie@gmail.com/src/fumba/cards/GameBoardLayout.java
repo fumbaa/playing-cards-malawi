@@ -46,8 +46,8 @@ public class GameBoardLayout extends RelativeLayout {
 	 * the device
 	 **/
 	public void setPosition(FGLGraphic graphic, double x, double y) {
-		int height = (int) (PlayingCardsActivity.height * y);
-		int width = (int) (PlayingCardsActivity.width * x);
+		int height = (int) (ApplicationEntryActivity.height * y);
+		int width = (int) (ApplicationEntryActivity.width * x);
 		graphic.setCurrentPosition(new Point(width, height));
 	}
 

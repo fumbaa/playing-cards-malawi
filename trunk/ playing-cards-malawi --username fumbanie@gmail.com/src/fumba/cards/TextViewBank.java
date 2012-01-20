@@ -96,7 +96,7 @@ public class TextViewBank {
 		currPlayerTextView.setId(TextViewBank.CURRENT_PLAYER);
 		currPlayerTextView.setBackgroundColor(Color.YELLOW);
 		currPlayerTextView.setTextColor(Color.BLUE);
-		currPlayerTextView.setWidth(PlayingCardsActivity.width / 3); // width of
+		currPlayerTextView.setWidth(ApplicationEntryActivity.width / 3); // width of
 																		// the
 																		// text
 																		// view
@@ -112,7 +112,7 @@ public class TextViewBank {
 		handCardsTextView.setId(TextViewBank.CARDS_IN_HAND);
 		handCardsTextView.setBackgroundColor(Color.WHITE);
 		handCardsTextView.setTextColor(Color.BLACK);
-		handCardsTextView.setWidth(PlayingCardsActivity.width / 3);
+		handCardsTextView.setWidth(ApplicationEntryActivity.width / 3);
 		handCardsTextView.setHeight(30);
 		handCardsTextView.setPadding(5, 0, 5, 0);
 		RelativeLayout.LayoutParams params2 = new RelativeLayout.LayoutParams(
@@ -127,7 +127,7 @@ public class TextViewBank {
 		deckStatus.setId(TextViewBank.DECK_STATUS);
 		deckStatus.setBackgroundColor(Color.GREEN);
 		deckStatus.setTextColor(Color.RED);
-		deckStatus.setWidth(PlayingCardsActivity.width / 3);
+		deckStatus.setWidth(ApplicationEntryActivity.width / 3);
 		deckStatus.setHeight(30);
 		deckStatus.setPadding(5, 0, 5, 0);
 		RelativeLayout.LayoutParams params3 = new RelativeLayout.LayoutParams(
