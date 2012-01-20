@@ -24,7 +24,7 @@ import android.view.WindowManager;
  * @see <a href="http:chibaka.com">Fumba Game Lab</a>
  */
 
-public class PlayingCardsActivity extends Activity {
+public class ApplicationEntryActivity extends Activity {
 
 	/** Organizes all the game elements. */
 	private static GameBoardLayout elements;

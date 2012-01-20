@@ -6,7 +6,7 @@
     <uses-sdk android:minSdkVersion="3" />
 
     <application android:icon="@drawable/card">
-        <activity android:name=".PlayingCardsActivity"
+        <activity android:name=".ApplicationEntryActivity"
                   android:label="@string/app_name"
                   android:screenOrientation="landscape">
             <intent-filter>
