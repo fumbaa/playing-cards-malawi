@@ -8,6 +8,7 @@ import android.graphics.Canvas;
 import android.graphics.Point;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 /**
@@ -28,7 +29,7 @@ import android.widget.Toast;
  * @see <a href="http:chibaka.com">Fumba Game Lab</a>
  */
 
-public class Controller extends View implements LanguageConstants,
+public class Controller extends RelativeLayout implements LanguageConstants,
 		GeneralConstants, ScreenConstants {
 
 	/** the card on the very top of the played card stack **/
@@ -68,7 +69,7 @@ public class Controller extends View implements LanguageConstants,
 	private List<Player> players = new ArrayList<Player>();
 
 	/** A framelayout that organizes all the graphical game elements **/
-	private GameBoardLayout layout;
+	private GameTableActivity layout;
 
 	/** Total number of cards available for this game application **/
 	private int totalNumCards;
@@ -100,7 +101,7 @@ public class Controller extends View implements LanguageConstants,
 	 *            interface to global information about an application
 	 *            environment
 	 */
-	public Controller(Context context, GameBoardLayout layout) {
+	public Controller(Context context, GameTableActivity gameTableActivity) {
 		super(context);
 
 		this.numOfCardsServed = 2;
@@ -108,14 +109,14 @@ public class Controller extends View implements LanguageConstants,
 		this.touchPoint = new Point();
 		this.context = context;
 		this.currentScreen = START_SCREEN;
-		this.layout = layout;
+		this.layout = gameTableActivity;
 		this.setFocusable(true);
 
 		// Make elements available to the controller
-		this.buttons = new CustomButtonBank(this.context, this.layout);
+		this.buttons = new CustomButtonBank(this.context, this);
 		this.sounds = new SoundBank(this.context);
 		this.cards = new CardBank(this.context, this);
-		this.textViews = new TextViewBank(this.context, this.layout);
+		this.textViews = new TextViewBank(this.context, this);
 
 		// LOG INFORMATION FOR INITIAL VALUES (for debugging )
 		this.totalNumCards = cards.countCards();
@@ -520,7 +521,7 @@ public class Controller extends View implements LanguageConstants,
 	 * 
 	 * @return GameBoardLayout
 	 */
-	public GameBoardLayout getLayout() {
+	public GameTableActivity getLayout() {
 		return this.layout;
 	}
 
