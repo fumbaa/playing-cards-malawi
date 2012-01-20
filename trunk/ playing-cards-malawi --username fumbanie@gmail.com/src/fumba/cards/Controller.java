@@ -69,7 +69,7 @@ public class Controller extends RelativeLayout implements LanguageConstants,
 	private List<Player> players = new ArrayList<Player>();
 
 	/** A framelayout that organizes all the graphical game elements **/
-	private GameTableActivity layout;
+	private GameBoardLayout layout;
 
 	/** Total number of cards available for this game application **/
 	private int totalNumCards;
@@ -101,7 +101,7 @@ public class Controller extends RelativeLayout implements LanguageConstants,
 	 *            interface to global information about an application
 	 *            environment
 	 */
-	public Controller(Context context, GameTableActivity gameTableActivity) {
+	public Controller(Context context, GameBoardLayout gameTableActivity) {
 		super(context);
 
 		this.numOfCardsServed = 2;
@@ -521,7 +521,7 @@ public class Controller extends RelativeLayout implements LanguageConstants,
 	 * 
 	 * @return GameBoardLayout
 	 */
-	public GameTableActivity getLayout() {
+	public GameBoardLayout getLayout() {
 		return this.layout;
 	}
 
