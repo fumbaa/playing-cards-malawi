@@ -62,7 +62,7 @@ public class TextViewBank {
 	public static final int PLAYER_TRANSITION = 4;
 
 	/** The gameboard layout object **/
-	private GameBoardLayout layout;
+	private Controller layout;
 
 	/**
 	 * Initiates sound bank and populates it with sounds from applications
@@ -76,10 +76,10 @@ public class TextViewBank {
 	 *      href="http://developer.android.com/reference/android/content/Context.html">Context
 	 *      (Android API) </a>
 	 */
-	TextViewBank(Context context, GameBoardLayout layout) {
+	TextViewBank(Context context, Controller layout2) {
 		this.context = context;
 		this.textViewMap = new HashMap<Integer, TextView>();
-		this.layout = layout;
+		this.layout = layout2;
 		this.initialise();
 	}
 

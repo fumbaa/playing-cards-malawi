@@ -1,7 +1,7 @@
 package fumba.cards;
 
 import android.app.Activity;
-import android.content.Context;
+import android.content.Intent;
 import android.media.AudioManager;
 import android.os.Bundle;
 import android.view.Display;
@@ -26,9 +26,6 @@ import android.view.WindowManager;
 
 public class ApplicationEntryActivity extends Activity {
 
-	/** Organizes all the game elements. */
-	private static GameBoardLayout elements;
-
 	/**
 	 * The screen width and height of the android device running this
 	 * application.
@@ -43,7 +40,7 @@ public class ApplicationEntryActivity extends Activity {
 		// Set hardware volume buttons to control this applications' volume
 		this.setVolumeControlStream(AudioManager.STREAM_MUSIC);
 
-		//Determine the height and width of the mobile device screen
+		// Determine the height and width of the mobile device screen
 		Display display = this.getWindowManager().getDefaultDisplay();
 		width = display.getWidth();
 		height = display.getHeight();
@@ -55,19 +52,20 @@ public class ApplicationEntryActivity extends Activity {
 		this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
 				WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-		
-		Context context = this.getApplication();
-		elements = new GameBoardLayout(context);
-		//this.setContentView(elements);
-		
-		//Show Landing Screen (main.xml)
+		// Show Landing Screen (main.xml)
 		this.setContentView(R.layout.main);
 	}
-	
+
 	/**
-	 * Start Button Actions
+	 * Start Button opens an activity with the game elements ready for gameplay
+	 * 
 	 * @param view
+	 *            Button View that triggers this method
 	 */
-	 public void selfDestruct(View view) {
-	 }
+	public void selfDestruct(View view) {
+		// Intent starts GameTableActivity
+		Intent gameTableProtocol = new Intent(view.getContext(),
+				GameTableActivity.class);
+		this.startActivityForResult(gameTableProtocol, Activity.RESULT_CANCELED);
+	}
 }
