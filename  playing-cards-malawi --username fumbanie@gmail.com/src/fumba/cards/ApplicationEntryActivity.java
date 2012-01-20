@@ -1,6 +1,7 @@
 package fumba.cards;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.os.Bundle;
@@ -52,15 +53,17 @@ public class ApplicationEntryActivity extends Activity {
 		this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
 				WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
+		Context context = this.getApplication();
+		new GameBoardLayout(context);
+
 		// Show Landing Screen (main.xml)
 		this.setContentView(R.layout.main);
 	}
 
 	/**
-	 * Start Button opens an activity with the game elements ready for gameplay
+	 * Start Button Actions
 	 * 
 	 * @param view
-	 *            Button View that triggers this method
 	 */
 	public void selfDestruct(View view) {
 		// Intent starts GameTableActivity
