@@ -1,7 +1,6 @@
 package fumba.cards;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.os.Bundle;
@@ -52,9 +51,6 @@ public class ApplicationEntryActivity extends Activity {
 		// Remove notification bar
 		this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
 				WindowManager.LayoutParams.FLAG_FULLSCREEN);
-
-		Context context = this.getApplication();
-		new GameBoardLayout(context);
 
 		// Show Landing Screen (main.xml)
 		this.setContentView(R.layout.main);
