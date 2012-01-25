@@ -24,31 +24,52 @@
  */
 package fumba.cards;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Point;
+import android.widget.Button;
 import android.widget.RelativeLayout;
 
 public class GameBoardLayout extends RelativeLayout {
 
-        /**
-         * Uses relative layout to arrange game elements
-         * 
-         * @param context
-         */
-        public GameBoardLayout(Context context) {
-                super(context);
-                Controller board = new Controller(context, this);
-                this.addView(board);
-        }
+	private Activity activity;
 
-        /**
-         * Sets positions for the game graphics based on the relative screen size of
-         * the device
-         **/
-        public void setPosition(FGLGraphic graphic, double x, double y) {
-                int height = (int) (ApplicationEntryActivity.height * y);
-                int width = (int) (ApplicationEntryActivity.width * x);
-                graphic.setCurrentPosition(new Point(width, height));
-        }
+	private Context context;
+
+	/**
+	 * Uses relative layout to arrange game elements
+	 * 
+	 * @param context
+	 */
+	public GameBoardLayout(Activity activity) {
+		super(activity.getApplication());
+		this.context = activity.getApplication();
+		this.activity = activity;
+		Controller board = new Controller(this);
+		this.addView(board);
+
+		// add back button
+		Button btn = new Button(context);
+		btn.setId(555);
+		btn.setBackgroundResource(R.drawable.back_button);
+		this.addView(btn);
+
+		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+				LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+		params.setMargins((int) (ApplicationEntryActivity.width * 0.9),
+				(int) (ApplicationEntryActivity.height * 0.1), 0, 0);
+		btn.setLayoutParams(params);
+		btn.setOnClickListener(new ButtonListeners(this.activity));
+	}
+
+	/**
+	 * Sets positions for the game graphics based on the relative screen size of
+	 * the device
+	 **/
+	public void setPosition(FGLGraphic graphic, double x, double y) {
+		int height = (int) (ApplicationEntryActivity.height * y);
+		int width = (int) (ApplicationEntryActivity.width * x);
+		graphic.setCurrentPosition(new Point(width, height));
+	}
 
 }

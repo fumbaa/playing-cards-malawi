@@ -1,7 +1,6 @@
 package fumba.cards;
 
 import android.app.Activity;
-import android.content.Context;
 import android.media.AudioManager;
 import android.os.Bundle;
 import android.view.Window;
@@ -29,8 +28,9 @@ public class GameTableActivity extends Activity {
 		this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
 				WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-		Context context = this.getApplication();
-		this.setContentView(new GameBoardLayout(context));
+		this.setContentView(new GameBoardLayout( this));
+		
+		
 	}
 
 }
