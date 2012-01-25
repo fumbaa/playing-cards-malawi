@@ -76,8 +76,8 @@ public class CardBank {
 				this.controller));
 		this.cardMap.add(new Card(this.context, "AH", R.drawable.fglahearts,
 				this.controller));
-		// this.cardMap.add( new Card(this.context, "AS", R.drawable.fglaspades)
-		// );
+		this.cardMap.add(new Card(this.context, "AS", R.drawable.fglaspades,
+				this.controller));
 
 		// 2
 		this.cardMap.add(new Card(this.context, "2C", R.drawable.fgl2club,
@@ -86,8 +86,8 @@ public class CardBank {
 				this.controller));
 		this.cardMap.add(new Card(this.context, "2H", R.drawable.fgl2hearts,
 				this.controller));
-		// this.cardMap.add( new Card(this.context, "2S", R.drawable.fgl2spades)
-		// );
+		this.cardMap.add(new Card(this.context, "2S", R.drawable.fgl2spades,
+				this.controller));
 
 		// 3
 		this.cardMap.add(new Card(this.context, "3C", R.drawable.fgl3club,
@@ -96,8 +96,8 @@ public class CardBank {
 				this.controller));
 		this.cardMap.add(new Card(this.context, "3H", R.drawable.fgl3hearts,
 				this.controller));
-		// this.cardMap.add( new Card(this.context, "3S", R.drawable.fgl3spades)
-		// );
+		this.cardMap.add(new Card(this.context, "3S", R.drawable.fgl3spades,
+				this.controller));
 
 		// 4
 		this.cardMap.add(new Card(this.context, "4C", R.drawable.fgl4club,
@@ -106,8 +106,8 @@ public class CardBank {
 				this.controller));
 		this.cardMap.add(new Card(this.context, "4H", R.drawable.fgl4hearts,
 				this.controller));
-		// this.cardMap.add( new Card(this.context, "4S", R.drawable.fgl4spades)
-		// );
+		this.cardMap.add(new Card(this.context, "4S", R.drawable.fgl4spades,
+				this.controller));
 
 		// 5
 		this.cardMap.add(new Card(this.context, "5C", R.drawable.fgl5club,
@@ -116,8 +116,8 @@ public class CardBank {
 				this.controller));
 		this.cardMap.add(new Card(this.context, "5H", R.drawable.fgl5hearts,
 				this.controller));
-		// this.cardMap.add( new Card(this.context, "5S", R.drawable.fgl5spades)
-		// );
+		this.cardMap.add(new Card(this.context, "5S", R.drawable.fgl5spades,
+				this.controller));
 
 		// 6
 		this.cardMap.add(new Card(this.context, "6C", R.drawable.fgl6club,
@@ -126,8 +126,8 @@ public class CardBank {
 				this.controller));
 		this.cardMap.add(new Card(this.context, "6H", R.drawable.fgl6hearts,
 				this.controller));
-		// this.cardMap.add( new Card(this.context, "6S", R.drawable.fgl6spades)
-		// );
+		this.cardMap.add(new Card(this.context, "6S", R.drawable.fgl6spades,
+				this.controller));
 
 		// 7
 		this.cardMap.add(new Card(this.context, "7C", R.drawable.fgl7club,
@@ -136,8 +136,8 @@ public class CardBank {
 				this.controller));
 		this.cardMap.add(new Card(this.context, "7H", R.drawable.fgl7hearts,
 				this.controller));
-		// this.cardMap.add( new Card(this.context, "7S", R.drawable.fgl7spades)
-		// );
+		this.cardMap.add(new Card(this.context, "7S", R.drawable.fgl7spades,
+				this.controller));
 
 		// 8
 		this.cardMap.add(new Card(this.context, "8C", R.drawable.fgl8club,
@@ -146,8 +146,8 @@ public class CardBank {
 				this.controller));
 		this.cardMap.add(new Card(this.context, "8H", R.drawable.fgl8hearts,
 				this.controller));
-		// this.cardMap.add( new Card(this.context, "8S", R.drawable.fgl8spades)
-		// );
+		this.cardMap.add(new Card(this.context, "8S", R.drawable.fgl8spades,
+				this.controller));
 
 		// 9
 		this.cardMap.add(new Card(this.context, "9C", R.drawable.fgl9club,
@@ -156,8 +156,8 @@ public class CardBank {
 				this.controller));
 		this.cardMap.add(new Card(this.context, "9H", R.drawable.fgl9hearts,
 				this.controller));
-		// this.cardMap.add( new Card(this.context, "9S", R.drawable.fgl9spades)
-		// );
+		this.cardMap.add(new Card(this.context, "9S", R.drawable.fgl9spades,
+				this.controller));
 
 		// 10
 		this.cardMap.add(new Card(this.context, "XC", R.drawable.fgl10club,
@@ -166,8 +166,8 @@ public class CardBank {
 				this.controller));
 		this.cardMap.add(new Card(this.context, "XH", R.drawable.fgl10hearts,
 				this.controller));
-		// this.cardMap.add( new Card(this.context, "XS",
-		// R.drawable.fgl10spades) );
+		this.cardMap.add(new Card(this.context, "XS", R.drawable.fgl10spades,
+				this.controller));
 
 		// K
 		this.cardMap.add(new Card(this.context, "KC", R.drawable.kclub,
@@ -190,10 +190,10 @@ public class CardBank {
 				this.controller));
 
 		// Jokers
-		// this.cardMap.add( new Card(this.context, "*B", R.drawable.fglahearts)
-		// );
-		// this.cardMap.add( new Card(this.context, "*C", R.drawable.fglahearts)
-		// );
+		this.cardMap.add(new Card(this.context, "*B", R.drawable.fglahearts,
+				this.controller));
+		this.cardMap.add(new Card(this.context, "*C", R.drawable.fglahearts,
+				this.controller));
 
 	}
 

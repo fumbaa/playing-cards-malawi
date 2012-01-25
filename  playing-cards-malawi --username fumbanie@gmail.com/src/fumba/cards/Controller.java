@@ -125,8 +125,8 @@ public class Controller extends View implements LanguageConstants,
 		this.players.add(p1);
 		this.players.add(p2);
 		// this.players.add(p3);
-		
-		//TODO Change how this is initiated....
+
+		// TODO Change how this is initiated....
 		this.buttonDown();
 	}
 
@@ -159,8 +159,8 @@ public class Controller extends View implements LanguageConstants,
 	 */
 	@Override
 	protected void onDraw(Canvas canvas) {
-				this.drawCards(canvas);
-		}
+		this.drawCards(canvas);
+	}
 
 	/**
 	 * Prints the instructions for the next player to touch screen during device
@@ -214,8 +214,8 @@ public class Controller extends View implements LanguageConstants,
 
 		// Only move cards on the game screen when the player is not waiting to
 		// press (PASS TO NEXT PLAYER) button
-		Boolean canMove =  true; //(this.currentScreen == PLAY_SCREEN)
-				//&& !this.currentPlayer.getCurrentMove().isContinued();
+		Boolean canMove = true; // (this.currentScreen == PLAY_SCREEN)
+		// && !this.currentPlayer.getCurrentMove().isContinued();
 
 		switch (eventAction) {
 
@@ -225,10 +225,10 @@ public class Controller extends View implements LanguageConstants,
 			break;
 
 		case MotionEvent.ACTION_DOWN:
-			//this.screenDown();
+			// this.screenDown();
 			if (canMove)
 				this.cardTouched();
-			//this.buttonDown();
+			// this.buttonDown();
 			break;
 
 		case MotionEvent.ACTION_MOVE:
@@ -245,11 +245,11 @@ public class Controller extends View implements LanguageConstants,
 	 * Actions to be performed when the screen in touched
 	 */
 	private void screenDown() {
-	//	if (this.currentScreen == TRANSITION_SCREEN) {
-		//	this.currentScreen = PLAY_SCREEN;
-		//	this.nextPlayer();
-		//	this.textViews.getPlayerTransitionTextView().setText("");
-	//	}
+		// if (this.currentScreen == TRANSITION_SCREEN) {
+		// this.currentScreen = PLAY_SCREEN;
+		// this.nextPlayer();
+		// this.textViews.getPlayerTransitionTextView().setText("");
+		// }
 	}
 
 	/**
@@ -282,7 +282,7 @@ public class Controller extends View implements LanguageConstants,
 				this.textViews.getHandStatusTextView().setText(
 						"# of Cards in Hand : "
 								+ this.currentPlayer.countCardsInHands());
-				//this.currentScreen = REVIEW_SCREEN;
+				// this.currentScreen = REVIEW_SCREEN;
 			} else {
 				// Player has valid moves force them...
 				String msg = FGLMessage.getMoveNotAllowedMsg(LN);
@@ -295,13 +295,13 @@ public class Controller extends View implements LanguageConstants,
 	 * Actions to perform when a card is moved.
 	 */
 	private void cardMove() {
-		//if (this.currentScreen == PLAY_SCREEN)
-			if (this.activeCard != null) {
-				Card card = this.currentPlayer.getCard(this.activeCard);
-				card.rescale();
-				card.setX(touchPoint.x - card.getCenter().x);
-				card.setY(touchPoint.y - card.getCenter().y);
-			}
+		// if (this.currentScreen == PLAY_SCREEN)
+		if (this.activeCard != null) {
+			Card card = this.currentPlayer.getCard(this.activeCard);
+			card.rescale();
+			card.setX(touchPoint.x - card.getCenter().x);
+			card.setY(touchPoint.y - card.getCenter().y);
+		}
 	}
 
 	/**
@@ -323,15 +323,15 @@ public class Controller extends View implements LanguageConstants,
 							0, currentPlayer);
 					// check if game is over....
 					if (this.gameOver()) {
-					//	this.currentScreen = GAME_OVER;
+						// this.currentScreen = GAME_OVER;
 						return;
 					}
 					// check if move is continued...
-				//	if (!move.isContinued())
-						//this.currentScreen = REVIEW_SCREEN;
-				//	else
-					//	Toast.makeText(this.context, "Its your turn again...",
-							//	Toast.LENGTH_SHORT);
+					// if (!move.isContinued())
+					// this.currentScreen = REVIEW_SCREEN;
+					// else
+					// Toast.makeText(this.context, "Its your turn again...",
+					// Toast.LENGTH_SHORT);
 				}
 				/* Invalid Move */
 				else {
@@ -386,18 +386,18 @@ public class Controller extends View implements LanguageConstants,
 	 * Performs necessary action when a button is touched
 	 */
 	private void buttonDown() {
-		
-			sounds.startSound();
-			this.currentPlayer = players.get(0); // Randomize this maybe ?
 
-			this.textViews.getCurrentPlayerTextView().setText(
-					"Current Player : " + this.currentPlayer.getName());
+		sounds.startSound();
+		this.currentPlayer = players.get(0); // Randomize this maybe ?
 
-			this.addCardDeck();
-			this.serveCards();
-			this.textViews.getHandStatusTextView().setText(
-					"# of Cards in Hand : "
-							+ this.currentPlayer.countCardsInHands());
+		this.textViews.getCurrentPlayerTextView().setText(
+				"Current Player : " + this.currentPlayer.getName());
+
+		this.addCardDeck();
+		this.serveCards();
+		this.textViews.getHandStatusTextView().setText(
+				"# of Cards in Hand : "
+						+ this.currentPlayer.countCardsInHands());
 	}
 
 	/**
