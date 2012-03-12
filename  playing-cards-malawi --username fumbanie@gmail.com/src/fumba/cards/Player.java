@@ -19,46 +19,46 @@ import java.util.List;
  * @see <a href="http:chibaka.com">Fumba Game Lab</a>
  */
 
-public interface Player {
+public abstract class Player {
 
 	/**
 	 * Returns the name of the player
 	 */
-	public String getName();
+	public abstract String getName();
 
 	/**
 	 * Check to see if the player is human
 	 */
-	public Boolean isHuman();
+	public abstract Boolean isHuman();
 
 	/**
 	 * Puts card to player hand
 	 * 
 	 * @param card
 	 */
-	public void addCard(Card card);
+	public abstract void addCard(Card card);
 
 	/**
 	 * This method sets new card positions whenever a card is added or removed
 	 * from the players hands
 	 **/
-	public void recalculatePositions();
+	public abstract void recalculatePositions();
 
 	/**
 	 * Gets list of cards in the players hands
 	 * 
 	 * @return ArrayList of cards
 	 */
-	public List<Card> getCardsInHand();
+	public abstract List<Card> getCardsInHand();
 
 	/** Return all the cards to the main deck **/
-	public void returnCards();
+	public abstract void returnCards();
 
 	/**
 	 * Brings the current card that player has selected to the top of all the
 	 * others
 	 **/
-	public void bringCardToFront(Card card);
+	public abstract void bringCardToFront(Card card);
 
 	/**
 	 * Gets the specific card from the players hand
@@ -67,30 +67,30 @@ public interface Player {
 	 *            the selected card
 	 * @return a card object
 	 */
-	public Card getCard(String activeCard);
+	public abstract Card getCard(String activeCard);
 
 	/**
 	 * Adds the specified card to the played cards list
 	 */
-	public void playCard(Move move);
+	public abstract void playCard(Move move);
 
 	/** Pick random card from the card deck **/
-	public void pickCard();
+	public abstract void pickCard();
 
 	/** Counts the number of cards in the players hand **/
-	public int countCardsInHands();
+	public abstract int countCardsInHands();
 
 	/**
 	 * Extracts the players current move
 	 * 
 	 * @return {@link Move Move Object}
 	 */
-	public Move getCurrentMove();
+	public abstract Move getCurrentMove();
 
 	/** Sets the players current move **/
-	public void setCurrentMove(Move move);
+	public abstract void setCurrentMove(Move move);
 
 	/** Checks if player has moves that can be made **/
-	public boolean hasValidMoves();
+	public abstract boolean hasValidMoves();
 
 }
