@@ -5,7 +5,7 @@ import java.util.List;
 
 import android.graphics.Point;
 
-public class HumanPlayer implements Player {
+public class HumanPlayer extends Player {
 
 	private Controller controller;
 

@@ -60,7 +60,7 @@ public abstract class FGLGraphic {
 	}
 
 	/**
-	 * Graphic object extracts the appropropriate bitmap image from the
+	 * Graphic object extracts the appropriate bitmap image from the
 	 * resources folder
 	 */
 	protected abstract void extractBitmap();

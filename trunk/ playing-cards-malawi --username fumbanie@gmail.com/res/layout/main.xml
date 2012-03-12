@@ -12,6 +12,6 @@
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
         android:background="@drawable/button"
-        android:onClick="selfDestruct" />
+        android:onClick="mainButtonOnClick" />
 
 </RelativeLayout>

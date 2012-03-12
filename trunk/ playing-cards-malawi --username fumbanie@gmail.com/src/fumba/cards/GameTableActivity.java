@@ -6,11 +6,21 @@ import android.os.Bundle;
 import android.view.Window;
 import android.view.WindowManager;
 
-public class GameTableActivity extends Activity {
+/**
+ * Makes adjustments to the game screen and initiates the main game layout.
+ * <p>
+ * <i>Copyright (c) 1998, 2011 Oracle. All rights reserved. This program and the
+ * accompanying materials are made available under the terms of the Eclipse
+ * Public License v1.0 and Eclipse Distribution License v. 1.0 which accompanies
+ * this distribution.</i>
+ * </p>
+ * 
+ * @author Fumbani Chibaka
+ * @version 1.0, 10/28/2011
+ * @see <a href="http:chibaka.com">Fumba Game Lab</a>
+ */
 
-	/**
-   * 
-   */
+public class GameTableActivity extends Activity {
 
 	@Override
 	/**
@@ -28,9 +38,7 @@ public class GameTableActivity extends Activity {
 		this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
 				WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-		this.setContentView(new GameBoardLayout( this));
-		
-		
+		this.setContentView(new GameBoardLayout(this));
 	}
 
 }

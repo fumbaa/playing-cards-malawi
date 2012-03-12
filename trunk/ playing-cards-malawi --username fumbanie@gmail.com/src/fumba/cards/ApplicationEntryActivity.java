@@ -57,11 +57,10 @@ public class ApplicationEntryActivity extends Activity {
 	}
 
 	/**
-	 * Start Button Actions
-	 * 
-	 * @param view
+	 * Triggered when the start button on the main screen is clicked	 * 
+	 * @param view User interface component defined by res/layout/main.xml
 	 */
-	public void selfDestruct(View view) {
+	public void mainButtonOnClick(View view) {
 		// Intent starts GameTableActivity
 		Intent gameTableProtocol = new Intent(view.getContext(),
 				GameTableActivity.class);

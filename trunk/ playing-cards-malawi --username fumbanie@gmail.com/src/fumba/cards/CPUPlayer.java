@@ -2,7 +2,7 @@ package fumba.cards;
 
 import java.util.List;
 
-public class CPUPlayer implements Player {
+public class CPUPlayer extends Player {
 
 	public String getName() {
 		// TODO Auto-generated method stub
