@@ -32,10 +32,7 @@ public class ApplicationEntryActivity extends Activity {
 	 */
 	public static int width, height;
 
-	/**
-	 * The current player - updated by the Controller class
-	 */
-	private static Player currentPlayer;
+
 
 	/** Called when the activity is first created. */
 	@Override
@@ -74,23 +71,5 @@ public class ApplicationEntryActivity extends Activity {
 		this.startActivityForResult(gameTableProtocol, Activity.RESULT_CANCELED);
 	}
 
-	/**
-	 * Gets the current player.
-	 * 
-	 * @return Current Player
-	 */
-	public static Player getCurrentPlayer() {
-		return currentPlayer;
-	}
-
-	/**
-	 * Sets the current player. Updated by the Controller class
-	 * 
-	 * @param player
-	 *            Current Player
-	 */
-	public static void setCurrentPlayer(Player player) {
-		currentPlayer = player;
-	}
 
 }

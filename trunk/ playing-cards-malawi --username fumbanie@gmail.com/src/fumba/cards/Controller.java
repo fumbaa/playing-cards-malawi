@@ -67,13 +67,11 @@ public class Controller extends View implements LanguageConstants,
 	private GameBoardLayout layout;
 
 	/** Total number of cards available for this game application **/
+	@SuppressWarnings("unused")
 	private int totalNumCards;
 
 	/** Textviews that are used to display text for this application **/
 	private TextViewBank textViews;
-
-	/** The next player **/
-	private Player nextPlayer;
 
 	/**
 	 * The number of cards to be served to the players at the beginning of the
@@ -143,8 +141,12 @@ public class Controller extends View implements LanguageConstants,
 		this.players.add(p2);
 		// this.players.add(p3);
 
-		// TODO Change how this is initiated....
-		this.buttonDown();
+		sounds.startSound();
+		// TODO Randomize this maybe ?
+		this.currentPlayer = players.get(0);
+
+		this.addCardDeck();
+		this.serveCards();
 	}
 
 	/**
@@ -180,18 +182,6 @@ public class Controller extends View implements LanguageConstants,
 	}
 
 	/**
-	 * Prints the instructions for the next player to touch screen during device
-	 * exchange
-	 * 
-	 * @param player
-	 */
-	private void printTransitionScreenMessage() {
-		String message = FGLMessage.getTouchScreenMsg(LN);
-		this.textViews.getPlayerTransitionTextView().setText(
-				this.nextPlayer.getName() + ", " + message);
-	}
-
-	/**
 	 * Draw All Cards on the game board
 	 * 
 	 * @param canvas
@@ -205,6 +195,13 @@ public class Controller extends View implements LanguageConstants,
 		for (Card card : this.currentPlayer.getCardsInHand()) {
 			canvas.drawBitmap(card.getBitmap(), card.getX(), card.getY(), null);
 		}
+
+		this.textViews.getCurrentPlayerTextView().setText(
+				"Current Player : " + this.currentPlayer.getName());
+		this.textViews.getHandStatusTextView().setText(
+				"# of Cards in Hand : "
+						+ this.currentPlayer.countCardsInHands());
+
 	}
 
 	/** Retrieves the next player **/
@@ -251,17 +248,6 @@ public class Controller extends View implements LanguageConstants,
 	}
 
 	/**
-	 * Actions to be performed when the screen in touched
-	 */
-	private void screenDown() {
-		// if (this.currentScreen == TRANSITION_SCREEN) {
-		// this.currentScreen = PLAY_SCREEN;
-		// this.nextPlayer();
-		// this.textViews.getPlayerTransitionTextView().setText("");
-		// }
-	}
-
-	/**
 	 * Actions to perform when a card is touched
 	 */
 	private void cardTouched() {
@@ -288,9 +274,6 @@ public class Controller extends View implements LanguageConstants,
 		if (this.cardBack.isTouched(this.touchPoint) != null) {
 			if (!this.currentPlayer.hasValidMoves()) {
 				this.currentPlayer.pickCard();
-				this.textViews.getHandStatusTextView().setText(
-						"# of Cards in Hand : "
-								+ this.currentPlayer.countCardsInHands());
 				this.showTransitionScreen();
 			} else {
 				// Player has valid moves force them...
@@ -306,11 +289,12 @@ public class Controller extends View implements LanguageConstants,
 	 * no valid moves and picks a card instead.
 	 */
 	private void showTransitionScreen() {
-		Button button = this.buttonBank.getButtonMap().get(ButtonConstants.CONTINUE);
+		Button button = this.buttonBank.getButtonMap().get(
+				ButtonConstants.CONTINUE);
 		button.setOnClickListener(this.gameBoardListeners);
 		this.layout.addView(button);
-		//Update current player in the Application Entry Activity
-		ApplicationEntryActivity.setCurrentPlayer(this.currentPlayer);
+		// Update current player in the Application Entry Activity
+		GameTableActivity.setCurrentPlayer(this.getNextPlayer());
 	}
 
 	/**
@@ -341,19 +325,18 @@ public class Controller extends View implements LanguageConstants,
 						&& this.topPlayedCard.isTouched(this.touchPoint) != null) {
 					this.currentPlayer.playCard(move);
 					this.activeCard = null;
-					Tools.debug(CURRENT_MOVE_UPDATE, textViews, null, 0, null,
-							0, currentPlayer);
+
 					// check if game is over....
 					if (this.gameOver()) {
 						// this.currentScreen = GAME_OVER;
 						return;
 					}
 					// check if move is continued...
-					// if (!move.isContinued())
-					// this.currentScreen = REVIEW_SCREEN;
-					// else
-					// Toast.makeText(this.context, "Its your turn again...",
-					// Toast.LENGTH_SHORT);
+					if (!move.isContinued())
+						this.showTransitionScreen();
+					else
+						Toast.makeText(this.context, "Its your turn again...",
+								Toast.LENGTH_SHORT);
 				}
 				/* Invalid Move */
 				else {
@@ -387,42 +370,6 @@ public class Controller extends View implements LanguageConstants,
 	}
 
 	/**
-	 * Switch to the next player. Gives some time for the user to see what card
-	 * they picked before it switches
-	 */
-	public void nextPlayer() {
-
-		int location = this.players.indexOf(this.currentPlayer) + 1;
-		if (location == this.players.size())
-			location = 0;
-		this.currentPlayer = this.players.get(location);
-
-		this.textViews.getCurrentPlayerTextView().setText(
-				"Current Player : " + this.currentPlayer.getName());
-		this.textViews.getHandStatusTextView().setText(
-				"# of Cards in Hand : "
-						+ this.currentPlayer.countCardsInHands());
-	}
-
-	/**
-	 * Performs necessary action when a button is touched
-	 */
-	private void buttonDown() {
-
-		sounds.startSound();
-		this.currentPlayer = players.get(0); // Randomize this maybe ?
-
-		this.textViews.getCurrentPlayerTextView().setText(
-				"Current Player : " + this.currentPlayer.getName());
-
-		this.addCardDeck();
-		this.serveCards();
-		this.textViews.getHandStatusTextView().setText(
-				"# of Cards in Hand : "
-						+ this.currentPlayer.countCardsInHands());
-	}
-
-	/**
 	 * Show the card deck and make cards available for player to pick if
 	 * necessary
 	 **/
@@ -433,13 +380,14 @@ public class Controller extends View implements LanguageConstants,
 	}
 
 	/** Reset the game elements **/
+	@SuppressWarnings("unused")
 	private void resetGame() {
 
 		// return all cards that are currently in player hands
 		for (int i = 0; i < this.players.size(); i++) {
 			this.players.get(i).returnCards();
-			this.players.get(i).setCurrentMove(new Move()); // refresh player
-															// moves
+			// refresh player moves
+			this.players.get(i).setCurrentMove(new Move());
 		}
 
 		// return played cards to the main card deck
@@ -496,6 +444,7 @@ public class Controller extends View implements LanguageConstants,
 	 * 
 	 * @return the number of cards
 	 */
+	@SuppressWarnings("unused")
 	private int countNumCardsAllPlayers() {
 		int sum = 0;
 		for (Player player : this.players) {
@@ -519,6 +468,13 @@ public class Controller extends View implements LanguageConstants,
 
 	public Activity getGameTableActivity() {
 		return gameTableActivity;
+	}
+
+	/**
+	 * Switches to the next player
+	 */
+	public void switchToNextPlayer() {
+		this.currentPlayer = this.getNextPlayer();
 	}
 
 }

@@ -22,6 +22,12 @@ import android.view.WindowManager;
 
 public class GameTableActivity extends Activity {
 
+	/**
+	 * The current player - updated by the Controller class
+	 */
+	private static Player currentPlayer;
+	private static Controller controller;
+	
 	@Override
 	/**
 	 * Entry point for game table activity
@@ -39,6 +45,35 @@ public class GameTableActivity extends Activity {
 				WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
 		this.setContentView(new GameBoardLayout(this));
+	}
+	
+
+	/**
+	 * Gets the current player.
+	 * 
+	 * @return Current Player
+	 */
+	public static Player getCurrentPlayer() {
+		return currentPlayer;
+	}
+
+	/**
+	 * Sets the current player. Updated by the Controller class
+	 * 
+	 * @param player
+	 *            Current Player
+	 */
+	public static void setCurrentPlayer(Player player) {
+		currentPlayer = player;
+	}
+
+
+	public static Controller getController() {
+		return controller;
+	}
+	
+	public static void setController(Controller controll){
+		controller = controll;
 	}
 
 }

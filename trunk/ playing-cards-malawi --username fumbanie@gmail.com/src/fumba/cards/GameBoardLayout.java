@@ -32,6 +32,9 @@ public class GameBoardLayout extends RelativeLayout implements ButtonConstants {
 	/** Collections of dynamic buttons **/
 	private ButtonBank buttonBank;
 
+	/** game table controller **/
+	private Controller controller;
+
 	/**
 	 * Adds framework game elements to the game table
 	 * 
@@ -43,11 +46,12 @@ public class GameBoardLayout extends RelativeLayout implements ButtonConstants {
 		Application context = activity.getApplication();
 		this.buttonBank = new ButtonBank(context);
 		
-		this.setGameBoardListeners(new ButtonListeners(activity));
+		this.setGameBoardListeners(new ButtonListeners(this, activity));
 
 		// Add the controller board
-		Controller board = new Controller(this, activity);
-		this.addView(board);
+		this.controller = new Controller(this, activity);
+		this.addView(controller);
+		GameTableActivity.setController(controller);
 
 		// add common back button
 		Button btn = this.buttonBank.getButtonMap().get(COMMON_BACK);
@@ -99,5 +103,6 @@ public class GameBoardLayout extends RelativeLayout implements ButtonConstants {
 	public ButtonBank getButtonBank() {
 		return this.buttonBank;
 	}
+
 
 }
