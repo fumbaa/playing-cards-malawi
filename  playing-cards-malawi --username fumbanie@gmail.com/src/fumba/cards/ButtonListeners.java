@@ -23,27 +23,15 @@ public class ButtonListeners implements View.OnClickListener {
 
 	/** Activity that contains the button **/
 	private Activity activity;
+	
+	private GameBoardLayout layout;
 
-	public ButtonListeners(Activity activity) {
+	public ButtonListeners(GameBoardLayout gameBoardLayout, Activity activity) {
 		this.activity = activity;
+		this.layout = gameBoardLayout;
 	}
 
 	public void onClick(View view) {
-
-		// Button 1 Actions
-		if (view.getId() == 888) {
-			// Create an Intent to start another activity.
-			//
-			// Intent a2intentProtocol = new Intent(view.getContext(),
-			// Activity2.class);
-			// Used for intent protocols that are designed to return a result
-			// When called inside initial onCreate... window is not displayed
-			// until a result is returned when requestCode >= 0
-			// this.activity.startActivityForResult(a2intentProtocol,
-			// Activity.RESULT_CANCELED);
-			// TODO startActivity(Intent) - activity is not launched as a sub
-			// activity
-		}
 
 		// Common Back Button
 		if (view.getId() == ButtonConstants.COMMON_BACK) {
@@ -53,11 +41,14 @@ public class ButtonListeners implements View.OnClickListener {
 
 		// Continue Button
 		else if (view.getId() == ButtonConstants.CONTINUE) {
+						
 			// Intent starts GameTableActivity
 			Intent gameTableProtocol = new Intent(view.getContext(),
 					PlayerTransitionActivity.class);
 			this.activity.startActivityForResult(gameTableProtocol,
 					Activity.RESULT_CANCELED);
+			
+			this.layout.removeView(view);
 		}
 
 	}// end onClick
