@@ -21,13 +21,16 @@ import android.widget.RelativeLayout;
  * @see <a href="http:chibaka.com">Fumba Game Lab</a>
  */
 
-public class GameBoardLayout extends RelativeLayout {
+public class GameBoardLayout extends RelativeLayout implements ButtonConstants {
 
 	/**
 	 * Listeners for any buttons that are dynamically added to the
 	 * GameTableLayout activity ONLY
 	 */
 	private ButtonListeners gameBoardListeners;
+	
+	/** Collections of dynamic buttons **/
+	private ButtonBank buttonBank;
 
 	/**
 	 * Adds framework game elements to the game table
@@ -38,23 +41,16 @@ public class GameBoardLayout extends RelativeLayout {
 	public GameBoardLayout(Activity activity) {
 		super(activity.getApplication());
 		Application context = activity.getApplication();
+		this.buttonBank = new ButtonBank(context);
+		
 		this.setGameBoardListeners(new ButtonListeners(activity));
 
 		// Add the controller board
-		Controller board = new Controller(this);
+		Controller board = new Controller(this, activity);
 		this.addView(board);
 
 		// add common back button
-		Button btn = new Button(context);
-		btn.setId(IDConstants.COMMON_BACK);
-
-		btn.setBackgroundResource(R.drawable.back_button);
-		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
-				LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-		params.setMargins((int) (ApplicationEntryActivity.width * 0.9),
-				(int) (ApplicationEntryActivity.height * 0.1), 0, 0);
-
-		btn.setLayoutParams(params);
+		Button btn = this.buttonBank.getButtonMap().get(COMMON_BACK);
 		btn.setOnClickListener( this.gameBoardListeners );
 		this.addView(btn);
 
@@ -94,6 +90,14 @@ public class GameBoardLayout extends RelativeLayout {
 	 */
 	public ButtonListeners getGameBoardListeners() {
 		return gameBoardListeners;
+	}
+
+	/**
+	 * Gets the button bank
+	 * @return a collection of dynamic buttons
+	 */
+	public ButtonBank getButtonBank() {
+		return this.buttonBank;
 	}
 
 }

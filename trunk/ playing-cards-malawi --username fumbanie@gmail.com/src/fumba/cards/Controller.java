@@ -2,12 +2,14 @@ package fumba.cards;
 
 import java.util.ArrayList;
 import java.util.List;
+import android.app.Activity;
 
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Point;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 /**
@@ -86,6 +88,18 @@ public class Controller extends View implements LanguageConstants,
 	private String[] repeatCards = REPEAT_CARDS_1;
 
 	/**
+	 * Collection of listeners for all the buttons that are dynamically added to
+	 * the parent activity
+	 **/
+	private ButtonListeners gameBoardListeners;
+
+	/** Collection of dynamic buttons **/
+	private ButtonBank buttonBank;
+
+	/** Activity that houses the Controller elements **/
+	private Activity gameTableActivity;
+
+	/**
 	 * Starts the game with a welcome screen where user selects desired options
 	 * and initiates the game. Card objects are also created in this
 	 * constructor.
@@ -94,8 +108,11 @@ public class Controller extends View implements LanguageConstants,
 	 *            interface to global information about an application
 	 *            environment
 	 */
-	public Controller(GameBoardLayout layout) {
+	public Controller(GameBoardLayout layout, Activity gameTableActivity) {
 		super(layout.getContext());
+		this.gameBoardListeners = layout.getGameBoardListeners();
+		this.buttonBank = layout.getButtonBank();
+		this.setGameTableActivity(gameTableActivity);
 
 		this.numOfCardsServed = 2;
 		this.touchPoint = new Point();
@@ -212,27 +229,19 @@ public class Controller extends View implements LanguageConstants,
 		int eventAction = event.getAction();
 		this.touchPoint = new Point((int) event.getX(), (int) event.getY());
 
-		// Only move cards on the game screen when the player is not waiting to
-		// press (PASS TO NEXT PLAYER) button
-		Boolean canMove = true; // (this.currentScreen == PLAY_SCREEN)
-		// && !this.currentPlayer.getCurrentMove().isContinued();
-
 		switch (eventAction) {
 
 		case MotionEvent.ACTION_UP:
-			if (canMove && this.activeCard != null)
+			if (this.activeCard != null)
 				this.cardReleased();
 			break;
 
 		case MotionEvent.ACTION_DOWN:
-			// this.screenDown();
-			if (canMove)
-				this.cardTouched();
-			// this.buttonDown();
+			this.cardTouched();
 			break;
 
 		case MotionEvent.ACTION_MOVE:
-			if (canMove && this.activeCard != null)
+			if (this.activeCard != null)
 				this.cardMove();
 			break;
 		}
@@ -282,13 +291,26 @@ public class Controller extends View implements LanguageConstants,
 				this.textViews.getHandStatusTextView().setText(
 						"# of Cards in Hand : "
 								+ this.currentPlayer.countCardsInHands());
-				// this.currentScreen = REVIEW_SCREEN;
+				this.showTransitionScreen();
 			} else {
 				// Player has valid moves force them...
 				String msg = FGLMessage.getMoveNotAllowedMsg(LN);
 				Toast.makeText(this.context, msg, Toast.LENGTH_SHORT).show();
 			}
 		}
+	}
+
+	/**
+	 * This method gives the current player a chance to look at their current
+	 * card before they pass the device on to an opponent. Use when a player has
+	 * no valid moves and picks a card instead.
+	 */
+	private void showTransitionScreen() {
+		Button button = this.buttonBank.getButtonMap().get(ButtonConstants.CONTINUE);
+		button.setOnClickListener(this.gameBoardListeners);
+		this.layout.addView(button);
+		//Update current player in the Application Entry Activity
+		ApplicationEntryActivity.setCurrentPlayer(this.currentPlayer);
 	}
 
 	/**
@@ -489,6 +511,14 @@ public class Controller extends View implements LanguageConstants,
 	 */
 	public String[] getRepeatCards() {
 		return this.repeatCards;
+	}
+
+	public void setGameTableActivity(Activity gameTableActivity) {
+		this.gameTableActivity = gameTableActivity;
+	}
+
+	public Activity getGameTableActivity() {
+		return gameTableActivity;
 	}
 
 }
