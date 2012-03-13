@@ -69,7 +69,10 @@ public class PlayerTransitionActivity extends Activity {
 
 			public void onClick(View v) {
 
+				//Switch to next player and unlock the cards
 				GameTableActivity.getController().switchToNextPlayer();
+				GameTableActivity.getController().setLockCards(false);
+				
 				setResult(Activity.RESULT_OK, new Intent());
 				finish();
 			}
