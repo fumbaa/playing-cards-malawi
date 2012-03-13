@@ -17,11 +17,21 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        
         <activity
             android:name="GameTableActivity"
             android:label="@string/app_name"
             android:screenOrientation="landscape" >
         </activity>
+        
+        
+        <activity
+            android:name="PlayerTransitionActivity"
+            android:label="@string/app_name"
+            android:screenOrientation="landscape" >
+        </activity>
+        
+        
     </application>
 
 </manifest>

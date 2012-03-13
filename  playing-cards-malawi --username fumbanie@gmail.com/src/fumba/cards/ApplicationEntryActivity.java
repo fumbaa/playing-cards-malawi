@@ -32,6 +32,11 @@ public class ApplicationEntryActivity extends Activity {
 	 */
 	public static int width, height;
 
+	/**
+	 * The current player - updated by the Controller class
+	 */
+	private static Player currentPlayer;
+
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -57,8 +62,10 @@ public class ApplicationEntryActivity extends Activity {
 	}
 
 	/**
-	 * Triggered when the start button on the main screen is clicked	 * 
-	 * @param view User interface component defined by res/layout/main.xml
+	 * Triggered when the start button on the main screen is clicked *
+	 * 
+	 * @param view
+	 *            User interface component defined by res/layout/main.xml
 	 */
 	public void mainButtonOnClick(View view) {
 		// Intent starts GameTableActivity
@@ -66,4 +73,24 @@ public class ApplicationEntryActivity extends Activity {
 				GameTableActivity.class);
 		this.startActivityForResult(gameTableProtocol, Activity.RESULT_CANCELED);
 	}
+
+	/**
+	 * Gets the current player.
+	 * 
+	 * @return Current Player
+	 */
+	public static Player getCurrentPlayer() {
+		return currentPlayer;
+	}
+
+	/**
+	 * Sets the current player. Updated by the Controller class
+	 * 
+	 * @param player
+	 *            Current Player
+	 */
+	public static void setCurrentPlayer(Player player) {
+		currentPlayer = player;
+	}
+
 }

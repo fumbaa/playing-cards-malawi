@@ -46,11 +46,20 @@ public class ButtonListeners implements View.OnClickListener {
 		}
 
 		// Common Back Button
-		if (view.getId() ==IDConstants.COMMON_BACK) {
+		if (view.getId() == ButtonConstants.COMMON_BACK) {
 			this.activity.setResult(Activity.RESULT_OK, new Intent());
 			this.activity.finish();
 		}
 
-	}//end onClick
+		// Continue Button
+		else if (view.getId() == ButtonConstants.CONTINUE) {
+			// Intent starts GameTableActivity
+			Intent gameTableProtocol = new Intent(view.getContext(),
+					PlayerTransitionActivity.class);
+			this.activity.startActivityForResult(gameTableProtocol,
+					Activity.RESULT_CANCELED);
+		}
+
+	}// end onClick
 
 }
