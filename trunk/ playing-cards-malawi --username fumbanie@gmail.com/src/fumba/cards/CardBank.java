@@ -51,7 +51,7 @@ public class CardBank {
 	 * @param context
 	 *            application-specific resources and classes
 	 * @param controller
-	 *            can be visualiased as the person in control of the card deck
+	 *            can be visualized as the person in control of the card deck
 	 * @see <a
 	 *      href="http://developer.android.com/reference/android/content/Context.html">Context
 	 *      (Android API) </a>

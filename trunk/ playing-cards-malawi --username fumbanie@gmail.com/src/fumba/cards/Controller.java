@@ -97,6 +97,9 @@ public class Controller extends View implements LanguageConstants,
 	/** Activity that houses the Controller elements **/
 	private Activity gameTableActivity;
 
+	/** Flag to lock cards from being moved **/
+	private boolean lockCards = false;
+
 	/**
 	 * Starts the game with a welcome screen where user selects desired options
 	 * and initiates the game. Card objects are also created in this
@@ -226,21 +229,23 @@ public class Controller extends View implements LanguageConstants,
 		int eventAction = event.getAction();
 		this.touchPoint = new Point((int) event.getX(), (int) event.getY());
 
-		switch (eventAction) {
+		if (! this.lockCards) {
+			switch (eventAction) {
 
-		case MotionEvent.ACTION_UP:
-			if (this.activeCard != null)
-				this.cardReleased();
-			break;
+			case MotionEvent.ACTION_UP:
+				if (this.activeCard != null)
+					this.cardReleased();
+				break;
 
-		case MotionEvent.ACTION_DOWN:
-			this.cardTouched();
-			break;
+			case MotionEvent.ACTION_DOWN:
+				this.cardTouched();
+				break;
 
-		case MotionEvent.ACTION_MOVE:
-			if (this.activeCard != null)
-				this.cardMove();
-			break;
+			case MotionEvent.ACTION_MOVE:
+				if (this.activeCard != null)
+					this.cardMove();
+				break;
+			}
 		}
 
 		this.invalidate();
@@ -289,6 +294,7 @@ public class Controller extends View implements LanguageConstants,
 	 * no valid moves and picks a card instead.
 	 */
 	private void showTransitionScreen() {
+		this.lockCards = true;
 		Button button = this.buttonBank.getButtonMap().get(
 				ButtonConstants.CONTINUE);
 		button.setOnClickListener(this.gameBoardListeners);
@@ -475,6 +481,11 @@ public class Controller extends View implements LanguageConstants,
 	 */
 	public void switchToNextPlayer() {
 		this.currentPlayer = this.getNextPlayer();
+	}
+
+	/** Update the lock status of the cards- used during player transition **/
+	public void setLockCards(boolean lockStatus) {
+		this.lockCards = lockStatus;
 	}
 
 }
