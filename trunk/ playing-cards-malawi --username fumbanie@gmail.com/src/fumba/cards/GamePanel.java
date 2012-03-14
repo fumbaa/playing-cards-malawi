@@ -8,12 +8,14 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Point;
 import android.view.MotionEvent;
+import android.view.SurfaceHolder;
+import android.view.SurfaceView;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
 /**
- * The <code>Controller</code> manages the game application. This class controls
+ * The <code>GamePanel</code> manages the game application. This class controls
  * menu elements, creates the cards and distributes them to players. It also
  * listens to moves that players are making and updates the game state
  * accordingly.
@@ -30,8 +32,11 @@ import android.widget.Toast;
  * @see <a href="http:chibaka.com">Fumba Game Lab</a>
  */
 
-public class Controller extends View implements LanguageConstants,
-		GeneralConstants {
+public class GamePanel extends SurfaceView implements SurfaceHolder.Callback,
+		LanguageConstants, GeneralConstants {
+
+	/** Thread that controls drawing of elements on the panel **/
+	private GamePanelThread thread;
 
 	/** the card on the very top of the played card stack **/
 	private Card topPlayedCard;
@@ -64,7 +69,7 @@ public class Controller extends View implements LanguageConstants,
 	private List<Player> players = new ArrayList<Player>();
 
 	/** A framelayout that organizes all the graphical game elements **/
-	private GameBoardLayout layout;
+	private GamePanelLayout layout;
 
 	/** Total number of cards available for this game application **/
 	@SuppressWarnings("unused")
@@ -109,8 +114,16 @@ public class Controller extends View implements LanguageConstants,
 	 *            interface to global information about an application
 	 *            environment
 	 */
-	public Controller(GameBoardLayout layout, Activity gameTableActivity) {
+	public GamePanel(GamePanelLayout layout, Activity gameTableActivity) {
 		super(layout.getContext());
+
+		// add the Panel to the SurfaceHolder for a callback
+		getHolder().addCallback(this);
+		this.thread = new GamePanelThread(this);
+
+		// enable touch events to be processed on the panel
+		this.setFocusable(true);
+
 		this.gameBoardListeners = layout.getGameBoardListeners();
 		this.buttonBank = layout.getButtonBank();
 		this.setGameTableActivity(gameTableActivity);
@@ -119,7 +132,6 @@ public class Controller extends View implements LanguageConstants,
 		this.touchPoint = new Point();
 		this.context = this.getContext();
 		this.layout = layout;
-		this.setFocusable(true);
 
 		// Make elements available to the controller
 		this.sounds = new SoundBank(this.context);
@@ -182,6 +194,7 @@ public class Controller extends View implements LanguageConstants,
 	@Override
 	protected void onDraw(Canvas canvas) {
 		this.drawCards(canvas);
+		//this.showGameStatus(canvas);
 	}
 
 	/**
@@ -192,19 +205,28 @@ public class Controller extends View implements LanguageConstants,
 	private void drawCards(Canvas canvas) {
 		canvas.drawBitmap(this.cardBack.getBitmap(), this.cardBack.getX(),
 				this.cardBack.getY(), null);
+		
 		for (Card card : this.playedCards) {
 			canvas.drawBitmap(card.getBitmap(), card.getX(), card.getY(), null);
 		}
+		
 		for (Card card : this.currentPlayer.getCardsInHand()) {
 			canvas.drawBitmap(card.getBitmap(), card.getX(), card.getY(), null);
 		}
+	}
 
-		this.textViews.getCurrentPlayerTextView().setText(
-				"Current Player : " + this.currentPlayer.getName());
-		this.textViews.getHandStatusTextView().setText(
-				"# of Cards in Hand : "
-						+ this.currentPlayer.countCardsInHands());
-
+	/**
+	 * Used for debugging: Shows the current game status
+	 * 
+	 * @param canvas
+	 */
+	private void showGameStatus(Canvas canvas) {
+		/*
+		 * this.textViews.getCurrentPlayerTextView().setText(
+		 * "Current Player : " + this.currentPlayer.getName());
+		 * this.textViews.getHandStatusTextView().setText(
+		 * "# of Cards in Hand : " + this.currentPlayer.countCardsInHands());
+		 */
 	}
 
 	/** Retrieves the next player **/
@@ -229,26 +251,27 @@ public class Controller extends View implements LanguageConstants,
 		int eventAction = event.getAction();
 		this.touchPoint = new Point((int) event.getX(), (int) event.getY());
 
-		if (! this.lockCards) {
-			switch (eventAction) {
+		synchronized (this.thread.getSurfaceHolder()) {
+			if (!this.lockCards) {
+				switch (eventAction) {
 
-			case MotionEvent.ACTION_UP:
-				if (this.activeCard != null)
-					this.cardReleased();
-				break;
+				case MotionEvent.ACTION_UP:
+					if (this.activeCard != null)
+						this.cardReleased();
+					break;
 
-			case MotionEvent.ACTION_DOWN:
-				this.cardTouched();
-				break;
+				case MotionEvent.ACTION_DOWN:
+					this.cardTouched();
+					break;
 
-			case MotionEvent.ACTION_MOVE:
-				if (this.activeCard != null)
-					this.cardMove();
-				break;
+				case MotionEvent.ACTION_MOVE:
+					if (this.activeCard != null)
+						this.cardMove();
+					break;
+				}
 			}
 		}
-
-		this.invalidate();
+		// this.invalidate();
 		return true;
 	}
 
@@ -307,7 +330,6 @@ public class Controller extends View implements LanguageConstants,
 	 * Actions to perform when a card is moved.
 	 */
 	private void cardMove() {
-		// if (this.currentScreen == PLAY_SCREEN)
 		if (this.activeCard != null) {
 			Card card = this.currentPlayer.getCard(this.activeCard);
 			card.rescale();
@@ -438,9 +460,9 @@ public class Controller extends View implements LanguageConstants,
 	/**
 	 * Gets the gameboard layout object
 	 * 
-	 * @return GameBoardLayout
+	 * @return GamePanelLayout
 	 */
-	public GameBoardLayout getLayout() {
+	public GamePanelLayout getLayout() {
 		return this.layout;
 	}
 
@@ -488,4 +510,30 @@ public class Controller extends View implements LanguageConstants,
 		this.lockCards = lockStatus;
 	}
 
+	public void surfaceChanged(SurfaceHolder holder, int format, int width,
+			int height) {
+		// TODO Auto-generated method stub
+
+	}
+
+	public void surfaceCreated(SurfaceHolder holder) {
+		this.thread.setRunning(true);
+		this.thread.start();
+	}
+
+	public void surfaceDestroyed(SurfaceHolder holder) {
+		// simply copied from sample application LunarLander:
+		// we have to tell thread to shut down & wait for it to finish, or else
+		// it might touch the Surface after we return and explode
+		boolean retry = true;
+		this.thread.setRunning(false);
+		while (retry) {
+			try {
+				this.thread.join();
+				retry = false;
+			} catch (InterruptedException e) {
+				// we will try it again and again...
+			}
+		}
+	}
 }

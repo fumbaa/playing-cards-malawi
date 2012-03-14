@@ -42,7 +42,7 @@ public class CardBank {
 	 * can be visualised as the person who is taking charge of distributing the
 	 * cards and observing that all game rules are followed.
 	 */
-	private Controller controller;
+	private GamePanel controller;
 
 	/**
 	 * Initiates sound bank and populates it with sounds from applications
@@ -56,7 +56,7 @@ public class CardBank {
 	 *      href="http://developer.android.com/reference/android/content/Context.html">Context
 	 *      (Android API) </a>
 	 */
-	CardBank(Context context, Controller controller) {
+	CardBank(Context context, GamePanel controller) {
 		this.context = context;
 		this.controller = controller;
 		this.cardMap = new ArrayList<Card>();

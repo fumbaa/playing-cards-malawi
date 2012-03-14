@@ -35,17 +35,17 @@ import android.graphics.Point;
 
 public class Card extends FGLGraphic {
 	/**
-	 * The controller to which this card belongs to. In this case, the contoller
+	 * The GamePanel to which this card belongs to. In this case, the contoller
 	 * can be visualised as the person who is taking charge of distributing the
 	 * cards and observing that all game rules are followed.
 	 */
-	private Controller controller;
+	private GamePanel GamePanel;
 
 	/**
 	 * Makes a new card object with a name and decodes the
 	 * <code>resourceID</code> to figure out which bitmap image should be used
 	 * for the card object. The card is then placed in the control of the
-	 * controller.
+	 * GamePanel.
 	 * 
 	 * @param context
 	 *            interface to global information about an application
@@ -55,14 +55,14 @@ public class Card extends FGLGraphic {
 	 * @param resourceID
 	 *            an integer that maps to the appropriate bitmap image of the
 	 *            card
-	 * @param controller
+	 * @param GamePanel
 	 *            can be visualised as the person controlling the game
 	 * @see R.drawable
 	 */
 	public Card(Context context, String name, int resourceID,
-			Controller controller) {
+			GamePanel GamePanel) {
 		super(context, name, resourceID);
-		this.controller = controller;
+		this.GamePanel = GamePanel;
 	}
 
 	/**
@@ -70,6 +70,7 @@ public class Card extends FGLGraphic {
 	 */
 	@Override
 	protected void extractBitmap() {
+		
 		BitmapFactory.Options opts = new BitmapFactory.Options();
 		opts.inJustDecodeBounds = true;
 		this.img = BitmapFactory.decodeResource(context.getResources(),
@@ -112,19 +113,19 @@ public class Card extends FGLGraphic {
 	/**
 	 * Gets the current position of the card
 	 * 
-	 * @return Point representinf the x and y coordinates of the position
+	 * @return Point representing the x and y coordinates of the position
 	 */
 	public Point getPosition() {
 		return new Point(this.currentX, this.currentY);
 	}
 
 	/**
-	 * Retrieves the controller for the card
+	 * Retrieves the GamePanel for the card
 	 * 
-	 * @return Controller Object
+	 * @return GamePanel Object
 	 */
-	public Controller getController() {
-		return this.controller;
+	public GamePanel getGamePanel() {
+		return this.GamePanel;
 	}
 
 	/**
@@ -135,7 +136,7 @@ public class Card extends FGLGraphic {
 	 */
 	public String toString() {
 		return "Card: " + this.name + " , Owner: "
-				+ this.controller.getCurrentPlayer();
+				+ this.GamePanel.getCurrentPlayer();
 	}
 
 }

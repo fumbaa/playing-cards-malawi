@@ -7,7 +7,7 @@ import android.graphics.Point;
 
 public class HumanPlayer extends Player {
 
-	private Controller controller;
+	private GamePanel controller;
 
 	/** Name of the current player **/
 	private String name;
@@ -24,7 +24,7 @@ public class HumanPlayer extends Player {
 	 * @param name
 	 *            Name of the player
 	 */
-	public HumanPlayer(String name, Controller controller) {
+	public HumanPlayer(String name, GamePanel controller) {
 		this.name = name;
 		this.controller = controller;
 		this.currentMove = new Move(); // defaults to false, false for validity

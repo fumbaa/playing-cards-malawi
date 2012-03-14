@@ -4,7 +4,7 @@ import android.app.Activity;
 import android.app.Application;
 import android.graphics.Point;
 import android.widget.Button;
-import android.widget.RelativeLayout;
+import android.widget.FrameLayout;
 
 /**
  * The Canvas on which the game table elements are added onto.
@@ -21,7 +21,7 @@ import android.widget.RelativeLayout;
  * @see <a href="http:chibaka.com">Fumba Game Lab</a>
  */
 
-public class GameBoardLayout extends RelativeLayout implements ButtonConstants {
+public class GamePanelLayout extends FrameLayout implements ButtonConstants {
 
 	/**
 	 * Listeners for any buttons that are dynamically added to the
@@ -33,7 +33,7 @@ public class GameBoardLayout extends RelativeLayout implements ButtonConstants {
 	private ButtonBank buttonBank;
 
 	/** game table controller **/
-	private Controller controller;
+	private GamePanel controller;
 
 	/**
 	 * Adds framework game elements to the game table
@@ -41,7 +41,7 @@ public class GameBoardLayout extends RelativeLayout implements ButtonConstants {
 	 * @param activity
 	 *            Focused activity(i.e. GameTableLayout)
 	 */
-	public GameBoardLayout(Activity activity) {
+	public GamePanelLayout(Activity activity) {
 		super(activity.getApplication());
 		Application context = activity.getApplication();
 		this.buttonBank = new ButtonBank(context);
@@ -49,7 +49,7 @@ public class GameBoardLayout extends RelativeLayout implements ButtonConstants {
 		this.setGameBoardListeners(new ButtonListeners(this, activity));
 
 		// Add the controller board
-		this.controller = new Controller(this, activity);
+		this.controller = new GamePanel(this, activity);
 		this.addView(controller);
 		GameTableActivity.setController(controller);
 
