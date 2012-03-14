@@ -24,11 +24,11 @@ public class ButtonListeners implements View.OnClickListener {
 	/** Activity that contains the button **/
 	private Activity activity;
 	
-	private GameBoardLayout layout;
+	private GamePanelLayout layout;
 
-	public ButtonListeners(GameBoardLayout gameBoardLayout, Activity activity) {
+	public ButtonListeners(GamePanelLayout GamePanelLayout, Activity activity) {
 		this.activity = activity;
-		this.layout = gameBoardLayout;
+		this.layout = GamePanelLayout;
 	}
 
 	public void onClick(View view) {

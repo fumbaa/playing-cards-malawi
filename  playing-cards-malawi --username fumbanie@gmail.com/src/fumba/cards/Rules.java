@@ -28,7 +28,7 @@ public abstract class Rules {
 	public static Move checkMove(Card card) {
 		Move move = new Move();
 
-		Controller controller = card.getController();
+		GamePanel controller = card.getGamePanel();
 
 		char currCardSuite = card.getSuite();
 		char currCardNum = card.getNumber();
@@ -51,7 +51,7 @@ public abstract class Rules {
 	 * @return boolean true if the player needs to make another supporting move
 	 */
 	public static boolean determineContinuity(Card card) {
-		String[] repeatCards = card.getController().getRepeatCards();
+		String[] repeatCards = card.getGamePanel().getRepeatCards();
 		if ( ArrayUtils.contains(repeatCards, card.getName()) || ArrayUtils.contains(repeatCards, "" + card.getNumber() )){
 			return true;
 		}
