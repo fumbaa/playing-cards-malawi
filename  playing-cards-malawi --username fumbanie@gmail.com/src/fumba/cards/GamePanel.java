@@ -6,6 +6,7 @@ import android.app.Activity;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Point;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
@@ -34,6 +35,9 @@ import android.widget.Toast;
 
 public class GamePanel extends SurfaceView implements SurfaceHolder.Callback,
 		LanguageConstants, GeneralConstants {
+
+	/** **/
+	private boolean gameStarted = false;
 
 	/** Thread that controls drawing of elements on the panel **/
 	private GamePanelThread thread;
@@ -75,9 +79,6 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback,
 	@SuppressWarnings("unused")
 	private int totalNumCards;
 
-	/** Textviews that are used to display text for this application **/
-	private TextViewBank textViews;
-
 	/**
 	 * The number of cards to be served to the players at the beginning of the
 	 * game
@@ -117,6 +118,8 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback,
 	public GamePanel(GamePanelLayout layout, Activity gameTableActivity) {
 		super(layout.getContext());
 
+		this.gameStarted = true;
+
 		// add the Panel to the SurfaceHolder for a callback
 		getHolder().addCallback(this);
 		this.thread = new GamePanelThread(this);
@@ -136,7 +139,6 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback,
 		// Make elements available to the controller
 		this.sounds = new SoundBank(this.context);
 		this.cards = new CardBank(this.context, this);
-		this.textViews = new TextViewBank(this.context, this.layout);
 
 		// LOG INFORMATION FOR INITIAL VALUES (for debugging )
 		this.totalNumCards = cards.countCards();
@@ -194,7 +196,16 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback,
 	@Override
 	protected void onDraw(Canvas canvas) {
 		this.drawCards(canvas);
-		//this.showGameStatus(canvas);
+
+		//come out of the 
+		this.gameTableActivity.runOnUiThread(
+
+		new Runnable() {
+			public void run() {
+				GameTableActivity.getGamePanelLayout().showGameStatus();
+			}
+		});
+
 	}
 
 	/**
@@ -203,30 +214,19 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback,
 	 * @param canvas
 	 */
 	private void drawCards(Canvas canvas) {
+		 canvas.drawColor(Color.BLACK);
+		//canvas.drawColor(Color.TRANSPARENT);
+
 		canvas.drawBitmap(this.cardBack.getBitmap(), this.cardBack.getX(),
 				this.cardBack.getY(), null);
-		
+
 		for (Card card : this.playedCards) {
 			canvas.drawBitmap(card.getBitmap(), card.getX(), card.getY(), null);
 		}
-		
+
 		for (Card card : this.currentPlayer.getCardsInHand()) {
 			canvas.drawBitmap(card.getBitmap(), card.getX(), card.getY(), null);
 		}
-	}
-
-	/**
-	 * Used for debugging: Shows the current game status
-	 * 
-	 * @param canvas
-	 */
-	private void showGameStatus(Canvas canvas) {
-		/*
-		 * this.textViews.getCurrentPlayerTextView().setText(
-		 * "Current Player : " + this.currentPlayer.getName());
-		 * this.textViews.getHandStatusTextView().setText(
-		 * "# of Cards in Hand : " + this.currentPlayer.countCardsInHands());
-		 */
 	}
 
 	/** Retrieves the next player **/
@@ -424,7 +424,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback,
 		}
 		this.playedCards.clear();
 
-		this.textViews.reset();
+		// TODO this.textViews.reset();
 	}
 
 	/**
@@ -517,8 +517,14 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback,
 	}
 
 	public void surfaceCreated(SurfaceHolder holder) {
-		this.thread.setRunning(true);
-		this.thread.start();
+		if (thread.getState() == Thread.State.TERMINATED) {
+			thread = new GamePanelThread(this);
+			thread.setRunning(true);
+			thread.start();
+		} else {
+			thread.setRunning(true);
+			thread.start();
+		}
 	}
 
 	public void surfaceDestroyed(SurfaceHolder holder) {
@@ -535,5 +541,13 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback,
 				// we will try it again and again...
 			}
 		}
+	}
+
+	public boolean isGameStarted() {
+		return gameStarted;
+	}
+
+	public void setGameStarted(boolean gameStarted) {
+		this.gameStarted = gameStarted;
 	}
 }

@@ -41,6 +41,7 @@ public class ButtonListeners implements View.OnClickListener {
 
 		// Continue Button
 		else if (view.getId() == ButtonConstants.CONTINUE) {
+			
 						
 			// Intent starts GameTableActivity
 			Intent gameTableProtocol = new Intent(view.getContext(),
