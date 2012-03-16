@@ -2,9 +2,10 @@ package fumba.cards;
 
 import android.app.Activity;
 import android.app.Application;
+import android.graphics.Canvas;
 import android.graphics.Point;
 import android.widget.Button;
-import android.widget.FrameLayout;
+import android.widget.RelativeLayout;
 
 /**
  * The Canvas on which the game table elements are added onto.
@@ -21,19 +22,22 @@ import android.widget.FrameLayout;
  * @see <a href="http:chibaka.com">Fumba Game Lab</a>
  */
 
-public class GamePanelLayout extends FrameLayout implements ButtonConstants {
+public class GamePanelLayout extends RelativeLayout implements ButtonConstants {
 
 	/**
 	 * Listeners for any buttons that are dynamically added to the
 	 * GameTableLayout activity ONLY
 	 */
 	private ButtonListeners gameBoardListeners;
-	
+
 	/** Collections of dynamic buttons **/
 	private ButtonBank buttonBank;
 
 	/** game table controller **/
 	private GamePanel controller;
+
+	/** Textviews that are used to display text for this application **/
+	private TextViewBank textViews;
 
 	/**
 	 * Adds framework game elements to the game table
@@ -45,17 +49,20 @@ public class GamePanelLayout extends FrameLayout implements ButtonConstants {
 		super(activity.getApplication());
 		Application context = activity.getApplication();
 		this.buttonBank = new ButtonBank(context);
-		
+
 		this.setGameBoardListeners(new ButtonListeners(this, activity));
 
 		// Add the controller board
 		this.controller = new GamePanel(this, activity);
 		this.addView(controller);
 		GameTableActivity.setController(controller);
+		
+
+		this.textViews = new TextViewBank(context, this);
 
 		// add common back button
 		Button btn = this.buttonBank.getButtonMap().get(COMMON_BACK);
-		btn.setOnClickListener( this.gameBoardListeners );
+		btn.setOnClickListener(this.gameBoardListeners);
 		this.addView(btn);
 
 	}
@@ -98,11 +105,23 @@ public class GamePanelLayout extends FrameLayout implements ButtonConstants {
 
 	/**
 	 * Gets the button bank
+	 * 
 	 * @return a collection of dynamic buttons
 	 */
 	public ButtonBank getButtonBank() {
 		return this.buttonBank;
 	}
 
+	/**
+	 * Used for debugging: Shows the current game status
+	 * 
+	 * @param canvas
+	 */
+	public void showGameStatus() {
+		this.textViews.getCurrentPlayerTextView().setText(
+				"Current Player : " + this.controller.getCurrentPlayer().getName());
+		this.textViews.getHandStatusTextView().setText(
+				"# of Cards in Hand : " + this.controller.getCurrentPlayer().countCardsInHands());
+	}
 
 }

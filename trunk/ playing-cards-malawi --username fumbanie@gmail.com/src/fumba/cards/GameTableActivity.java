@@ -5,7 +5,6 @@ import android.media.AudioManager;
 import android.os.Bundle;
 import android.view.Window;
 import android.view.WindowManager;
-import practice.*;
 
 /**
  * Makes adjustments to the game screen and initiates the main game layout.
@@ -28,6 +27,7 @@ public class GameTableActivity extends Activity {
 	 */
 	private static Player currentPlayer;
 	private static GamePanel controller;
+	private static GamePanelLayout gamePanelLayout;
 	
 	@Override
 	/**
@@ -45,8 +45,8 @@ public class GameTableActivity extends Activity {
 		this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
 				WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-		//this.setContentView( new Panel(this));
-		this.setContentView(new GamePanelLayout(this));
+		gamePanelLayout = new GamePanelLayout(this);
+		this.setContentView(gamePanelLayout);
 	}
 	
 
@@ -76,6 +76,11 @@ public class GameTableActivity extends Activity {
 	
 	public static void setController(GamePanel controll){
 		controller = controll;
+	}
+
+
+	public static GamePanelLayout getGamePanelLayout() {
+		return gamePanelLayout;
 	}
 
 }
