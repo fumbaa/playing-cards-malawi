@@ -51,7 +51,7 @@ public class Move {
 	 * 
 	 * @return Boolean
 	 */
-	public Boolean getValidity() {
+	public Boolean isValid() {
 		return this.validity;
 	}
 

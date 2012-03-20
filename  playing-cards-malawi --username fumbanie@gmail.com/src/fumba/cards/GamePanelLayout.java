@@ -2,7 +2,6 @@ package fumba.cards;
 
 import android.app.Activity;
 import android.app.Application;
-import android.graphics.Canvas;
 import android.graphics.Point;
 import android.widget.Button;
 import android.widget.RelativeLayout;

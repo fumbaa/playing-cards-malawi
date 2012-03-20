@@ -5,6 +5,7 @@ import java.util.List;
 import android.app.Activity;
 
 import android.content.Context;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Point;
@@ -147,11 +148,11 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback,
 		// TODO this.addMainMenu();
 
 		String playerName1 = "Fumbani";
-		String playerName2 = "Felix";
+		String playerName2 = "Computer";
 		// String playerName3 = "DiwiDiwi";
 
 		Player p1 = new HumanPlayer(playerName1, this);
-		Player p2 = new HumanPlayer(playerName2, this);
+		Player p2 = new CPUPlayer(playerName2, this);
 		// Player p3 = new HumanPlayer(playerName3, this);
 
 		this.players.add(p1);
@@ -173,7 +174,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback,
 
 		Card middle_card = this.cards.pickRandomCard();
 		this.layout.setPosition(middle_card, .5, .8);
-		this.updatePlayedCards(middle_card);
+		this.setTopCard(middle_card);
 		middle_card.activate();
 
 		for (int i = 0; i < this.numOfCardsServed; i++) {
@@ -195,9 +196,14 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback,
 	 */
 	@Override
 	protected void onDraw(Canvas canvas) {
+		 
+		// draw the background
+		//TODO Put in bitmap cache
+        canvas.drawBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.abstrakt) , 0, 0, null);
+        
 		this.drawCards(canvas);
 
-		//come out of the 
+		// come out of the panel thread
 		this.gameTableActivity.runOnUiThread(
 
 		new Runnable() {
@@ -214,8 +220,8 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback,
 	 * @param canvas
 	 */
 	private void drawCards(Canvas canvas) {
-		 canvas.drawColor(Color.BLACK);
-		//canvas.drawColor(Color.TRANSPARENT);
+		//canvas.drawColor(Color.BLACK);
+		// canvas.drawColor(Color.TRANSPARENT);
 
 		canvas.drawBitmap(this.cardBack.getBitmap(), this.cardBack.getX(),
 				this.cardBack.getY(), null);
@@ -302,7 +308,13 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback,
 		if (this.cardBack.isTouched(this.touchPoint) != null) {
 			if (!this.currentPlayer.hasValidMoves()) {
 				this.currentPlayer.pickCard();
-				this.showTransitionScreen();
+				
+				//Switch to the next player
+				if (this.getNextPlayer().isHuman())
+					this.showTransitionScreen();
+				else
+					this.currentPlayer = this.getNextPlayer();
+				
 			} else {
 				// Player has valid moves force them...
 				String msg = FGLMessage.getMoveNotAllowedMsg(LN);
@@ -343,20 +355,20 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback,
 	 */
 	private void cardReleased() {
 		if (this.activeCard != null) {
-
 			Card card = this.currentPlayer.getCard(this.activeCard);
-
 			if (this.currentPlayer.isHuman()) {
 				Move move = Rules.checkMove(card);
-				/* Valid Move */
-				if (move.getValidity()
+
+				if (move.isValid()
 						&& this.topPlayedCard.isTouched(this.touchPoint) != null) {
-					this.currentPlayer.playCard(move);
+					this.currentPlayer.makeMove(move);
 					this.activeCard = null;
 
 					// check if game is over....
 					if (this.gameOver()) {
-						// this.currentScreen = GAME_OVER;
+						Toast.makeText(this.context, "GAME OVER!!!",
+								Toast.LENGTH_SHORT).show();
+						this.lockCards = true;
 						return;
 					}
 					// check if move is continued...
@@ -364,7 +376,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback,
 						this.showTransitionScreen();
 					else
 						Toast.makeText(this.context, "Its your turn again...",
-								Toast.LENGTH_SHORT);
+								Toast.LENGTH_SHORT).show();
 				}
 				/* Invalid Move */
 				else {
@@ -377,7 +389,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback,
 			else {
 				card.resetPosition();
 				Toast.makeText(this.context, "Please wait: CPU is playing...",
-						Toast.LENGTH_SHORT);
+						Toast.LENGTH_SHORT).show();
 			}
 		}
 	}
@@ -391,10 +403,10 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback,
 	private boolean gameOver() {
 		// important: check if the player is continuing with his move
 		if (!this.currentPlayer.getCurrentMove().isContinued()
-				&& this.currentPlayer.getCardsInHand().isEmpty()) {
+				&& this.currentPlayer.getCardsInHand().isEmpty())
 			return true;
-		}
-		return false;
+		else
+			return false;
 	}
 
 	/**
@@ -452,7 +464,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback,
 	}
 
 	/** Updates the stack of cards that have already been played **/
-	public void updatePlayedCards(Card card) {
+	public void setTopCard(Card card) {
 		this.playedCards.add(card);
 		this.topPlayedCard = card;
 	}
