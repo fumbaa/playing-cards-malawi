@@ -28,13 +28,13 @@ public abstract class Rules {
 	public static Move checkMove(Card card) {
 		Move move = new Move();
 
-		GamePanel controller = card.getGamePanel();
+		GamePanel gamePanel = card.getGamePanel();
 
 		char currCardSuite = card.getSuite();
 		char currCardNum = card.getNumber();
 
-		char topCardSuite = controller.getTopCard().getSuite();
-		char topCardNum = controller.getTopCard().getNumber();
+		char topCardSuite = gamePanel.getTopCard().getSuite();
+		char topCardNum = gamePanel.getTopCard().getNumber();
 
 		if (currCardSuite == topCardSuite || currCardNum == topCardNum) {
 			move.setValidity(true);
@@ -68,7 +68,7 @@ public abstract class Rules {
 	 */
 	public static boolean hasValidMoves(Player player) {
 		for (Card card : player.getCardsInHand()) {
-			if (Rules.checkMove(card).getValidity())
+			if (Rules.checkMove(card).isValid())
 				return true;
 		}
 		return false;
