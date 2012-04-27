@@ -15,18 +15,15 @@ public class Graph extends JFrame {
  private void initializeComponent() {
   frame = (JPanel)this.getContentPane();
   panel = new JPanel();
-
-  frame.setLayout(null);
-  frame.setBackground(new Color(0, 0, 0));
-  frame.setForeground(new Color(255, 0, 0));
+  
+  frame.setBackground(Color.white);
   
   addComponent(frame, panel, 0,0,600,400);
-  panel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
-  panel.setBackground(new Color(50, 50, 50));
+  panel.setBackground(Color.black);
   panel.add( new GamePanel() );
   
   this.setTitle("Android FUMBA Emulator");
-  this.setLocation(new Point(10, 10));
+  this.setLocation(new Point(0, 0));
   this.setSize(new Dimension(600, 400));
   this.setResizable(false);
   this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -40,11 +37,6 @@ public class Graph extends JFrame {
 
  
  public static void main(String[] args) {
-  JFrame.setDefaultLookAndFeelDecorated(true);
-  JDialog.setDefaultLookAndFeelDecorated(true);
-  try {
-   UIManager.setLookAndFeel( UIManager.getSystemLookAndFeelClassName() );
-  } catch (Exception ex) {  }
   new Graph();
  }
  
