@@ -24,4 +24,10 @@ public interface GeneralConstants {
 	public static final String CURRENT_PLAYER_SUMMARY = "Current Player Summary";
 
 	public static final String CURRENT_MOVE_UPDATE = "Current Move Update";
+	
+	/** Player Position: Upper **/
+	public static final String UPPER_LOC = "Upper";
+	
+	/** Player Position: Lower **/
+	public static final String LOWER_LOC = "Lower";
 }

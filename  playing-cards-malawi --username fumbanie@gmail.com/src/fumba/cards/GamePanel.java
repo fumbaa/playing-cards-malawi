@@ -7,7 +7,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Point;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
@@ -152,7 +151,9 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback,
 		// String playerName3 = "DiwiDiwi";
 
 		Player p1 = new HumanPlayer(playerName1, this);
+		p1.setLocation(UPPER_LOC);
 		Player p2 = new CPUPlayer(playerName2, this);
+		p2.setLocation(LOWER_LOC);
 		// Player p3 = new HumanPlayer(playerName3, this);
 
 		this.players.add(p1);
@@ -196,11 +197,12 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback,
 	 */
 	@Override
 	protected void onDraw(Canvas canvas) {
-		 
-		// draw the background
-		//TODO Put in bitmap cache
-        canvas.drawBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.abstrakt) , 0, 0, null);
-        
+
+		// draw the background image
+		// TODO Put in bitmap cache
+		canvas.drawBitmap(BitmapFactory.decodeResource(getResources(),
+				R.drawable.abstrakt), 0, 0, null);
+
 		this.drawCards(canvas);
 
 		// come out of the panel thread
@@ -220,7 +222,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback,
 	 * @param canvas
 	 */
 	private void drawCards(Canvas canvas) {
-		//canvas.drawColor(Color.BLACK);
+		// canvas.drawColor(Color.BLACK);
 		// canvas.drawColor(Color.TRANSPARENT);
 
 		canvas.drawBitmap(this.cardBack.getBitmap(), this.cardBack.getX(),
@@ -230,8 +232,16 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback,
 			canvas.drawBitmap(card.getBitmap(), card.getX(), card.getY(), null);
 		}
 
-		for (Card card : this.currentPlayer.getCardsInHand()) {
-			canvas.drawBitmap(card.getBitmap(), card.getX(), card.getY(), null);
+		//draw player cards
+		for (Player player : this.players) {
+			for (Card card : player.getCardsInHand()) {
+				if (player.equals(this.currentPlayer))
+					canvas.drawBitmap(card.getBitmap(), card.getX(),
+							card.getY(), null);
+				else
+					canvas.drawBitmap(this.cardBack.getBitmap(), card.getX(),
+							card.getY(), null);
+			}
 		}
 	}
 
@@ -287,7 +297,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback,
 	private void cardTouched() {
 		this.activeCard = null;// reset active card
 
-		// if card is in hand....
+		// if card is in hands of the current player
 		for (Card card : this.currentPlayer.getCardsInHand()) {
 			Point check = card.isTouched(this.touchPoint);
 			if (check != null) {
@@ -308,13 +318,13 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback,
 		if (this.cardBack.isTouched(this.touchPoint) != null) {
 			if (!this.currentPlayer.hasValidMoves()) {
 				this.currentPlayer.pickCard();
-				
-				//Switch to the next player
+
+				// Switch to the next player
 				if (this.getNextPlayer().isHuman())
 					this.showTransitionScreen();
 				else
 					this.currentPlayer = this.getNextPlayer();
-				
+
 			} else {
 				// Player has valid moves force them...
 				String msg = FGLMessage.getMoveNotAllowedMsg(LN);
@@ -555,11 +565,46 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback,
 		}
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public boolean isGameStarted() {
 		return gameStarted;
 	}
 
+	/**
+	 * 
+	 * @param gameStarted
+	 */
 	public void setGameStarted(boolean gameStarted) {
 		this.gameStarted = gameStarted;
 	}
+
+	/**
+	 * This method sets new card positions whenever a card is added or removed
+	 * from the players hands
+	 * 
+	 * @param player
+	 */
+	protected void recalculatePositions(Player player) {
+
+		double initial_x = 0;
+		double x = 0;
+
+		double y = 0;
+		if (player.getLocation().equals(UPPER_LOC))
+			y = 0.2;
+		else if (player.getLocation().equals(LOWER_LOC))
+			y = 0.5;
+
+		for (int i = 1; i <= player.cards.size(); i++) {
+			Card card = player.cards.get(i - 1);
+			initial_x = 1.0 / (player.cards.size() + 2);
+			x = initial_x * i;
+			this.layout.setPosition(card, x, y);
+			card.setDefaultPosition(card.getPosition());
+		}
+	}
+
 }

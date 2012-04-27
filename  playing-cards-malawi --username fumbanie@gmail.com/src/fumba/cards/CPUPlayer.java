@@ -32,5 +32,13 @@ public class CPUPlayer extends Player {
 		// TODO Auto-generated method stub
 
 	}
+
+	/**
+	 * 
+	 */
+	@Override
+	public String getLocation() {
+		return this.location;
+	}
 	
 }
