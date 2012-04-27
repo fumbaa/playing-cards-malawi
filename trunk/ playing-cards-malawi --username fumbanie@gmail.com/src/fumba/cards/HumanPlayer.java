@@ -4,6 +4,7 @@ import android.graphics.Point;
 
 public class HumanPlayer extends Player {
 
+
 	/**
 	 * Constructs human player
 	 * 
@@ -12,7 +13,7 @@ public class HumanPlayer extends Player {
 	 */
 	public HumanPlayer(String name, GamePanel panel) {
 		this.setName(name);
-		this.gamePanel= panel;
+		this.gamePanel = panel;
 		this.currentMove = new Move(); // defaults to false, false for validity
 										// and continuity
 	}
@@ -35,7 +36,15 @@ public class HumanPlayer extends Player {
 
 		this.gamePanel.setTopCard(card);
 		this.cards.remove(card);
-		this.recalculatePositions();
+		this.gamePanel.recalculatePositions(this);
+	}
+
+	@Override
+	/**
+	 * 
+	 */
+	public String getLocation() {
+		return this.location;
 	}
 
 }

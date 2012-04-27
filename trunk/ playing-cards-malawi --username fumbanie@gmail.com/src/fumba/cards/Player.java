@@ -33,6 +33,9 @@ public abstract class Player {
 
 	/** The players current move **/
 	protected Move currentMove;
+	
+	/**  **/
+	protected String location;
 
 	/**
 	 * Returns the name of the player
@@ -52,7 +55,7 @@ public abstract class Player {
 	 */
 	protected void addCard(Card card) {
 		this.cards.add(card);
-		this.recalculatePositions();
+		this.gamePanel.recalculatePositions(this);
 	}
 
 	/**
@@ -62,6 +65,12 @@ public abstract class Player {
 		return this.cards;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
+	public abstract String getLocation();
+	
 	/**
 	 * Adds the specified card to the played cards list
 	 */
@@ -100,23 +109,6 @@ public abstract class Player {
 				return card;
 		}
 		return null;
-	}
-
-	/**
-	 * This method sets new card positions whenever a card is added or removed
-	 * from the players hands
-	 **/
-	protected void recalculatePositions() {
-
-		// TODO Move this method to the GamePanel class
-		for (int i = 1; i <= this.cards.size(); i++) {
-			Card card = this.cards.get(i - 1);
-			double initial_x = 1.0 / (this.cards.size() + 2);
-			double x = initial_x * i;
-			double y = 0.3;
-			this.gamePanel.getLayout().setPosition(card, x, y);
-			card.setDefaultPosition(card.getPosition());
-		}
 	}
 
 	/**
@@ -176,4 +168,9 @@ public abstract class Player {
 	protected int countCardsInHands() {
 		return this.cards.size();
 	}
+
+	public void setLocation(String location) {
+		this.location = location;
+	}
+
 }
