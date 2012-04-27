@@ -8,6 +8,8 @@ import android.content.Context;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Point;
+import android.graphics.Shader;
+import android.graphics.drawable.BitmapDrawable;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -199,10 +201,14 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback,
 	protected void onDraw(Canvas canvas) {
 
 		// draw the background image
-		// TODO Put in bitmap cache
-		canvas.drawBitmap(BitmapFactory.decodeResource(getResources(),
-				R.drawable.abstrakt), 0, 0, null);
-
+		BitmapDrawable background = new BitmapDrawable(
+				BitmapFactory.decodeResource(getResources(),
+						R.drawable.background));
+		background.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+		background.setTileModeX(Shader.TileMode.REPEAT);
+		background.setTileModeY(Shader.TileMode.REPEAT);
+		background.draw(canvas);
+		
 		this.drawCards(canvas);
 
 		// come out of the panel thread
@@ -232,7 +238,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback,
 			canvas.drawBitmap(card.getBitmap(), card.getX(), card.getY(), null);
 		}
 
-		//draw player cards
+		// draw player cards
 		for (Player player : this.players) {
 			for (Card card : player.getCardsInHand()) {
 				if (player.equals(this.currentPlayer))
@@ -320,7 +326,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback,
 				this.currentPlayer.pickCard();
 
 				// Switch to the next player
-				if (this.getNextPlayer().isHuman())
+				if (this.getNextPlayer().isHuman() && this.currentPlayer.isHuman() )
 					this.showTransitionScreen();
 				else
 					this.currentPlayer = this.getNextPlayer();
