@@ -190,9 +190,9 @@ public class CardBank {
 				this.controller));
 
 		// Jokers
-		this.cardMap.add(new Card(this.context, "*B", R.drawable.fglahearts,
+		this.cardMap.add(new Card(this.context, "*B", R.drawable.fgljokerblack,
 				this.controller));
-		this.cardMap.add(new Card(this.context, "*C", R.drawable.fglahearts,
+		this.cardMap.add(new Card(this.context, "*C", R.drawable.fgljoker,
 				this.controller));
 
 	}
