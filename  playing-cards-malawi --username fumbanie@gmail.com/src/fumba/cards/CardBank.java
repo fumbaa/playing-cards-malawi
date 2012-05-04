@@ -221,4 +221,15 @@ public class CardBank {
 		return this.cardMap.size();
 	}
 
+	/** Get specific card **/
+	public Card getCard(String string) {
+		int location = 0;
+		for (Card card : this.cardMap) {
+			if (card.getName().equalsIgnoreCase(string))
+				break;
+			location++;
+		}
+		return this.cardMap.get(location);
+	}
+
 }

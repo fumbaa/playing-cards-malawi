@@ -115,7 +115,7 @@ public class Card extends FGLGraphic {
 	 * @return Point representing the x and y coordinates of the position
 	 */
 	public Point getPosition() {
-		return new Point(this.currentX, this.currentY);
+		return new Point((int)this.currentX, (int)this.currentY);
 	}
 
 	/**

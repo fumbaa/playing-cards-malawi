@@ -1,5 +1,7 @@
 package fumba.cards;
 
+import android.graphics.Point;
+
 /**
  * The <code>CPUPlayer</code> class represents an artificial intelligence
  * player.
@@ -55,7 +57,7 @@ public class CPUPlayer extends Player {
 	@Override
 	public Card pickCard() {
 		Card card = this.gamePanel.getCardBank().pickRandomCard();
-		//card.activate();
+		card.activate();
 		this.addCard(card);
 		Tools.catLog("Picked : "+ card);
 		return card;
@@ -65,6 +67,7 @@ public class CPUPlayer extends Player {
 	void addCard(Card card) {
 		this.cards.add(card);
 		this.gamePanel.recalculatePositions(this);
+		this.newCardPosition = card.getPosition();
 		if (! this.initial ){
 		card.setCurrentPosition(this.gamePanel.getCardBack().getPosition() );
 		}
@@ -72,7 +75,7 @@ public class CPUPlayer extends Player {
 
 	@Override
 	public void makeMove(Move move) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 

@@ -3,6 +3,8 @@ package fumba.cards;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.graphics.Point;
+
 /**
  * The <code>Player</code> interface defines a player object. A player can
  * either be a human or CPU. In order to implement an artificially intelligent
@@ -36,6 +38,9 @@ public abstract class Player {
 	
 	/**  **/
 	protected String location;
+
+	/** Position for the newly picked card **/
+	protected Point newCardPosition;
 
 	/**
 	 * Returns the name of the player
@@ -159,6 +164,10 @@ public abstract class Player {
 
 	public void setLocation(String location) {
 		this.location = location;
+	}
+
+	public Point getNewCardPosition() {
+		return this.newCardPosition;
 	}
 
 }

@@ -30,8 +30,10 @@ public abstract class FGLGraphic {
 	/** the unique id of the custom view */
 	protected String name;
 
+	double currentX;
+
 	/** graphic current position coordinate */
-	protected int currentX, currentY;
+	protected double currentY;
 
 	/** graphic original position coordinate */
 	private int originalX, originalY;
@@ -78,11 +80,11 @@ public abstract class FGLGraphic {
 		return this.img;
 	}
 
-	public int getX() {
+	public double getX() {
 		return this.currentX;
 	}
 
-	public int getY() {
+	public double getY() {
 		return this.currentY;
 	}
 
@@ -212,8 +214,8 @@ public abstract class FGLGraphic {
 				if (touchPoint.y >= (this.getY() - adjust)
 						&& touchPoint.y <= (this.getY() + adjust)
 								+ this.getHeight()) {
-					int x = touchPoint.x - (this.getCenter().x + this.getX());
-					int y = touchPoint.y - (this.getCenter().y + this.getY());
+					int x = (int) (touchPoint.x - (this.getCenter().x + this.getX()));
+					int y = (int) (touchPoint.y - (this.getCenter().y + this.getY()));
 					// Log that this button was touched (for debugging purposes
 					Tools.catLog(this.name);
 					return new Point(x, y);

@@ -114,10 +114,21 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback,
 	/** Card to be animated on game screen **/
 	private Card movingCard;
 
-	/** X-coordinate step for animation **/
-	private int stepX;
-
 	private BitmapDrawable background;
+
+	private double vX;
+
+	private double vY;
+
+	private double length;
+
+	private int speed = 1;
+
+	/** Point to where the animated card needs to be delivered **/
+	private Point destinationLoc;
+
+	/** Flag to detect if CPU has valid moves **/
+	private boolean CPUHasNoMoves = false;
 
 	/**
 	 * Starts the game with a welcome screen where user selects desired options
@@ -192,18 +203,40 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback,
 	 */
 	private void serveCards() {
 
-		Card middle_card = this.cards.pickRandomCard();
-		this.layout.setPosition(middle_card, .5, .8);
-		this.setTopCard(middle_card);
-		middle_card.activate();
+		boolean random = true;
+		if (random) {
+			Card middle_card = this.cards.pickRandomCard();
+			this.layout.setPosition(middle_card, .5, .8);
+			this.setTopCard(middle_card);
+			middle_card.activate();
 
-		for (int i = 0; i < this.numOfCardsServed; i++) {
-			// distribute to all the players
-			for (int j = 0; j < this.players.size(); j++) {
-				Card card = this.cards.pickRandomCard();
-				card.activate();
-				this.players.get(j).addCard(card);
+			for (int i = 0; i < this.numOfCardsServed; i++) {
+				// distribute to all the players
+				for (int j = 0; j < this.players.size(); j++) {
+					Card card = this.cards.pickRandomCard();
+					card.activate();
+					this.players.get(j).addCard(card);
+				}
 			}
+		}
+
+		else {
+			Card middle_card = this.cards.getCard("AS");
+			;
+			this.layout.setPosition(middle_card, .5, .8);
+			this.setTopCard(middle_card);
+			middle_card.activate();
+
+			this.players.get(0).addCard(this.cards.getCard("3H"));
+			this.cards.getCard("3H").activate();
+			this.players.get(0).addCard(this.cards.getCard("4H"));
+			this.cards.getCard("4H").activate();
+
+			this.players.get(1).addCard(this.cards.getCard("6H"));
+			this.cards.getCard("6H").activate();
+			this.players.get(1).addCard(this.cards.getCard("AH"));
+			this.cards.getCard("AH").activate();
+
 		}
 
 		// Indicate that all cards have been distributed
@@ -254,25 +287,23 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback,
 	 * @param canvas
 	 */
 	private void drawCards(Canvas canvas) {
-		// canvas.drawColor(Color.BLACK);
-		// canvas.drawColor(Color.TRANSPARENT);
 
-		canvas.drawBitmap(this.cardBack.getBitmap(), this.cardBack.getX(),
-				this.cardBack.getY(), null);
+		canvas.drawBitmap(this.cardBack.getBitmap(), (int)this.cardBack.getX(),
+				(int)this.cardBack.getY(), null);
 
 		for (Card card : this.playedCards) {
-			canvas.drawBitmap(card.getBitmap(), card.getX(), card.getY(), null);
+			canvas.drawBitmap(card.getBitmap(), (int)card.getX(), (int)card.getY(), null);
 		}
 
 		// draw player cards
 		for (Player player : this.players) {
 			for (Card card : player.getCardsInHand()) {
 				if (player.equals(this.currentPlayer))
-					canvas.drawBitmap(card.getBitmap(), card.getX(),
-							card.getY(), null);
+					canvas.drawBitmap(card.getBitmap(), (int)card.getX(),
+							(int)card.getY(), null);
 				else
-					canvas.drawBitmap(this.cardBack.getBitmap(), card.getX(),
-							card.getY(), null);
+					canvas.drawBitmap(this.cardBack.getBitmap(), (int)card.getX(),
+							(int)card.getY(), null);
 			}
 		}
 	}
@@ -676,18 +707,78 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback,
 		if (this.animateCPU) {
 
 			if (this.movingCard == null) {
+
 				if (this.currentPlayer.getCurrentMove().getCard() != null) {
+
+					// Valid Card available from CPU Hand
+					this.CPUHasNoMoves = false;
+					destinationLoc = this.getPlayedTopCard().getPosition();
 					this.setMovingCard(this.currentPlayer.getCurrentMove()
 							.getCard());
-					this.stepX = +1;
+					this.clickedScreen(this.getPlayedTopCard().currentX,
+							this.getPlayedTopCard().currentY);
+					Tools.catLog("Card destination : "
+							+ this.topPlayedCard.getPosition());
 				} else {
+
+					// Picking New Card from Deck
+					this.CPUHasNoMoves = true;
+					destinationLoc = this.currentPlayer.getNewCardPosition();
 					this.setMovingCard(this.currentPlayer.pickCard());
-					this.stepX = -1;
+					this.clickedScreen(
+							this.currentPlayer.getNewCardPosition().x,
+							this.currentPlayer.getNewCardPosition().y);
+					Tools.catLog("Card destination : "
+							+ this.currentPlayer.newCardPosition);
 				}
 			}
-			this.movingCard.setCurrentPosition(new Point(this.movingCard.getX()
-					+ stepX, this.movingCard.getY() + stepX));
+
+			// Check if the card has reached its intended destination
+			if (this.movingCard.isTouched(destinationLoc) == null)
+				this.moveRec();
+			else {
+				movingCard.setCurrentPosition(destinationLoc);
+				// CPU made a valid move
+				if (!CPUHasNoMoves) {
+					this.getTopCard().deactivate();
+					// this.currentMove = move;
+
+					this.setTopCard(movingCard);
+					this.currentPlayer.cards.remove(movingCard);
+					this.recalculatePositions(currentPlayer);
+				}
+
+				this.animateCPU = false;
+				this.movingCard = null;
+				this.switchToNextPlayer();
+
+			}
 		}
+	}
+
+	/** Returns the top played card **/
+	private Card getPlayedTopCard() {
+		return this.playedCards.get(this.playedCards.size() - 1);
+	}
+
+	private void moveRec() {
+		this.movingCard.currentX = this.movingCard.currentX + (vX * speed);
+		this.movingCard.currentY = this.movingCard.currentY + (vY * speed);
+		Tools.catLog("Current : " + this.movingCard.getPosition() );
+	}
+
+	// here we work out the movement
+	public void clickedScreen(double x, double y) {
+		double newX = x;
+		double newY = y;
+		// calculate the speed to move at
+		vX = newX - this.movingCard.currentX;
+		vY = newY - this.movingCard.currentY;
+		// get the distance
+		length = Math.sqrt((vX * vX) + (vY * vY));
+		// make it a unit vector
+		vX = vX / length;
+		vY = vY / length;
 	}
 
 	/** Sets the card that is to be animated **/
