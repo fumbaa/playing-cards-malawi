@@ -4,7 +4,6 @@ import android.graphics.Point;
 
 public class HumanPlayer extends Player {
 
-
 	/**
 	 * Constructs human player
 	 * 
@@ -14,7 +13,7 @@ public class HumanPlayer extends Player {
 	public HumanPlayer(String name, GamePanel panel) {
 		this.setName(name);
 		this.gamePanel = panel;
-		this.currentMove = new Move(); 
+		this.currentMove = new Move();
 	}
 
 	/** Add the selected card to the played cards list **/
@@ -45,6 +44,12 @@ public class HumanPlayer extends Player {
 		card.activate();
 		this.addCard(card);
 		return card;
+	}
+
+	@Override
+	void addCard(Card card) {
+		this.cards.add(card);
+		this.gamePanel.recalculatePositions(this);
 	}
 
 }

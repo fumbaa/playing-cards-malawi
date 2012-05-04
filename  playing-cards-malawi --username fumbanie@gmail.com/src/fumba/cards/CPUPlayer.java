@@ -18,6 +18,9 @@ package fumba.cards;
 
 public class CPUPlayer extends Player {
 
+	/** Flag to show if cards are being distributed at the beginning of the game **/
+	private boolean initial = true;
+
 	/** Constructor **/
 	public CPUPlayer(String playerName, GamePanel gamePanel) {
 		this.setName(playerName);
@@ -42,14 +45,6 @@ public class CPUPlayer extends Player {
 	}
 
 	/**
-	 * Player makes move
-	 */
-	public void makeMove(Move move) {
-		// TODO Auto-generated method stub
-
-	}
-
-	/**
 	 * Gets the screen placement for the cards
 	 */
 	@Override
@@ -61,8 +56,28 @@ public class CPUPlayer extends Player {
 	public Card pickCard() {
 		Card card = this.gamePanel.getCardBank().pickRandomCard();
 		//card.activate();
-		//this.addCard(card);
+		this.addCard(card);
+		Tools.catLog("Picked : "+ card);
 		return card;
+	}
+
+	@Override
+	void addCard(Card card) {
+		this.cards.add(card);
+		this.gamePanel.recalculatePositions(this);
+		if (! this.initial ){
+		card.setCurrentPosition(this.gamePanel.getCardBack().getPosition() );
+		}
+	}
+
+	@Override
+	public void makeMove(Move move) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void setInitial(boolean initial) {
+		this.initial = initial;
 	}
 
 }

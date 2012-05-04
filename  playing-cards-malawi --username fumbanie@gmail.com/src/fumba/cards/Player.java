@@ -48,10 +48,7 @@ public abstract class Player {
 	 * Makes card available to player and determine the position that the card
 	 * is to be placed on the players hand
 	 */
-	protected void addCard(Card card) {
-		this.cards.add(card);
-		this.gamePanel.recalculatePositions(this);
-	}
+	abstract void addCard(Card card);
 
 	/**
 	 * Gets the list of cards in the players hands
