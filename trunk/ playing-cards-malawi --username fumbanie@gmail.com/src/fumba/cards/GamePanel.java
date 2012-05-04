@@ -108,6 +108,17 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback,
 	/** Flag to lock cards from being moved **/
 	private boolean lockCards = false;
 
+	/** Flag for CPU play animation **/
+	private boolean animateCPU = false;
+
+	/** Card to be animated on game screen **/
+	private Card movingCard;
+
+	/** X-coordinate step for animation **/
+	private int stepX;
+
+	private BitmapDrawable background;
+
 	/**
 	 * Starts the game with a welcome screen where user selects desired options
 	 * and initiates the game. Card objects are also created in this
@@ -120,6 +131,12 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback,
 	public GamePanel(GamePanelLayout layout, Activity gameTableActivity) {
 		super(layout.getContext());
 
+		this.background = new BitmapDrawable(BitmapFactory.decodeResource(
+				getResources(), R.drawable.background));
+		background.setBounds(0, 0, ApplicationEntryActivity.width,
+				ApplicationEntryActivity.height);
+		background.setTileModeX(Shader.TileMode.REPEAT);
+		background.setTileModeY(Shader.TileMode.REPEAT);
 		this.gameStarted = true;
 
 		// add the Panel to the SurfaceHolder for a callback
@@ -201,14 +218,9 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback,
 	protected void onDraw(Canvas canvas) {
 
 		// draw the background image
-		BitmapDrawable background = new BitmapDrawable(
-				BitmapFactory.decodeResource(getResources(),
-						R.drawable.background));
-		background.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
-		background.setTileModeX(Shader.TileMode.REPEAT);
-		background.setTileModeY(Shader.TileMode.REPEAT);
-		background.draw(canvas);
-		
+
+		this.background.draw(canvas);
+
 		this.drawCards(canvas);
 
 		// come out of the panel thread
@@ -321,12 +333,13 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback,
 		}
 
 		// if card is on the deck of unplayed cards
-		if (this.cardBack.isTouched(this.touchPoint) != null) {
+		if (this.cardBack.isTouched(this.touchPoint) != null
+				&& this.isHumanPlayer()) {
 			if (!this.currentPlayer.hasValidMoves()) {
 				this.currentPlayer.pickCard();
 
 				// Switch to the next player
-				if (this.getNextPlayer().isHuman() && this.currentPlayer.isHuman() )
+				if (this.nextPlayerIsHuman())
 					this.showTransitionScreen();
 				else
 					this.currentPlayer = this.getNextPlayer();
@@ -337,6 +350,24 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback,
 				Toast.makeText(this.context, msg, Toast.LENGTH_SHORT).show();
 			}
 		}
+	}
+
+	/**
+	 * Checks to see if a human player is currently playing
+	 * 
+	 * @return Boolean true if human is playing
+	 */
+	private boolean isHumanPlayer() {
+		return HumanPlayer.class.isInstance(this.currentPlayer);
+	}
+
+	/**
+	 * Checks to see if the next player is human
+	 * 
+	 * @return Boolean true if human is playing
+	 */
+	private boolean nextPlayerIsHuman() {
+		return HumanPlayer.class.isInstance(this.getNextPlayer());
 	}
 
 	/**
@@ -372,7 +403,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback,
 	private void cardReleased() {
 		if (this.activeCard != null) {
 			Card card = this.currentPlayer.getCard(this.activeCard);
-			if (this.currentPlayer.isHuman()) {
+			if (this.isHumanPlayer()) {
 				Move move = Rules.checkMove(card);
 
 				if (move.isValid()
@@ -388,9 +419,10 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback,
 						return;
 					}
 					// check if move is continued...
-					if (!move.isContinued())
-						this.showTransitionScreen();
-					else
+					if (!move.isContinued()) {
+						if (this.nextPlayerIsHuman())
+							this.showTransitionScreen();
+					} else
 						Toast.makeText(this.context, "Its your turn again...",
 								Toast.LENGTH_SHORT).show();
 				}
@@ -611,6 +643,44 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback,
 			this.layout.setPosition(card, x, y);
 			card.setDefaultPosition(card.getPosition());
 		}
+	}
+
+	/** Allows the CPU Player to make a move if it has one **/
+	public void CPUMakeMove() {
+		if (!this.isHumanPlayer() && !this.animateCPU) {
+			((CPUPlayer) this.currentPlayer).calculateMove();
+			// CPU is either thinking of move or ready to play.....
+			if (this.currentPlayer.getCurrentMove() != null) {
+				Tools.catLog("CPU is ready to play... "
+						+ this.currentPlayer.getCurrentMove());
+				this.animateCPU = true;
+			}
+		}
+
+		// Animate move
+		if (this.animateCPU) {
+
+			if (this.movingCard == null) {
+				if (this.currentPlayer.getCurrentMove().getCard() != null) {
+					this.setMovingCard(this.currentPlayer.getCurrentMove()
+							.getCard());
+					this.stepX = +1;
+				} else {
+					this.setMovingCard(this.currentPlayer.pickCard());
+					this.stepX = -1;
+				}
+			}
+			this.movingCard.setCurrentPosition(new Point(this.movingCard.getX()
+					+ stepX, this.movingCard.getY() + stepX));
+		}
+	}
+
+	public void setMovingCard(Card movingCard) {
+		this.movingCard = movingCard;
+	}
+
+	public Card getMovingCard() {
+		return movingCard;
 	}
 
 }

@@ -35,8 +35,8 @@ import android.graphics.Point;
 
 public class Card extends FGLGraphic {
 	/**
-	 * The GamePanel to which this card belongs to. In this case, the contoller
-	 * can be visualised as the person who is taking charge of distributing the
+	 * The GamePanel to which this card belongs to. In this case, the GamePanel
+	 * can be visualized as the person who is taking charge of distributing the
 	 * cards and observing that all game rules are followed.
 	 */
 	private GamePanel GamePanel;
@@ -56,7 +56,7 @@ public class Card extends FGLGraphic {
 	 *            an integer that maps to the appropriate bitmap image of the
 	 *            card
 	 * @param GamePanel
-	 *            can be visualised as the person controlling the game
+	 *            can be visualized as the person controlling the game
 	 * @see R.drawable
 	 */
 	public Card(Context context, String name, int resourceID,
@@ -70,7 +70,6 @@ public class Card extends FGLGraphic {
 	 */
 	@Override
 	protected void extractBitmap() {
-		
 		BitmapFactory.Options opts = new BitmapFactory.Options();
 		opts.inJustDecodeBounds = true;
 		this.img = BitmapFactory.decodeResource(context.getResources(),

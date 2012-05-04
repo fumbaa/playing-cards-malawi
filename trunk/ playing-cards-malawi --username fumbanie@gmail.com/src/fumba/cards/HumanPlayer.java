@@ -14,15 +14,7 @@ public class HumanPlayer extends Player {
 	public HumanPlayer(String name, GamePanel panel) {
 		this.setName(name);
 		this.gamePanel = panel;
-		this.currentMove = new Move(); // defaults to false, false for validity
-										// and continuity
-	}
-
-	/**
-	 * Check to see if this class is human
-	 */
-	public Boolean isHuman() {
-		return true;
+		this.currentMove = new Move(); 
 	}
 
 	/** Add the selected card to the played cards list **/
@@ -45,6 +37,14 @@ public class HumanPlayer extends Player {
 	 */
 	public String getLocation() {
 		return this.location;
+	}
+
+	@Override
+	public Card pickCard() {
+		Card card = this.gamePanel.getCardBank().pickRandomCard();
+		card.activate();
+		this.addCard(card);
+		return card;
 	}
 
 }

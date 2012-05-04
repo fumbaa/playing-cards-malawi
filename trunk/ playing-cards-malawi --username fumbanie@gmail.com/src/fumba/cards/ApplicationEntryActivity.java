@@ -10,8 +10,9 @@ import android.view.Window;
 import android.view.WindowManager;
 
 /**
- * Initiates the canvas and adds a layout view which contains all graphic game
- * elements.
+ * This is the entry point for the Malawi Playing Cards Android application.
+ * Main menu items are displayed from which the user is directed to the chosen
+ * activity on selection.
  * <p>
  * <i>Copyright (c) 1998, 2011 Oracle. All rights reserved. This program and the
  * accompanying materials are made available under the terms of the Eclipse
@@ -27,12 +28,14 @@ import android.view.WindowManager;
 public class ApplicationEntryActivity extends Activity {
 
 	/**
-	 * The screen width and height of the android device running this
-	 * application.
+	 * Screen width of the device
 	 */
-	public static int width, height;
+	public static int width;
 
-
+	/**
+	 * Screen height of the device
+	 */
+	public static int height;
 
 	/** Called when the activity is first created. */
 	@Override
@@ -65,11 +68,9 @@ public class ApplicationEntryActivity extends Activity {
 	 *            User interface component defined by res/layout/main.xml
 	 */
 	public void mainButtonOnClick(View view) {
-		// Intent starts GameTableActivity
 		Intent gameTableProtocol = new Intent(view.getContext(),
 				GameTableActivity.class);
 		this.startActivityForResult(gameTableProtocol, Activity.RESULT_CANCELED);
 	}
-
 
 }
