@@ -205,6 +205,20 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback,
 				this.players.get(j).addCard(card);
 			}
 		}
+
+		// Indicate that all cards have been distributed
+		if (this.getCPUPlayer() != null) {
+			this.getCPUPlayer().setInitial(false);
+		}
+	}
+
+	/** Gets the CPU Player **/
+	private CPUPlayer getCPUPlayer() {
+		for (Player player : this.players) {
+			if (CPUPlayer.class.isInstance(player))
+				return (CPUPlayer) player;
+		}
+		return null;
 	}
 
 	/**
@@ -422,6 +436,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback,
 					if (!move.isContinued()) {
 						if (this.nextPlayerIsHuman())
 							this.showTransitionScreen();
+						this.switchToNextPlayer();
 					} else
 						Toast.makeText(this.context, "Its your turn again...",
 								Toast.LENGTH_SHORT).show();
@@ -675,12 +690,19 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback,
 		}
 	}
 
+	/** Sets the card that is to be animated **/
 	public void setMovingCard(Card movingCard) {
 		this.movingCard = movingCard;
 	}
 
+	/** Gets the card that is to be animated **/
 	public Card getMovingCard() {
 		return movingCard;
+	}
+
+	/** Gets the card that represents deck **/
+	public Card getCardBack() {
+		return cardBack;
 	}
 
 }
