@@ -17,7 +17,7 @@ package fumba.cards;
  */
 public class Move {
 
-	/** Tag to show if player is required to make another  move (continued move) **/
+	/** Tag to show if player is required to make another move (continued move) **/
 	private Boolean continuity;
 
 	/** tag to show the attempted move is a valid one **/
@@ -65,8 +65,11 @@ public class Move {
 	}
 
 	public String toString() {
-		return "Move : " + this.card.getName() + " -  Valid: " + this.validity
-				+ " Continuity: " + this.continuity;
+		if (this.card != null)
+			return "Move : " + this.card.getName() + " -  Valid: "
+					+ this.validity + " Continuity: " + this.continuity;
+		else
+			return "Player needs to pick Card";
 	}
 
 	public void setCard(Card card) {

@@ -67,6 +67,7 @@ public class GamePanelThread extends Thread {
 				canvas = this.surfaceHolder.lockCanvas(null);
 				synchronized (this.surfaceHolder) {
 					// _panel.updatePhysics();
+					this.gamePanel.CPUMakeMove();
 					this.gamePanel.onDraw(canvas);
 				}
 			} finally {

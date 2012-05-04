@@ -39,7 +39,7 @@ public class ButtonBank implements ButtonConstants {
 	/** Make buttons and store them in a hashmap **/
 	private void createButtons() {
 
-		// BACK_BUTTON
+		//Back Button
 		Button back_button = new Button(this.context);
 		back_button.setId(COMMON_BACK);
 		back_button.setBackgroundResource(R.drawable.back_button);
@@ -47,11 +47,10 @@ public class ButtonBank implements ButtonConstants {
 				LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 		back_button_params.setMargins(BACK_BTN_PSN_X, BACK_BTN_PSN_Y, ZERO,
 				ZERO);
-
 		back_button.setLayoutParams(back_button_params);
 		this.buttonMap.put(COMMON_BACK, back_button);
 
-		// CONTINUE BUTTON
+		// Continue Button
 		Button continue_btn = new Button(this.context);
 		continue_btn.setId(CONTINUE);
 		continue_btn.setBackgroundResource(R.drawable.continue_button);
@@ -66,10 +65,12 @@ public class ButtonBank implements ButtonConstants {
 
 	}
 
+	/** Sets the buttonMap hashmap to the specified one **/
 	public void setButtonMap(HashMap<Integer, Button> buttonMap) {
 		this.buttonMap = buttonMap;
 	}
 
+	/** Gets the button hashmap collection of buttons **/
 	public HashMap<Integer, Button> getButtonMap() {
 		return buttonMap;
 	}

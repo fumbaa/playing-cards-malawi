@@ -45,11 +45,6 @@ public abstract class Player {
 	}
 
 	/**
-	 * Check to see if the player is human
-	 */
-	public abstract Boolean isHuman();
-
-	/**
 	 * Makes card available to player and determine the position that the card
 	 * is to be placed on the players hand
 	 */
@@ -116,11 +111,7 @@ public abstract class Player {
 	 * 
 	 * @return Card
 	 */
-	protected void pickCard() {
-		Card card = this.gamePanel.getCardBank().pickRandomCard();
-		card.activate();
-		this.addCard(card);
-	}
+	public abstract Card pickCard() ;
 
 	/**
 	 * String representation of the player object

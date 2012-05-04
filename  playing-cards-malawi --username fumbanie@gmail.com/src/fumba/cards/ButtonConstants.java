@@ -1,7 +1,7 @@
 package fumba.cards;
 
 /**
- * Unique IDs for elements that are added dynamically to the application canvas
+ * Values for elements that are added dynamically to the application canvas
  * 
  * <p>
  * <i>Copyright (c) 1998, 2011 Oracle. All rights reserved. This program and the

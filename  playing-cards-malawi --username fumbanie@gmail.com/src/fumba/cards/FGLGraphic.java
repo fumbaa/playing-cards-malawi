@@ -33,7 +33,7 @@ public abstract class FGLGraphic {
 	/** graphic current position coordinate */
 	protected int currentX, currentY;
 
-	/** graphic original positon coordinate */
+	/** graphic original position coordinate */
 	private int originalX, originalY;
 
 	/** view dimension */
@@ -60,8 +60,8 @@ public abstract class FGLGraphic {
 	}
 
 	/**
-	 * Graphic object extracts the appropriate bitmap image from the
-	 * resources folder
+	 * Graphic object extracts the appropriate bitmap image from the resources
+	 * folder
 	 */
 	protected abstract void extractBitmap();
 

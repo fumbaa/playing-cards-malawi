@@ -23,35 +23,34 @@ public class ButtonListeners implements View.OnClickListener {
 
 	/** Activity that contains the button **/
 	private Activity activity;
-	
+
+	/** Layout on which dynamic view components are added **/
 	private GamePanelLayout layout;
 
-	public ButtonListeners(GamePanelLayout GamePanelLayout, Activity activity) {
+	/** Constructor **/
+	public ButtonListeners(GamePanelLayout layout, Activity activity) {
 		this.activity = activity;
-		this.layout = GamePanelLayout;
+		this.layout = layout;
 	}
 
+	/**
+	 * Events to be initiated when dynamic buttons are clicked
+	 */
 	public void onClick(View view) {
-
-		// Common Back Button
+		// Back Button
 		if (view.getId() == ButtonConstants.COMMON_BACK) {
+			// FIXME: Back should Pause game state
 			this.activity.setResult(Activity.RESULT_OK, new Intent());
 			this.activity.finish();
 		}
-
 		// Continue Button
 		else if (view.getId() == ButtonConstants.CONTINUE) {
-			
-						
-			// Intent starts GameTableActivity
 			Intent gameTableProtocol = new Intent(view.getContext(),
 					PlayerTransitionActivity.class);
 			this.activity.startActivityForResult(gameTableProtocol,
 					Activity.RESULT_CANCELED);
-			
 			this.layout.removeView(view);
 		}
-
-	}// end onClick
+	}
 
 }
