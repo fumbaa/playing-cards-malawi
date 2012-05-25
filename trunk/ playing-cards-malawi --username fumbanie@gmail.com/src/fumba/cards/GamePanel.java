@@ -288,22 +288,23 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback,
 	 */
 	private void drawCards(Canvas canvas) {
 
-		canvas.drawBitmap(this.cardBack.getBitmap(), (int)this.cardBack.getX(),
-				(int)this.cardBack.getY(), null);
+		canvas.drawBitmap(this.cardBack.getBitmap(),
+				(int) this.cardBack.getX(), (int) this.cardBack.getY(), null);
 
 		for (Card card : this.playedCards) {
-			canvas.drawBitmap(card.getBitmap(), (int)card.getX(), (int)card.getY(), null);
+			canvas.drawBitmap(card.getBitmap(), (int) card.getX(),
+					(int) card.getY(), null);
 		}
 
 		// draw player cards
 		for (Player player : this.players) {
 			for (Card card : player.getCardsInHand()) {
 				if (player.equals(this.currentPlayer))
-					canvas.drawBitmap(card.getBitmap(), (int)card.getX(),
-							(int)card.getY(), null);
+					canvas.drawBitmap(card.getBitmap(), (int) card.getX(),
+							(int) card.getY(), null);
 				else
-					canvas.drawBitmap(this.cardBack.getBitmap(), (int)card.getX(),
-							(int)card.getY(), null);
+					canvas.drawBitmap(this.cardBack.getBitmap(),
+							(int) card.getX(), (int) card.getY(), null);
 			}
 		}
 	}
@@ -764,7 +765,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback,
 	private void moveRec() {
 		this.movingCard.currentX = this.movingCard.currentX + (vX * speed);
 		this.movingCard.currentY = this.movingCard.currentY + (vY * speed);
-		Tools.catLog("Current : " + this.movingCard.getPosition() );
+		Tools.catLog("Current : " + this.movingCard.getPosition());
 	}
 
 	// here we work out the movement

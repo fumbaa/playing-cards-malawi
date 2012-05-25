@@ -1,7 +1,5 @@
 package fumba.cards;
 
-import android.graphics.Point;
-
 /**
  * The <code>CPUPlayer</code> class represents an artificial intelligence
  * player.
